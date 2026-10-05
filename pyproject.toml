@@ -1,0 +1,75 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mconet-sdk"
+version = "0.1.0.dev0"
+description = "Protocol-driven, composable model interaction SDK"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Typing :: Typed",
+]
+
+[project.optional-dependencies]
+dev = [
+  "build>=1.2.2,<2",
+  "hatchling>=1.27,<2",
+  "pyright>=1.1.390,<2",
+  "pytest>=8.3,<10",
+  "pytest-cov>=6,<8",
+  "ruff>=0.9,<1",
+]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src",
+  "/README.md",
+  "/pyproject.toml",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mconet"]
+
+[tool.pyright]
+include = ["src", "scripts", "tests"]
+exclude = ["build", "dist"]
+pythonVersion = "3.11"
+typeCheckingMode = "strict"
+
+[tool.pytest.ini_options]
+addopts = "--strict-config --strict-markers -ra"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["mconet"]
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
+
+[tool.ruff]
+line-length = 88
+src = ["src", "tests"]
+target-version = "py311"
+
+[tool.ruff.format]
+docstring-code-format = true
+quote-style = "double"
+
+[tool.ruff.lint]
+select = ["B", "E4", "E7", "E9", "F", "I", "RUF", "TID", "UP"]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
