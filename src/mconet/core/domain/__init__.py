@@ -78,6 +78,7 @@ from mconet.core.domain.service_access import ServiceAccess
 from mconet.core.domain.service_access_validation import validate_service_access
 from mconet.core.domain.task_descriptor import TaskDescriptor
 from mconet.core.domain.task_descriptor_validation import validate_task_descriptor
+from mconet.core.domain.task_relation import TaskRelation
 from mconet.core.domain.text_message_content import TextMessageContent
 from mconet.core.domain.text_message_content_validation import (
     validate_text_message_content,
@@ -144,6 +145,7 @@ __all__ = (
     "SecretValue",
     "ServiceAccess",
     "TaskDescriptor",
+    "TaskRelation",
     "TextMessageContent",
     "Timestamp",
     "UriArtifactSource",

@@ -608,6 +608,11 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.domain.TaskRelation": {
+      "kind": "class",
+      "members": {},
+      "signature": "(source: 'str', target: 'str', type: 'OpenIdentifier', metadata: 'Extensions' = <factory>) -> None"
+    },
     "mconet.core.domain.TextMessageContent": {
       "kind": "class",
       "members": {
