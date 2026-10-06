@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import ast
 from dataclasses import dataclass
 from pathlib import Path
@@ -69,12 +70,39 @@ _RULES = (
             }
         ),
     ),
+    LayerRule(
+        "mconet.testing",
+        frozenset(
+            {
+                "mconet.auth",
+                "mconet.client",
+                "mconet.codec",
+                "mconet.core",
+                "mconet.integration",
+                "mconet.testing",
+                "mconet.transport",
+            }
+        ),
+    ),
+    LayerRule(
+        "mconet",
+        frozenset(
+            {
+                "mconet.auth",
+                "mconet.client",
+                "mconet.codec",
+                "mconet.core",
+                "mconet.integration",
+                "mconet.transport",
+            }
+        ),
+    ),
 )
 
 
-def _module_name(path: Path) -> str:
+def _module_name(path: Path, source_root: Path) -> str:
     # Convert a source path into its absolute package name.
-    relative = path.relative_to(_SOURCE_ROOT.parent).with_suffix("")
+    relative = path.relative_to(source_root.parent).with_suffix("")
     parts = relative.parts
     if parts[-1] == "__init__":
         parts = parts[:-1]
@@ -105,12 +133,12 @@ def _rule_for(module: str) -> LayerRule | None:
     )
 
 
-def main() -> int:
-    """Return a nonzero status when an internal import violates a layer rule."""
+def _find_violations(source_root: Path) -> list[str]:
+    """Return every forbidden internal import below one package source root."""
     # Parse every production module and report all violations in one invocation.
     violations: list[str] = []
-    for path in sorted(_SOURCE_ROOT.rglob("*.py")):
-        module = _module_name(path)
+    for path in sorted(source_root.rglob("*.py")):
+        module = _module_name(path, source_root)
         rule = _rule_for(module)
         if rule is None:
             continue
@@ -120,10 +148,30 @@ def main() -> int:
                 continue
             if any(_matches_prefix(imported, prefix) for prefix in rule.allowed):
                 continue
-            relative_path = path.relative_to(_PROJECT_ROOT)
+            relative_path = path.relative_to(source_root.parent)
             violations.append(
                 f"{relative_path}:{line_number}: {module} cannot import {imported}"
             )
+    return violations
+
+
+def main() -> int:
+    """Return a nonzero status when an internal import violates a layer rule."""
+    # An overridable source root lets contract tests exercise a real violation
+    # without placing intentionally invalid imports in production modules.
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--source-root",
+        type=Path,
+        default=_SOURCE_ROOT,
+        help="mconet package root to inspect",
+    )
+    args = parser.parse_args()
+    source_root: Path = args.source_root.resolve()
+    if not source_root.is_dir():
+        print(f"Source root does not exist or is not a directory: {source_root}")
+        return 2
+    violations = _find_violations(source_root)
 
     if violations:
         print("Import boundary violations:")
