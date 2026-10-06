@@ -1,5 +1,6 @@
 """Task-neutral domain contracts and immutable values for Mconet."""
 
+from mconet.core.domain.authorization import Authorization
 from mconet.core.domain.bytes_value import Bytes
 from mconet.core.domain.diagnostic import Diagnostic
 from mconet.core.domain.duration import Duration, validate_duration
@@ -28,6 +29,7 @@ from mconet.core.domain.unknown_fields import (
 from mconet.core.domain.uri import UriValue, validate_uri
 
 __all__ = (
+    "Authorization",
     "AuthorizedSecretConsumer",
     "Bytes",
     "Diagnostic",

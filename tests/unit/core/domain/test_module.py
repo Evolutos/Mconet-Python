@@ -7,6 +7,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
     """Verify the domain root exposes only implemented public types."""
     # Keep exports explicit so incomplete types cannot enter the public API.
     assert mconet.core.domain.__all__ == (
+        "Authorization",
         "AuthorizedSecretConsumer",
         "Bytes",
         "Diagnostic",
