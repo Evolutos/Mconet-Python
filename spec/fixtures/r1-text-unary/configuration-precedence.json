@@ -1,0 +1,65 @@
+{
+  "fieldSourceOrder": {
+    "cancellationSignal": [
+      "interaction"
+    ],
+    "compatibilityPolicy": [
+      "interaction",
+      "client",
+      "sdk_safe_default"
+    ],
+    "monitoring.mergeMode": [
+      "interaction",
+      "sdk_safe_default"
+    ],
+    "resourceLimits.maxFrameBytes": [
+      "interaction",
+      "client",
+      "sdk_safe_default"
+    ],
+    "resourceLimits.maxResponseBodyBytes": [
+      "interaction",
+      "client",
+      "sdk_safe_default"
+    ],
+    "resourceLimits.maxStreamingErrorBodyBytes": [
+      "interaction",
+      "client",
+      "sdk_safe_default"
+    ],
+    "serviceAccess": [
+      "interaction",
+      "request",
+      "client",
+      "integration"
+    ],
+    "target": [
+      "request",
+      "client"
+    ]
+  },
+  "format_version": 1,
+  "monitorSourceOrderByMode": {
+    "append": [
+      "client",
+      "interaction"
+    ],
+    "prepend": [
+      "interaction",
+      "client"
+    ],
+    "replace": [
+      "interaction"
+    ]
+  },
+  "precedenceDirection": "highest_to_lowest",
+  "safeDefaults": {
+    "compatibilityPolicy": "compatible",
+    "monitoring.mergeMode": "append"
+  },
+  "selectionSemantics": {
+    "missingValue": "continue_to_next_source",
+    "presentValue": "select_and_stop",
+    "resourceLimits": "resolve_each_field_independently"
+  }
+}
