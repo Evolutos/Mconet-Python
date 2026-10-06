@@ -5,6 +5,7 @@
   "resources": [
     "experimental-api-policy.json",
     "package-names.json",
+    "r1-openai-endpoint.json",
     "runtime-matrix.json",
     "test-log-policy.json",
     "test-secret-placeholders.json",

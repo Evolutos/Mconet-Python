@@ -1,0 +1,16 @@
+{
+  "base_url": {
+    "fragment": "forbidden",
+    "query": "forbidden",
+    "source": "service-access"
+  },
+  "format_version": 1,
+  "method": "POST",
+  "path": "/v1/chat/completions",
+  "profile": "r1.text-unary",
+  "protocol": "openai.chat-completions",
+  "version": {
+    "location": "path",
+    "value": "v1"
+  }
+}

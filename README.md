@@ -33,6 +33,7 @@ python scripts/build_all.py
 - [R1 text unary scope](docs/adr/0004-r1-text-unary-only.md)
 - [Experimental API policy](spec/compatibility/experimental-api-policy.json)
 - [Package names](spec/compatibility/package-names.json)
+- [R1 OpenAI-compatible endpoint](spec/compatibility/r1-openai-endpoint.json)
 - [Runtime compatibility](spec/compatibility/runtime-matrix.json)
 - [Test log policy](spec/compatibility/test-log-policy.json)
 - [Test secret placeholders](spec/compatibility/test-secret-placeholders.json)
