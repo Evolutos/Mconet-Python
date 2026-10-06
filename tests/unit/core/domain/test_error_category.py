@@ -1,5 +1,6 @@
 """Open-value tests for normalized error categories."""
 
+import json
 from collections.abc import Callable
 from dataclasses import FrozenInstanceError
 from typing import cast
@@ -59,6 +60,20 @@ def test_error_category_preserves_unknown_future_categories() -> None:
     assert category not in {
         ErrorCategory(OpenIdentifier(value)) for value in _STANDARD_CATEGORIES
     }
+
+
+def test_error_category_round_trips_unknown_value_through_json() -> None:
+    """Verify wire serialization never replaces an unknown category."""
+    category = ErrorCategory(OpenIdentifier("vendor.future_quota"))
+
+    # Open values serialize as their exact identifier text. Reconstruction uses
+    # the same public value path as known categories and performs no fallback.
+    encoded = json.dumps({"category": str(category)})
+    decoded = cast(dict[str, str], json.loads(encoded))
+    restored = ErrorCategory(OpenIdentifier(decoded["category"]))
+
+    assert restored == category
+    assert str(restored) == "vendor.future_quota"
 
 
 def test_error_category_has_immutable_value_semantics() -> None:

@@ -1,5 +1,6 @@
 """Open-value tests for interaction phases."""
 
+import json
 from collections.abc import Callable
 from dataclasses import FrozenInstanceError
 from typing import cast
@@ -62,6 +63,20 @@ def test_interaction_phase_preserves_unknown_future_phases() -> None:
     assert phase not in {
         InteractionPhase(OpenIdentifier(value)) for value in _STANDARD_PHASES
     }
+
+
+def test_interaction_phase_round_trips_unknown_value_through_json() -> None:
+    """Verify wire serialization never replaces an unknown phase."""
+    phase = InteractionPhase(OpenIdentifier("vendor.future_validation"))
+
+    # The open identifier itself is the wire value, so older readers preserve
+    # extensions without mapping them to a generic or known phase.
+    encoded = json.dumps({"phase": str(phase)})
+    decoded = cast(dict[str, str], json.loads(encoded))
+    restored = InteractionPhase(OpenIdentifier(decoded["phase"]))
+
+    assert restored == phase
+    assert str(restored) == "vendor.future_validation"
 
 
 def test_interaction_phase_has_immutable_value_semantics() -> None:
