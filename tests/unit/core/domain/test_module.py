@@ -30,6 +30,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "preserve_unknown_fields",
         "restore_preserved_fields",
         "serialize_optional_fields",
+        "serialize_timestamp",
         "validate_duration",
         "validate_json_value_numbers",
         "validate_open_identifier",

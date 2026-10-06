@@ -15,7 +15,7 @@ from mconet.core.domain.optional_field import OptionalField, serialize_optional_
 from mconet.core.domain.recovery_hint import RecoveryHint
 from mconet.core.domain.schema_version import SchemaVersion
 from mconet.core.domain.secret_value import AuthorizedSecretConsumer, SecretValue
-from mconet.core.domain.timestamp import Timestamp, parse_timestamp
+from mconet.core.domain.timestamp import Timestamp, parse_timestamp, serialize_timestamp
 from mconet.core.domain.unknown_fields import (
     preserve_unknown_fields,
     restore_preserved_fields,
@@ -46,6 +46,7 @@ __all__ = (
     "preserve_unknown_fields",
     "restore_preserved_fields",
     "serialize_optional_fields",
+    "serialize_timestamp",
     "validate_duration",
     "validate_json_value_numbers",
     "validate_open_identifier",

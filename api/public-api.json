@@ -113,6 +113,10 @@
       "kind": "function",
       "signature": "(fields: 'Mapping[str, OptionalField]') -> 'Extensions'"
     },
+    "mconet.core.domain.serialize_timestamp": {
+      "kind": "function",
+      "signature": "(timestamp: 'Timestamp', precision: \"Literal['seconds', 'milliseconds', 'microseconds', 'nanoseconds']\" = 'nanoseconds') -> 'str'"
+    },
     "mconet.core.domain.validate_duration": {
       "kind": "function",
       "signature": "(value: 'int', unit: \"Literal['seconds', 'milliseconds', 'microseconds', 'nanoseconds']\" = 'nanoseconds') -> 'Duration'"

@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta, timezone
-from typing import cast
+from typing import Literal, cast
 
 _TIMESTAMP_PATTERN = re.compile(
     r"(?P<year>[0-9]{4})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2})"
@@ -14,6 +14,12 @@ _TIMESTAMP_PATTERN = re.compile(
     r"(?P<offset>Z|[+-][0-9]{2}:[0-9]{2})"
 )
 _UNIX_EPOCH = datetime(1970, 1, 1, tzinfo=UTC)
+_PRECISION_DIGITS = {
+    "seconds": 0,
+    "milliseconds": 3,
+    "microseconds": 6,
+    "nanoseconds": 9,
+}
 
 
 @dataclass(frozen=True, order=True, slots=True)
@@ -104,6 +110,71 @@ def parse_timestamp(value: str) -> Timestamp:
     # canonical nine-digit nanosecond scale.
     nanosecond = int(fraction.ljust(9, "0")) if fraction is not None else 0
     return Timestamp(epoch_seconds=epoch_seconds, nanosecond=nanosecond)
+
+
+def serialize_timestamp(
+    timestamp: Timestamp,
+    precision: Literal[
+        "seconds", "milliseconds", "microseconds", "nanoseconds"
+    ] = "nanoseconds",
+) -> str:
+    """Serialize a UTC timestamp without silently discarding precision.
+
+    Output uses a canonical RFC 3339 UTC form with ``Z`` and a fixed number of
+    fractional digits selected by ``precision``. A lower precision is accepted
+    only when the timestamp is exactly representable at that precision; the
+    serializer never rounds or truncates fractional nanoseconds.
+
+    Args:
+        timestamp: The canonical UTC instant to serialize.
+        precision: The required fractional-second precision.
+
+    Returns:
+        Canonical RFC 3339 text at the selected exact precision.
+
+    Raises:
+        TypeError: If an argument has the wrong runtime type.
+        ValueError: If precision is unsupported, would lose data, or the instant
+            is outside the RFC 3339 four-digit year range.
+    """
+    candidate = cast(object, timestamp)
+    # Require the domain value rather than accepting datetime, whose timezone
+    # and microsecond limits cannot preserve this contract.
+    if not isinstance(candidate, Timestamp):
+        raise TypeError("timestamp must be a Timestamp.")
+
+    precision_value = cast(object, precision)
+    if not isinstance(precision_value, str):
+        raise TypeError("Timestamp precision must be a string.")
+    fractional_digits = _PRECISION_DIGITS.get(precision_value)
+    if fractional_digits is None:
+        raise ValueError(f"Unsupported Timestamp precision: {precision_value!r}.")
+
+    # A coarser representation is valid only when every omitted decimal digit
+    # is zero. Rejecting avoids platform-specific rounding or truncation.
+    quantum = 10 ** (9 - fractional_digits)
+    if candidate.nanosecond % quantum != 0:
+        raise ValueError("Timestamp cannot be represented at the requested precision.")
+
+    # datetime is used only for exact calendar decomposition. Integer timedelta
+    # arithmetic avoids float timestamps and exposes its supported year range.
+    try:
+        utc_time = _UNIX_EPOCH + timedelta(seconds=candidate.epoch_seconds)
+    except OverflowError as error:
+        raise ValueError(
+            "Timestamp is outside the RFC 3339 four-digit year range."
+        ) from error
+
+    date_time = (
+        f"{utc_time.year:04d}-{utc_time.month:02d}-{utc_time.day:02d}"
+        f"T{utc_time.hour:02d}:{utc_time.minute:02d}:{utc_time.second:02d}"
+    )
+    # Fixed-width fractions make the selected precision explicit. Seconds omit
+    # the decimal point entirely, while other modes take exact leading digits.
+    if fractional_digits == 0:
+        return f"{date_time}Z"
+    fraction = f"{candidate.nanosecond:09d}"[:fractional_digits]
+    return f"{date_time}.{fraction}Z"
 
 
 def _parse_utc_offset(value: str) -> timezone:
