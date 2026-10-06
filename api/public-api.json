@@ -608,6 +608,20 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.domain.TaskNodeKind": {
+      "kind": "class",
+      "members": {
+        "composition": {
+          "kind": "property",
+          "signature": null
+        },
+        "id": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.domain.TaskRelation": {
       "kind": "class",
       "members": {},
