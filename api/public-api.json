@@ -228,6 +228,32 @@
       },
       "signature": "(id: 'str', role: 'MessageRole', content: 'tuple[MessageContent, ...]', relations: 'tuple[MessageRelation, ...]' = (), metadata: 'Extensions' = <factory>, extensions: 'Extensions' = <factory>) -> None"
     },
+    "mconet.core.domain.MessageEntryBuilder": {
+      "kind": "class",
+      "members": {
+        "add_content": {
+          "kind": "method",
+          "signature": "(self, content: 'MessageContent') -> 'Self'"
+        },
+        "add_relation": {
+          "kind": "method",
+          "signature": "(self, relation: 'MessageRelation') -> 'Self'"
+        },
+        "build": {
+          "kind": "method",
+          "signature": "(self) -> 'MessageEntry'"
+        },
+        "with_extensions": {
+          "kind": "method",
+          "signature": "(self, extensions: 'Extensions') -> 'Self'"
+        },
+        "with_metadata": {
+          "kind": "method",
+          "signature": "(self, metadata: 'Extensions') -> 'Self'"
+        }
+      },
+      "signature": "(entry_id: 'str', role: 'MessageRole') -> 'None'"
+    },
     "mconet.core.domain.MessageGroup": {
       "kind": "class",
       "members": {},
