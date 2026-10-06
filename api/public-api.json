@@ -516,6 +516,52 @@
       "members": {},
       "signature": "(category: 'ErrorCategory', phase: 'InteractionPhase', code: 'str', message: 'str', status_code: 'int | None' = None, service_error_code: 'str | None' = None, request_id: 'str | None' = None, recovery: 'RecoveryHint | None' = None, cause: 'BaseException | None' = None) -> None"
     },
+    "mconet.core.domain.ModelOutput": {
+      "kind": "class",
+      "members": {
+        "diagnostics": {
+          "kind": "property",
+          "signature": null
+        },
+        "extensions": {
+          "kind": "property",
+          "signature": null
+        },
+        "id": {
+          "kind": "property",
+          "signature": null
+        },
+        "protocol_state": {
+          "kind": "property",
+          "signature": null
+        },
+        "resolved_model": {
+          "kind": "property",
+          "signature": null
+        },
+        "result": {
+          "kind": "property",
+          "signature": null
+        },
+        "status": {
+          "kind": "property",
+          "signature": null
+        },
+        "stop_reason": {
+          "kind": "property",
+          "signature": null
+        },
+        "target": {
+          "kind": "property",
+          "signature": null
+        },
+        "usage": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.domain.ModelRequest": {
       "kind": "class",
       "members": {
