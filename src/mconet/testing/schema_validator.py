@@ -32,11 +32,12 @@ class SchemaValidationIssue:
 class SchemaValidatorAdapter:
     """Validate JSON fixtures against schemas selected by stable identifier.
 
-    The adapter implements the assertion keywords needed by foundational value
-    schemas: type, const, enum, numeric bounds, string bounds/pattern, object
-    required/properties/additionalProperties, and array items. Unsupported
-    annotation keywords remain inert as required by JSON Schema vocabulary
-    extensibility; malformed supported keywords raise schema definition errors.
+    The adapter implements the assertion keywords used by committed schemas:
+    local references, type, const, enum, oneOf/not composition, numeric and
+    string bounds, object required/properties/additionalProperties, and array
+    items/minItems. Unsupported annotation keywords remain inert as required by
+    JSON Schema vocabulary extensibility; malformed supported keywords raise
+    schema definition errors.
     """
 
     __slots__ = ("_loader",)
@@ -73,7 +74,7 @@ class SchemaValidatorAdapter:
         schema = self._loader.load(schema_id)
 
         issues: list[SchemaValidationIssue] = []
-        _validate_node(schema, instance, "", issues)
+        _validate_node(schema, instance, "", issues, schema)
         return tuple(issues)
 
 
@@ -82,8 +83,29 @@ def _validate_node(
     instance: JsonValue,
     path: str,
     issues: list[SchemaValidationIssue],
+    root_schema: dict[str, JsonValue],
+    reference_chain: tuple[str, ...] = (),
 ) -> None:
     """Validate one schema node and append issues in stable keyword order."""
+    # Resolve local references against the originally loaded document. A chain
+    # applies only to this instance node; child values begin a new chain so a
+    # recursive tree schema can consume data while true reference loops fail.
+    if "$ref" in schema:
+        reference = schema["$ref"]
+        if not isinstance(reference, str):
+            raise ValueError(f"Schema $ref must be a string at {path!r}.")
+        if reference in reference_chain:
+            raise ValueError(f"Schema $ref cycle does not consume data at {path!r}.")
+        target = _resolve_local_reference(root_schema, reference, path)
+        _validate_node(
+            target,
+            instance,
+            path,
+            issues,
+            root_schema,
+            (*reference_chain, reference),
+        )
+
     # A type mismatch stops type-specific keyword evaluation at this node while
     # leaving sibling nodes available to report their own independent issues.
     allowed_types = _schema_types(schema["type"], path) if "type" in schema else None
@@ -111,6 +133,8 @@ def _validate_node(
                 )
             )
 
+    _validate_composition(schema, instance, path, issues, root_schema)
+
     # bool is excluded explicitly because Python otherwise treats it as a
     # numeric subtype even though JSON Schema does not.
     if type(instance) in (int, float):
@@ -118,9 +142,111 @@ def _validate_node(
     if isinstance(instance, str):
         _validate_string(schema, instance, path, issues)
     if isinstance(instance, list):
-        _validate_array(schema, instance, path, issues)
+        _validate_array(schema, instance, path, issues, root_schema)
     if isinstance(instance, dict):
-        _validate_object(schema, instance, path, issues)
+        _validate_object(schema, instance, path, issues, root_schema)
+
+
+def _resolve_local_reference(
+    root_schema: dict[str, JsonValue], reference: str, path: str
+) -> dict[str, JsonValue]:
+    """Resolve one RFC 6901 fragment reference to an object schema node."""
+    # This deterministic adapter deliberately resolves only the current schema
+    # document. External fetching and mutable global schema registries remain out
+    # of scope for isolated conformance validation.
+    if reference == "#":
+        return root_schema
+    if not reference.startswith("#/"):
+        raise ValueError(f"Schema $ref must be a local JSON Pointer at {path!r}.")
+
+    current: JsonValue = root_schema
+    for raw_token in reference[2:].split("/"):
+        token = _decode_reference_token(raw_token, path)
+        if not isinstance(current, dict) or token not in current:
+            raise ValueError(f"Schema $ref target does not exist at {path!r}.")
+        current = current[token]
+    if not isinstance(current, dict):
+        raise ValueError(f"Schema $ref target must be an object at {path!r}.")
+    return cast(dict[str, JsonValue], current)
+
+
+def _decode_reference_token(token: str, path: str) -> str:
+    """Decode one JSON Pointer token while rejecting malformed escapes."""
+    decoded: list[str] = []
+    index = 0
+    # Decode explicitly instead of chained replacements so invalid or ambiguous
+    # tilde sequences never resolve to a different schema location by accident.
+    while index < len(token):
+        character = token[index]
+        if character != "~":
+            decoded.append(character)
+            index += 1
+            continue
+        if index + 1 >= len(token) or token[index + 1] not in ("0", "1"):
+            raise ValueError(f"Schema $ref contains an invalid escape at {path!r}.")
+        decoded.append("~" if token[index + 1] == "0" else "/")
+        index += 2
+    return "".join(decoded)
+
+
+def _validate_composition(
+    schema: dict[str, JsonValue],
+    instance: JsonValue,
+    path: str,
+    issues: list[SchemaValidationIssue],
+    root_schema: dict[str, JsonValue],
+) -> None:
+    """Apply oneOf and not assertions without leaking branch diagnostics."""
+    if "oneOf" in schema:
+        raw_branches = schema["oneOf"]
+        if (
+            not isinstance(raw_branches, list)
+            or not raw_branches
+            or any(not isinstance(branch, dict) for branch in raw_branches)
+        ):
+            raise ValueError(
+                f"Schema oneOf must be a non-empty array of objects at {path!r}."
+            )
+        matches = 0
+        for raw_branch in raw_branches:
+            # Branch issues are private matching evidence. Exposing every failed
+            # alternative would create noisy, ordering-sensitive diagnostics.
+            branch_issues: list[SchemaValidationIssue] = []
+            _validate_node(
+                cast(dict[str, JsonValue], raw_branch),
+                instance,
+                path,
+                branch_issues,
+                root_schema,
+            )
+            if not branch_issues:
+                matches += 1
+        if matches != 1:
+            issues.append(
+                SchemaValidationIssue(
+                    path,
+                    "oneOf",
+                    "Value must match exactly one schema alternative.",
+                )
+            )
+
+    if "not" in schema:
+        raw_negative = schema["not"]
+        if not isinstance(raw_negative, dict):
+            raise ValueError(f"Schema not must be an object at {path!r}.")
+        negative_issues: list[SchemaValidationIssue] = []
+        _validate_node(
+            cast(dict[str, JsonValue], raw_negative),
+            instance,
+            path,
+            negative_issues,
+            root_schema,
+        )
+        # A not schema fails precisely when its nested schema matches completely.
+        if not negative_issues:
+            issues.append(
+                SchemaValidationIssue(path, "not", "Value matches a forbidden schema.")
+            )
 
 
 def _schema_types(value: JsonValue, path: str) -> tuple[str, ...]:
@@ -235,8 +361,22 @@ def _validate_array(
     value: list[JsonValue],
     path: str,
     issues: list[SchemaValidationIssue],
+    root_schema: dict[str, JsonValue],
 ) -> None:
-    """Apply one object items schema to every ordered array element."""
+    """Apply length and one object items schema to an ordered array."""
+    if "minItems" in schema:
+        minimum_items = schema["minItems"]
+        if type(minimum_items) is not int or minimum_items < 0:
+            raise ValueError(
+                f"Schema minItems must be a non-negative integer at {path!r}."
+            )
+        if len(value) < minimum_items:
+            issues.append(
+                SchemaValidationIssue(
+                    path, "minItems", "Array is shorter than minItems."
+                )
+            )
+
     if "items" not in schema:
         return
     items = schema["items"]
@@ -246,7 +386,7 @@ def _validate_array(
     # Array indexes are traversed in source order so issue ordering and JSON
     # Pointer paths remain deterministic and preserve array semantics.
     for index, item in enumerate(value):
-        _validate_node(item_schema, item, f"{path}/{index}", issues)
+        _validate_node(item_schema, item, f"{path}/{index}", issues, root_schema)
 
 
 def _validate_object(
@@ -254,6 +394,7 @@ def _validate_object(
     value: dict[str, JsonValue],
     path: str,
     issues: list[SchemaValidationIssue],
+    root_schema: dict[str, JsonValue],
 ) -> None:
     """Apply required, properties, and additionalProperties assertions."""
     properties_value = schema.get("properties", {})
@@ -294,6 +435,7 @@ def _validate_object(
                 value[name],
                 _child_path(path, name),
                 issues,
+                root_schema,
             )
 
     additional = schema.get("additionalProperties", True)

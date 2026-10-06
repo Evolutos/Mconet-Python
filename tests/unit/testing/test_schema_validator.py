@@ -122,6 +122,90 @@ def test_schema_validator_supports_const_union_types_and_escaped_paths() -> None
     )
 
 
+def test_schema_validator_supports_recursive_local_composition() -> None:
+    """Verify local refs, oneOf/not, and minItems validate recursive arrays."""
+    schema_id = OpenIdentifier("schema.recursive")
+    schema: JsonValue = {
+        "type": "object",
+        "$defs": {
+            "node": {
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "kind": {"const": "leaf"},
+                            "children": {"const": []},
+                        },
+                        "required": ["children", "kind"],
+                        "additionalProperties": False,
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "kind": {"const": "branch"},
+                            "children": {
+                                "type": "array",
+                                "minItems": 1,
+                                "items": {"$ref": "#/$defs/node"},
+                            },
+                        },
+                        "required": ["children", "kind"],
+                        "additionalProperties": False,
+                    },
+                ]
+            }
+        },
+        "properties": {
+            "root": {"$ref": "#/$defs/node"},
+            "state": {"not": {"const": "forbidden"}},
+        },
+        "required": ["root", "state"],
+        "additionalProperties": False,
+    }
+    adapter = SchemaValidatorAdapter(SchemaLoader({schema_id: schema}))
+
+    # The recursive child reference consumes one instance level on every use;
+    # oneOf selects exactly one shape and not rejects only its matching value.
+    assert (
+        adapter.validate(
+            schema_id,
+            {
+                "root": {
+                    "kind": "branch",
+                    "children": [{"kind": "leaf", "children": []}],
+                },
+                "state": "ready",
+            },
+        )
+        == ()
+    )
+    assert adapter.validate(
+        schema_id,
+        {"root": {"kind": "branch", "children": []}, "state": "forbidden"},
+    ) == (
+        SchemaValidationIssue(
+            "/root",
+            "oneOf",
+            "Value must match exactly one schema alternative.",
+        ),
+        SchemaValidationIssue("/state", "not", "Value matches a forbidden schema."),
+    )
+
+    overlapping_id = OpenIdentifier("schema.overlapping")
+    overlapping_adapter = SchemaValidatorAdapter(
+        SchemaLoader(
+            {overlapping_id: {"oneOf": [{"type": "string"}, {"const": "same"}]}}
+        )
+    )
+    # oneOf requires exactly one successful branch; two matches are as invalid
+    # as zero matches and receive the same deterministic composition issue.
+    assert overlapping_adapter.validate(overlapping_id, "same") == (
+        SchemaValidationIssue(
+            "", "oneOf", "Value must match exactly one schema alternative."
+        ),
+    )
+
+
 def test_schema_validator_rejects_invalid_schema_definitions() -> None:
     """Verify malformed supported keywords fail as schema errors."""
     invalid_schemas: tuple[tuple[JsonValue, JsonValue, str], ...] = (
@@ -144,6 +228,34 @@ def test_schema_validator_rejects_invalid_schema_definitions() -> None:
         ({"additionalProperties": "no"}, {"value": "x"}, "must be a boolean"),
         ({"items": None}, [], "items must be an object"),
         ({"items": []}, [], "items must be an object"),
+        ({"minItems": -1}, [], "minItems must be a non-negative integer"),
+        ({"oneOf": []}, "x", "oneOf must be a non-empty array of objects"),
+        ({"not": []}, "x", "not must be an object"),
+        ({"$ref": 1}, "x", "$ref must be a string"),
+        ({"$ref": "schema.external"}, "x", "$ref must be a local JSON Pointer"),
+        ({"$ref": "#/$defs/missing"}, "x", "$ref target does not exist"),
+        (
+            {"$defs": {"invalid~escape": {}}, "$ref": "#/$defs/invalid~2escape"},
+            "x",
+            "$ref contains an invalid escape",
+        ),
+        (
+            {"$defs": {"scalar": "value"}, "$ref": "#/$defs/scalar"},
+            "x",
+            "$ref target must be an object",
+        ),
+        (
+            {
+                "$defs": {
+                    "first": {"$ref": "#/$defs/second"},
+                    "second": {"$ref": "#/$defs/first"},
+                },
+                "$ref": "#/$defs/first",
+            },
+            "x",
+            "$ref cycle does not consume data",
+        ),
+        ({"$ref": "#"}, "x", "$ref cycle does not consume data"),
     )
 
     for index, (schema, instance, message) in enumerate(invalid_schemas):
