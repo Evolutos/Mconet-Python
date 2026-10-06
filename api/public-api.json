@@ -168,6 +168,20 @@
       "members": {},
       "signature": "(temperature: 'float | None' = None, top_p: 'float | None' = None, max_output_tokens: 'int | None' = None, stop: 'tuple[str, ...]' = (), seed: 'int | None' = None) -> None"
     },
+    "mconet.core.domain.GenerationParametersNode": {
+      "kind": "class",
+      "members": {
+        "children": {
+          "kind": "property",
+          "signature": null
+        },
+        "kind": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(id: 'str', parameters: 'GenerationParameters', relations: 'tuple[TaskRelation, ...]' = (), metadata: 'Extensions' = <factory>, extensions: 'Extensions' = <factory>) -> None"
+    },
     "mconet.core.domain.HeaderField": {
       "kind": "class",
       "members": {},

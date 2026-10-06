@@ -31,6 +31,7 @@ from mconet.core.domain.duration import Duration, validate_duration
 from mconet.core.domain.error_category import ErrorCategory
 from mconet.core.domain.extensions import Extensions
 from mconet.core.domain.generation_parameters import GenerationParameters
+from mconet.core.domain.generation_parameters_node import GenerationParametersNode
 from mconet.core.domain.generation_parameters_validation import (
     validate_generation_parameters,
 )
@@ -124,6 +125,7 @@ __all__ = (
     "ErrorCategory",
     "Extensions",
     "GenerationParameters",
+    "GenerationParametersNode",
     "HeaderField",
     "Headers",
     "InlineArtifactSource",
