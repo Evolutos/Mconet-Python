@@ -24,6 +24,7 @@ jobs:
       - run: pyright
       - run: python scripts/check_import_boundaries.py
       - run: python scripts/check_api_compatibility.py
+      - run: python scripts/build_all.py
 
   unit:
     name: Unit / Python ${{ matrix.python-version }}
