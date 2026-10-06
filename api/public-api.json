@@ -197,6 +197,32 @@
       "kind": "value",
       "type": "UnionType"
     },
+    "mconet.core.domain.MessageEntry": {
+      "kind": "class",
+      "members": {
+        "attributes": {
+          "kind": "property",
+          "signature": null
+        },
+        "kind": {
+          "kind": "property",
+          "signature": null
+        },
+        "name": {
+          "kind": "property",
+          "signature": null
+        },
+        "sub_elements": {
+          "kind": "property",
+          "signature": null
+        },
+        "value": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(id: 'str', role: 'MessageRole', content: 'tuple[MessageContent, ...]', relations: 'tuple[MessageRelation, ...]' = (), metadata: 'Extensions' = <factory>, extensions: 'Extensions' = <factory>) -> None"
+    },
     "mconet.core.domain.MessageRelation": {
       "kind": "class",
       "members": {},
