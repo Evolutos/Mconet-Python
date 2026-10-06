@@ -110,6 +110,7 @@ from mconet.core.domain.text_message_content_validation import (
     validate_text_message_content,
 )
 from mconet.core.domain.timestamp import Timestamp, parse_timestamp, serialize_timestamp
+from mconet.core.domain.token_usage import TokenUsage
 from mconet.core.domain.unknown_fields import (
     preserve_unknown_fields,
     restore_preserved_fields,
@@ -185,6 +186,7 @@ __all__ = (
     "TaskRelation",
     "TextMessageContent",
     "Timestamp",
+    "TokenUsage",
     "UriArtifactSource",
     "UriValue",
     "default_compatibility_policy",

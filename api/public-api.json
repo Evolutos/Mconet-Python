@@ -782,6 +782,11 @@
       "members": {},
       "signature": "(epoch_seconds: 'int', nanosecond: 'int' = 0) -> None"
     },
+    "mconet.core.domain.TokenUsage": {
+      "kind": "class",
+      "members": {},
+      "signature": "(input_tokens: 'int | None' = None, output_tokens: 'int | None' = None, total_tokens: 'int | None' = None, extensions: 'Extensions' = <factory>) -> None"
+    },
     "mconet.core.domain.UriArtifactSource": {
       "kind": "class",
       "members": {
