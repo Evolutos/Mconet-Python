@@ -11,6 +11,11 @@
       "kind": "value",
       "type": "NewType"
     },
+    "mconet.core.domain.Diagnostic": {
+      "kind": "class",
+      "members": {},
+      "signature": "(code: 'str', severity: \"Literal['info', 'warning', 'error']\", phase: 'InteractionPhase', message: 'str', path: 'str | None' = None, service_id: 'OpenIdentifier | None' = None, details: 'JsonValue | None' = None) -> None"
+    },
     "mconet.core.domain.Duration": {
       "kind": "class",
       "members": {},
