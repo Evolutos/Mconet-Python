@@ -79,6 +79,7 @@ from mconet.core.domain.model_request_validation import validate_model_request
 from mconet.core.domain.model_target import ModelTarget
 from mconet.core.domain.model_target_validation import validate_model_target
 from mconet.core.domain.model_task_request import ModelTaskRequest
+from mconet.core.domain.model_task_result import ModelTaskResult
 from mconet.core.domain.monitoring_merge_mode import MonitoringMergeMode
 from mconet.core.domain.named_model import NamedModel
 from mconet.core.domain.open_identifier import OpenIdentifier, validate_open_identifier
@@ -167,6 +168,7 @@ __all__ = (
     "ModelRequest",
     "ModelTarget",
     "ModelTaskRequest",
+    "ModelTaskResult",
     "MonitoringMergeMode",
     "NamedModel",
     "OpenIdentifier",
