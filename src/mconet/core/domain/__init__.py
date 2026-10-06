@@ -79,6 +79,7 @@ from mconet.core.domain.service_access_validation import validate_service_access
 from mconet.core.domain.task_descriptor import TaskDescriptor
 from mconet.core.domain.task_descriptor_validation import validate_task_descriptor
 from mconet.core.domain.task_document import TaskDocument
+from mconet.core.domain.task_document_validation import validate_task_document
 from mconet.core.domain.task_group_node import TaskGroupNode
 from mconet.core.domain.task_node import TaskNode
 from mconet.core.domain.task_node_kind import TaskNodeKind
@@ -183,6 +184,7 @@ __all__ = (
     "validate_resource_limits",
     "validate_service_access",
     "validate_task_descriptor",
+    "validate_task_document",
     "validate_task_node",
     "validate_text_message_content",
     "validate_text_message_content_scope",

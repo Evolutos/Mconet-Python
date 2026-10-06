@@ -33,6 +33,16 @@ def validate_task_node(node: TaskNode) -> TaskNode:
         resolution, and cycle detection require the complete TaskDocument and are
         intentionally deferred.
     """
+    candidate, _, _ = validate_task_node_snapshot(node)
+    # The public validator preserves the caller's object and intentionally hides
+    # traversal snapshots that are needed only by whole-document validation.
+    return candidate
+
+
+def validate_task_node_snapshot(
+    node: TaskNode,
+) -> tuple[TaskNode, tuple[TaskNode, ...], tuple[TaskRelation, ...]]:
+    """Validate one node and return stable children and relation snapshots."""
     candidate = cast(object, node)
     # Structural recognition admits provider-defined task nodes while rejecting
     # partial objects before any property is read through the public protocol.
@@ -57,7 +67,9 @@ def validate_task_node(node: TaskNode) -> TaskNode:
 
     _validate_json_mapping(cast(object, candidate.metadata), "metadata")
     _validate_json_mapping(cast(object, candidate.extensions), "extensions")
-    return candidate
+    # Returning the same snapshots already checked above prevents a mutable
+    # custom Sequence from being read again before document traversal uses it.
+    return candidate, children, relations
 
 
 def _validate_node_id(value: object, field_name: str) -> str:

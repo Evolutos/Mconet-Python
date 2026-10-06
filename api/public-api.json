@@ -793,6 +793,10 @@
       "kind": "function",
       "signature": "(descriptor: 'TaskDescriptor') -> 'TaskDescriptor'"
     },
+    "mconet.core.domain.validate_task_document": {
+      "kind": "function",
+      "signature": "(document: 'TaskDocument') -> 'TaskDocument'"
+    },
     "mconet.core.domain.validate_task_node": {
       "kind": "function",
       "signature": "(node: 'TaskNode') -> 'TaskNode'"
