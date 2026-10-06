@@ -7,6 +7,9 @@ from mconet.core.domain.artifact_descriptor import ArtifactDescriptor
 from mconet.core.domain.artifact_kind import ArtifactKind
 from mconet.core.domain.artifact_metadata import ArtifactMetadata
 from mconet.core.domain.artifact_reference import ArtifactReference
+from mconet.core.domain.artifact_reference_resolution import (
+    resolve_artifact_reference,
+)
 from mconet.core.domain.artifact_source import ArtifactSource
 from mconet.core.domain.artifact_validation import validate_artifact
 from mconet.core.domain.authorization import Authorization
@@ -138,6 +141,7 @@ __all__ = (
     "parse_media_type",
     "parse_timestamp",
     "preserve_unknown_fields",
+    "resolve_artifact_reference",
     "resolve_resource_limits",
     "restore_preserved_fields",
     "serialize_optional_fields",
