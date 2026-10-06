@@ -645,6 +645,11 @@
       "members": {},
       "signature": "(id: 'OpenIdentifier') -> None"
     },
+    "mconet.core.domain.ParsedTaskResponse": {
+      "kind": "class",
+      "members": {},
+      "signature": "(result: 'ModelTaskResult', status: 'OutputStatus', resolved_model: 'ModelDescriptor | None' = None, stop_reason: 'str | None' = None, usage: 'TokenUsage | None' = None, protocol_state: 'tuple[ProtocolState, ...]' = (), extensions: 'Extensions' = <factory>) -> None"
+    },
     "mconet.core.domain.ProtocolState": {
       "kind": "class",
       "members": {},
