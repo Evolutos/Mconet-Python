@@ -183,6 +183,44 @@
       },
       "signature": "(value: 'str | Bytes') -> 'None'"
     },
+    "mconet.core.domain.ServiceAccess": {
+      "kind": "class",
+      "members": {
+        "api_version": {
+          "kind": "property",
+          "signature": null
+        },
+        "authorization": {
+          "kind": "property",
+          "signature": null
+        },
+        "endpoint": {
+          "kind": "property",
+          "signature": null
+        },
+        "extensions": {
+          "kind": "property",
+          "signature": null
+        },
+        "headers": {
+          "kind": "property",
+          "signature": null
+        },
+        "project_id": {
+          "kind": "property",
+          "signature": null
+        },
+        "query": {
+          "kind": "property",
+          "signature": null
+        },
+        "tenant_id": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.domain.Timestamp": {
       "kind": "class",
       "members": {},

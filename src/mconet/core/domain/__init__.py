@@ -25,6 +25,7 @@ from mconet.core.domain.query_parameters import QueryParameters
 from mconet.core.domain.recovery_hint import RecoveryHint
 from mconet.core.domain.schema_version import SchemaVersion
 from mconet.core.domain.secret_value import AuthorizedSecretConsumer, SecretValue
+from mconet.core.domain.service_access import ServiceAccess
 from mconet.core.domain.timestamp import Timestamp, parse_timestamp, serialize_timestamp
 from mconet.core.domain.unknown_fields import (
     preserve_unknown_fields,
@@ -57,6 +58,7 @@ __all__ = (
     "RecoveryHint",
     "SchemaVersion",
     "SecretValue",
+    "ServiceAccess",
     "Timestamp",
     "UriValue",
     "parse_media_type",
