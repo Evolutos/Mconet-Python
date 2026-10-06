@@ -164,6 +164,10 @@
       "kind": "function",
       "signature": "(value: 'JsonValue') -> 'JsonValue'"
     },
+    "mconet.core.domain.validate_model_descriptor": {
+      "kind": "function",
+      "signature": "(descriptor: 'ModelDescriptor') -> 'ModelDescriptor'"
+    },
     "mconet.core.domain.validate_open_identifier": {
       "kind": "function",
       "signature": "(identifier: 'OpenIdentifier') -> 'OpenIdentifier'"

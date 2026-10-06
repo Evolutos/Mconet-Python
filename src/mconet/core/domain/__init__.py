@@ -10,6 +10,7 @@ from mconet.core.domain.json_primitive import JsonPrimitive
 from mconet.core.domain.json_value import JsonValue, validate_json_value_numbers
 from mconet.core.domain.media_type import MediaType, parse_media_type
 from mconet.core.domain.model_descriptor import ModelDescriptor
+from mconet.core.domain.model_descriptor_validation import validate_model_descriptor
 from mconet.core.domain.model_interaction_error import ModelInteractionError
 from mconet.core.domain.named_model import NamedModel
 from mconet.core.domain.open_identifier import OpenIdentifier, validate_open_identifier
@@ -53,6 +54,7 @@ __all__ = (
     "serialize_timestamp",
     "validate_duration",
     "validate_json_value_numbers",
+    "validate_model_descriptor",
     "validate_open_identifier",
     "validate_uri",
 )
