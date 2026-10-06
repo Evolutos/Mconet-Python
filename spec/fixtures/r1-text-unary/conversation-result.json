@@ -1,0 +1,284 @@
+{
+  "cases": [
+    {
+      "expected": {
+        "assistantTextSegments": [
+          "你好，",
+          "世界 🌍",
+          "\n第二行 é"
+        ],
+        "contentOrder": [
+          "content-assistant-1a",
+          "content-assistant-1b",
+          "content-user-ignored",
+          "content-assistant-2"
+        ],
+        "diagnosticOrder": [
+          "response.compatibility",
+          "response.metadata"
+        ],
+        "messageElementOrder": [
+          "result-messages",
+          "primary",
+          "entry-assistant-1",
+          "entry-user-ignored",
+          "follow-up",
+          "entry-assistant-2"
+        ],
+        "projectedText": "你好，世界 🌍\n第二行 é",
+        "protocolStateOrder": [
+          "state.response_id",
+          "state.region"
+        ],
+        "roleOrder": [
+          "message.assistant",
+          "message.user",
+          "message.assistant"
+        ],
+        "status": "completed",
+        "stopReason": "stop",
+        "usage": {
+          "extensions": {
+            "vendor.cachedInputTokens": 8
+          },
+          "inputTokens": 37,
+          "outputTokens": 12,
+          "totalTokens": 49
+        }
+      },
+      "name": "ordered-assistant-text-and-completion-facts",
+      "output": {
+        "diagnostics": [
+          {
+            "code": "response.compatibility",
+            "details": {
+              "mode": "compatible"
+            },
+            "message": "Response used compatible mapping.",
+            "path": "/choices/0/message",
+            "phase": "response_mapping",
+            "serviceId": "service.vendor",
+            "severity": "info"
+          },
+          {
+            "code": "response.metadata",
+            "message": "Provider metadata was retained.",
+            "phase": "response_mapping",
+            "severity": "warning"
+          }
+        ],
+        "extensions": {
+          "vendor.responseFingerprint": "fp_fixture"
+        },
+        "id": "output-fixture-1",
+        "protocolState": [
+          {
+            "protocolId": "protocol.compatible",
+            "serviceId": "service.vendor",
+            "stateType": "state.response_id",
+            "stateValue": "response-123"
+          },
+          {
+            "protocolId": "protocol.compatible",
+            "serviceId": "service.vendor",
+            "stateType": "state.region",
+            "stateValue": {
+              "name": "east",
+              "priority": 1
+            }
+          }
+        ],
+        "resolvedModel": {
+          "description": "Resolved conversation model",
+          "displayName": "Resolved Fixture Model",
+          "extensions": {
+            "vendor.revision": "stable"
+          },
+          "family": "family.text",
+          "metadata": {
+            "contextWindow": 128000
+          },
+          "name": "fixture-model-resolved",
+          "version": "2026-10-01"
+        },
+        "result": {
+          "artifacts": {
+            "artifacts": []
+          },
+          "descriptor": {
+            "type": "conversation.generate"
+          },
+          "document": {
+            "root": {
+              "children": [
+                {
+                  "children": [],
+                  "id": "result",
+                  "kind": {
+                    "composition": "leaf",
+                    "id": "task.result"
+                  },
+                  "messages": {
+                    "extensions": {
+                      "vendor.messageFormat": "segments"
+                    },
+                    "metadata": {
+                      "locale": "zh-CN"
+                    },
+                    "purpose": "output",
+                    "root": {
+                      "id": "result-messages",
+                      "kind": {
+                        "category": "group",
+                        "composition": "container",
+                        "id": "message.root"
+                      },
+                      "subElements": [
+                        {
+                          "id": "primary",
+                          "kind": {
+                            "category": "group",
+                            "composition": "container",
+                            "id": "message.result"
+                          },
+                          "subElements": [
+                            {
+                              "content": [
+                                {
+                                  "id": "content-assistant-1a",
+                                  "kind": {
+                                    "id": "content.text"
+                                  },
+                                  "text": "你好，"
+                                },
+                                {
+                                  "id": "content-assistant-1b",
+                                  "kind": {
+                                    "id": "content.text"
+                                  },
+                                  "text": "世界 🌍"
+                                }
+                              ],
+                              "id": "entry-assistant-1",
+                              "kind": {
+                                "category": "entry",
+                                "composition": "leaf",
+                                "id": "message.entry"
+                              },
+                              "role": {
+                                "id": "message.assistant"
+                              },
+                              "subElements": []
+                            },
+                            {
+                              "content": [
+                                {
+                                  "id": "content-user-ignored",
+                                  "kind": {
+                                    "id": "content.text"
+                                  },
+                                  "text": "不得进入结果文本"
+                                }
+                              ],
+                              "id": "entry-user-ignored",
+                              "kind": {
+                                "category": "entry",
+                                "composition": "leaf",
+                                "id": "message.entry"
+                              },
+                              "role": {
+                                "id": "message.user"
+                              },
+                              "subElements": []
+                            }
+                          ]
+                        },
+                        {
+                          "id": "follow-up",
+                          "kind": {
+                            "category": "group",
+                            "composition": "container",
+                            "id": "message.result"
+                          },
+                          "subElements": [
+                            {
+                              "content": [
+                                {
+                                  "id": "content-assistant-2",
+                                  "kind": {
+                                    "id": "content.text"
+                                  },
+                                  "text": "\n第二行 é"
+                                }
+                              ],
+                              "id": "entry-assistant-2",
+                              "kind": {
+                                "category": "entry",
+                                "composition": "leaf",
+                                "id": "message.entry"
+                              },
+                              "role": {
+                                "id": "message.assistant"
+                              },
+                              "subElements": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "version": "1.0"
+                  }
+                }
+              ],
+              "id": "root",
+              "kind": {
+                "composition": "container",
+                "id": "task.root"
+              }
+            },
+            "version": "1.0"
+          },
+          "extensions": {
+            "vendor.choiceIndex": 0
+          },
+          "metadata": {
+            "providerRequestId": "request-123"
+          }
+        },
+        "status": "completed",
+        "stopReason": "stop",
+        "target": {
+          "deploymentId": "production-east",
+          "extensions": {
+            "vendor.routing": "primary"
+          },
+          "model": {
+            "description": "Requested conversation model",
+            "displayName": "Fixture Model",
+            "extensions": {
+              "vendor.model": true
+            },
+            "family": "family.text",
+            "metadata": {
+              "contextWindow": 128000
+            },
+            "name": "fixture-model",
+            "version": "2026-10"
+          },
+          "protocolId": "protocol.compatible",
+          "serviceId": "service.vendor"
+        },
+        "usage": {
+          "extensions": {
+            "vendor.cachedInputTokens": 8
+          },
+          "inputTokens": 37,
+          "outputTokens": 12,
+          "totalTokens": 49
+        }
+      }
+    }
+  ],
+  "format_version": 1,
+  "schemaId": "schema.model_output"
+}
