@@ -814,6 +814,10 @@
       "kind": "function",
       "signature": "(node: 'ConversationInputNode') -> 'ConversationInputNode'"
     },
+    "mconet.core.domain.validate_conversation_task_request": {
+      "kind": "function",
+      "signature": "(request: 'ConversationTaskRequest') -> 'ConversationTaskRequest'"
+    },
     "mconet.core.domain.validate_duration": {
       "kind": "function",
       "signature": "(value: 'int', unit: \"Literal['seconds', 'milliseconds', 'microseconds', 'nanoseconds']\" = 'nanoseconds') -> 'Duration'"
