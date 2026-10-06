@@ -30,6 +30,10 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.domain.ArtifactMetadata": {
+      "kind": "value",
+      "type": "GenericAlias"
+    },
     "mconet.core.domain.ArtifactSource": {
       "kind": "class",
       "members": {

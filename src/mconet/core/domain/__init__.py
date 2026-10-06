@@ -2,6 +2,7 @@
 
 from mconet.core.domain.artifact_descriptor import ArtifactDescriptor
 from mconet.core.domain.artifact_kind import ArtifactKind
+from mconet.core.domain.artifact_metadata import ArtifactMetadata
 from mconet.core.domain.artifact_source import ArtifactSource
 from mconet.core.domain.authorization import Authorization
 from mconet.core.domain.bytes_value import Bytes
@@ -72,6 +73,7 @@ from mconet.core.domain.uri import UriValue, validate_uri
 __all__ = (
     "ArtifactDescriptor",
     "ArtifactKind",
+    "ArtifactMetadata",
     "ArtifactSource",
     "Authorization",
     "AuthorizedSecretConsumer",
