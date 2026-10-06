@@ -1,5 +1,6 @@
 """Serialization tests for presence-aware optional fields."""
 
+import json
 from collections.abc import Callable, Mapping
 from dataclasses import FrozenInstanceError
 from typing import cast
@@ -45,6 +46,36 @@ def test_optional_serialization_returns_read_only_snapshot() -> None:
 
     assert serialized == {"name": "example"}
     assert not hasattr(serialized, "__setitem__")
+
+
+def test_optional_serialization_preserves_empty_arrays_and_objects() -> None:
+    """Verify present empty collections are serialized instead of omitted."""
+    serialized = serialize_optional_fields(
+        {
+            "missingArray": OptionalField(False),
+            "emptyArray": OptionalField(True, []),
+            "emptyObject": OptionalField(True, {}),
+        }
+    )
+
+    assert "missingArray" not in serialized
+    assert serialized["emptyArray"] == []
+    assert serialized["emptyObject"] == {}
+
+
+def test_empty_collections_remain_present_after_json_round_trip() -> None:
+    """Verify JSON encoding and decoding retain both empty collection fields."""
+    serialized = serialize_optional_fields(
+        {
+            "items": OptionalField(True, []),
+            "metadata": OptionalField(True, {}),
+        }
+    )
+
+    decoded = json.loads(json.dumps(dict(serialized)))
+
+    assert decoded == {"items": [], "metadata": {}}
+    assert set(decoded) == {"items", "metadata"}
 
 
 def test_optional_field_has_immutable_value_semantics() -> None:
