@@ -18,6 +18,7 @@ from mconet.core.domain.interaction_resource_limits import InteractionResourceLi
 from mconet.core.domain.json_primitive import JsonPrimitive
 from mconet.core.domain.json_value import JsonValue, validate_json_value_numbers
 from mconet.core.domain.media_type import MediaType, parse_media_type
+from mconet.core.domain.message_role import MessageRole
 from mconet.core.domain.model_descriptor import ModelDescriptor
 from mconet.core.domain.model_descriptor_validation import validate_model_descriptor
 from mconet.core.domain.model_interaction_error import ModelInteractionError
@@ -63,6 +64,7 @@ __all__ = (
     "JsonPrimitive",
     "JsonValue",
     "MediaType",
+    "MessageRole",
     "ModelDescriptor",
     "ModelInteractionError",
     "ModelTarget",

@@ -101,6 +101,28 @@
       "members": {},
       "signature": "(type: 'str', subtype: 'str', parameters: 'tuple[tuple[str, str], ...]' = ()) -> None"
     },
+    "mconet.core.domain.MessageRole": {
+      "kind": "class",
+      "members": {
+        "extensions": {
+          "kind": "property",
+          "signature": null
+        },
+        "id": {
+          "kind": "property",
+          "signature": null
+        },
+        "raw_value": {
+          "kind": "property",
+          "signature": null
+        },
+        "semantic": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.domain.ModelDescriptor": {
       "kind": "class",
       "members": {
