@@ -132,6 +132,10 @@
     "mconet.core.domain.validate_uri": {
       "kind": "function",
       "signature": "(uri: 'UriValue') -> 'UriValue'"
+    },
+    "mconet.testing.json_fixtures_equal": {
+      "kind": "function",
+      "signature": "(actual: 'JsonValue', expected: 'JsonValue') -> 'bool'"
     }
   }
 }

@@ -1,3 +1,5 @@
 """Reusable fixtures, test doubles, and contract suites."""
 
-__all__: tuple[str, ...] = ()
+from mconet.testing.json_fixture import json_fixtures_equal
+
+__all__ = ("json_fixtures_equal",)
