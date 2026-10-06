@@ -6,6 +6,10 @@
       "kind": "value",
       "type": "UnionType"
     },
+    "mconet.core.domain.JsonValue": {
+      "kind": "value",
+      "type": "UnionType"
+    },
     "mconet.core.domain.OpenIdentifier": {
       "kind": "class",
       "members": {},

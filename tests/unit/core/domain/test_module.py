@@ -9,6 +9,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
     # implementation and tests are complete.
     assert mconet.core.domain.__all__ == (
         "JsonPrimitive",
+        "JsonValue",
         "OpenIdentifier",
         "validate_open_identifier",
     )
