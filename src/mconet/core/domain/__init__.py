@@ -1,5 +1,6 @@
 """Task-neutral domain contracts and immutable values for Mconet."""
 
+from mconet.core.domain.artifact import Artifact
 from mconet.core.domain.artifact_descriptor import ArtifactDescriptor
 from mconet.core.domain.artifact_kind import ArtifactKind
 from mconet.core.domain.artifact_metadata import ArtifactMetadata
@@ -72,6 +73,7 @@ from mconet.core.domain.unknown_fields import (
 from mconet.core.domain.uri import UriValue, validate_uri
 
 __all__ = (
+    "Artifact",
     "ArtifactDescriptor",
     "ArtifactKind",
     "ArtifactMetadata",

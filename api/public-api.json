@@ -2,6 +2,40 @@
   "package": "mconet",
   "schema_version": 1,
   "symbols": {
+    "mconet.core.domain.Artifact": {
+      "kind": "class",
+      "members": {
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "extensions": {
+          "kind": "property",
+          "signature": null
+        },
+        "id": {
+          "kind": "property",
+          "signature": null
+        },
+        "kind": {
+          "kind": "property",
+          "signature": null
+        },
+        "media_type": {
+          "kind": "property",
+          "signature": null
+        },
+        "metadata": {
+          "kind": "property",
+          "signature": null
+        },
+        "source": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.domain.ArtifactDescriptor": {
       "kind": "class",
       "members": {
