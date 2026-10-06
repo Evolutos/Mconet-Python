@@ -206,6 +206,33 @@ def test_schema_validator_supports_recursive_local_composition() -> None:
     )
 
 
+def test_schema_validator_supports_array_cardinality_bounds() -> None:
+    """Verify array lower and upper bounds report independent stable issues."""
+    schema_id = OpenIdentifier("schema.array_bounds")
+    adapter = SchemaValidatorAdapter(
+        SchemaLoader(
+            {
+                schema_id: {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": {"type": "string"},
+                }
+            }
+        )
+    )
+
+    # Exact cardinality accepts one item, while each side of the interval reports
+    # its own keyword at the array path without suppressing item validation.
+    assert adapter.validate(schema_id, ["value"]) == ()
+    assert adapter.validate(schema_id, []) == (
+        SchemaValidationIssue("", "minItems", "Array is shorter than minItems."),
+    )
+    assert adapter.validate(schema_id, ["first", "second"]) == (
+        SchemaValidationIssue("", "maxItems", "Array is longer than maxItems."),
+    )
+
+
 def test_schema_validator_rejects_invalid_schema_definitions() -> None:
     """Verify malformed supported keywords fail as schema errors."""
     invalid_schemas: tuple[tuple[JsonValue, JsonValue, str], ...] = (
@@ -229,6 +256,7 @@ def test_schema_validator_rejects_invalid_schema_definitions() -> None:
         ({"items": None}, [], "items must be an object"),
         ({"items": []}, [], "items must be an object"),
         ({"minItems": -1}, [], "minItems must be a non-negative integer"),
+        ({"maxItems": -1}, [], "maxItems must be a non-negative integer"),
         ({"oneOf": []}, "x", "oneOf must be a non-empty array of objects"),
         ({"not": []}, "x", "not must be an object"),
         ({"$ref": 1}, "x", "$ref must be a string"),

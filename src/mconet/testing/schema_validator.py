@@ -35,9 +35,9 @@ class SchemaValidatorAdapter:
     The adapter implements the assertion keywords used by committed schemas:
     local references, type, const, enum, oneOf/not composition, numeric and
     string bounds, object required/properties/additionalProperties, and array
-    items/minItems. Unsupported annotation keywords remain inert as required by
-    JSON Schema vocabulary extensibility; malformed supported keywords raise
-    schema definition errors.
+    items/minItems/maxItems. Unsupported annotation keywords remain inert as
+    required by JSON Schema vocabulary extensibility; malformed supported
+    keywords raise schema definition errors.
     """
 
     __slots__ = ("_loader",)
@@ -374,6 +374,23 @@ def _validate_array(
             issues.append(
                 SchemaValidationIssue(
                     path, "minItems", "Array is shorter than minItems."
+                )
+            )
+
+    if "maxItems" in schema:
+        maximum_items = schema["maxItems"]
+        # JSON Schema cardinality is an exact non-negative integer. Explicit type
+        # membership rejects bool despite Python's integer subclass relationship.
+        if type(maximum_items) is not int or maximum_items < 0:
+            raise ValueError(
+                f"Schema maxItems must be a non-negative integer at {path!r}."
+            )
+        # Report the array itself because the violation concerns collection
+        # membership count rather than any particular otherwise-valid item.
+        if len(value) > maximum_items:
+            issues.append(
+                SchemaValidationIssue(
+                    path, "maxItems", "Array is longer than maxItems."
                 )
             )
 

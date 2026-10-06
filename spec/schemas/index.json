@@ -8,6 +8,7 @@
     "foundation-values.json",
     "message-document.json",
     "model-descriptor.json",
+    "model-output.json",
     "model-request.json",
     "model-target.json",
     "service-access.json",
