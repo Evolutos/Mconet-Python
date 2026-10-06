@@ -478,6 +478,10 @@
       "kind": "function",
       "signature": "(value: 'JsonValue') -> 'JsonValue'"
     },
+    "mconet.core.domain.validate_message_document": {
+      "kind": "function",
+      "signature": "(document: 'MessageDocument') -> 'MessageDocument'"
+    },
     "mconet.core.domain.validate_message_entry": {
       "kind": "function",
       "signature": "(entry: 'MessageEntry') -> 'MessageEntry'"
