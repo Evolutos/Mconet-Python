@@ -40,7 +40,7 @@ def test_fake_leak_is_detected_without_echoing_value(tmp_path: Path) -> None:
 
 
 def test_reviewed_placeholder_is_allowed(tmp_path: Path) -> None:
-    """Verify the exact S0.33 API-key placeholder does not trigger the scanner."""
+    """Verify the approved API-key placeholder does not trigger the scanner."""
     fixture = tmp_path / "tests" / "safe.env"
     fixture.parent.mkdir()
     fixture.write_text('API_KEY="mconet-test-api-key-not-secret"\n', encoding="utf-8")

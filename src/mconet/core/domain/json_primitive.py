@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TypeAlias
 
-# JSON arrays and objects belong to the recursive JsonValue work package. The
-# numeric range and finite-value policy are likewise deferred to S1.26.
+# JsonValue adds arrays and objects; a separate contract defines numeric ranges
+# and finite-value requirements.
 JsonPrimitive: TypeAlias = bool | int | float | str | None
 """A JSON null, boolean, number, or string primitive."""

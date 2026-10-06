@@ -3,13 +3,13 @@
 - 状态：Accepted
 - 日期：2026-10-06
 - 决策者：Mcont
-- 适用范围：Mconet Python 默认 Factory、JSON Codec、HTTP Transport 与 R1 Text Unary
+- 适用范围：Mconet Python 默认 Factory、JSON Codec、HTTP Transport 与初始文本 Unary
 
 ## 背景
 
-Mconet 需要在调用侧不注入基础组件时即可完成 R1 文本 unary 请求，同时保持 Codec 和 Transport 可替换、Core 不依赖具体网络库、默认安装不引入第三方运行时依赖。Python 标准库提供 JSON、HTTP(S) 与 TLS 基础能力，但没有原生异步 HTTP Client，因此默认实现必须诚实声明能力，不能伪装为流式或全双工 Transport。
+Mconet 需要在调用侧不注入基础组件时即可完成初始文本 unary 请求，同时保持 Codec 和 Transport 可替换、Core 不依赖具体网络库、默认安装不引入第三方运行时依赖。Python 标准库提供 JSON、HTTP(S) 与 TLS 基础能力，但没有原生异步 HTTP Client，因此默认实现必须诚实声明能力，不能伪装为流式或全双工 Transport。
 
-本决策固定 Python 默认 Factory 使用的 JSON 与 HTTP 实现、支持边界、安全要求和替换规则。具体类型与行为由后续原子工作包实施；替代本决策必须新增 ADR。
+本决策固定 Python 默认 Factory 使用的 JSON 与 HTTP 实现、支持边界、安全要求和替换规则；替代本决策必须新增 ADR。
 
 ## 决策
 
@@ -34,7 +34,7 @@ Mconet 需要在调用侧不注入基础组件时即可完成 R1 文本 unary �
 
 默认 HTTP Transport 只使用 Python 标准库 HTTP(S) 与 TLS 能力，初始实现可基于 `urllib.request`/`http.client`，但这些类型不得出现在公共 SPI。异步公共入口通过 SDK 控制的线程卸载适配同步 I/O，不能阻塞事件循环线程。
 
-R1 默认 Transport 只承诺：
+初始默认 Transport 只承诺：
 
 - HTTP/1.1 unary 请求与完整响应；
 - `http` 仅用于明确允许的本地开发或受控测试，生产 Endpoint 默认要求 `https`；
@@ -114,7 +114,7 @@ R1 默认 Transport 只承诺：
 
 正向结果：
 
-- R1 JSON + HTTP(S) unary 在零基础组件注入时可用；
+- 初始 JSON + HTTP(S) unary 在零基础组件注入时可用；
 - 默认发布制品保持零第三方运行时依赖；
 - Core 与具体 JSON/HTTP 库隔离；
 - 业务可以直接替换企业网络层、代理、连接池或其他协议实现；

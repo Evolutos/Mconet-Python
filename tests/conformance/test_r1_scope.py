@@ -1,4 +1,4 @@
-"""Conformance check for the frozen R1 scope declaration."""
+"""Conformance check for the frozen initial scope declaration."""
 
 import json
 from pathlib import Path

@@ -24,7 +24,7 @@ def _assert_raises(
 
 def test_open_identifier_preserves_unknown_text_exactly() -> None:
     """Verify unknown values survive without trimming or Unicode normalization."""
-    # Format acceptance belongs to S1.2; the value type must retain the producer
+    # The validator owns format acceptance; this value type retains producer
     # spelling so a newer namespace can round-trip through an older client.
     value = "Vendor.Future/β "
     identifier = OpenIdentifier(value)

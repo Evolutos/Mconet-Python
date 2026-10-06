@@ -1,4 +1,4 @@
-"""Conformance contract for the R1 OpenAI-compatible endpoint shape."""
+"""Conformance contract for the OpenAI-compatible endpoint shape."""
 
 import json
 from pathlib import Path
@@ -50,8 +50,8 @@ def test_openai_endpoint_matches_frozen_profile() -> None:
 
 
 def test_openai_endpoint_matches_r1_scope() -> None:
-    """Require the Endpoint Profile and the R1 reference protocol to agree."""
-    # R1 Scope is the release-facing capability declaration; this cross-check
+    """Require the endpoint profile and reference protocol to agree."""
+    # The scope is the release-facing capability declaration; this cross-check
     # prevents it from naming a different protocol or endpoint path.
     endpoint = _load_json_object(_ENDPOINT_PATH)
     scope = _load_json_object(_SCOPE_PATH)

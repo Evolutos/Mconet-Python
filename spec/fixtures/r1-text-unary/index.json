@@ -2,6 +2,6 @@
   "collection": "fixtures",
   "format_version": 1,
   "profile": "r1.text-unary",
-  "purpose": "Golden fixtures for the R1 text unary conformance profile.",
+  "purpose": "Golden fixtures for the initial text unary conformance profile.",
   "resources": []
 }

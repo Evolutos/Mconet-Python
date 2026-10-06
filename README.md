@@ -1,6 +1,6 @@
 # Mconet Python SDK
 
-当前处于 S0 工程基线，尚未提供模型交互 API。需要 Python 3.11+。
+当前工程尚未提供模型交互 API。需要 Python 3.11+。
 
 ```bash
 python3 -m venv .venv
@@ -26,15 +26,15 @@ python -m build
 python scripts/build_all.py
 ```
 
-- [R1 Scope](spec/r1-scope.json)
+- [Initial release scope](spec/r1-scope.json)
 - [Task, Message, and Artifact boundaries](docs/adr/0001-task-message-artifact-boundaries.md)
 - [Direct injection without registries](docs/adr/0002-direct-injection-without-registry.md)
 - [Default JSON and system HTTP](docs/adr/0003-default-json-and-system-http.md)
-- [R1 text unary scope](docs/adr/0004-r1-text-unary-only.md)
+- [Initial text unary scope](docs/adr/0004-r1-text-unary-only.md)
 - [Experimental API policy](spec/compatibility/experimental-api-policy.json)
 - [Package names](spec/compatibility/package-names.json)
-- [R1 OpenAI-compatible endpoint](spec/compatibility/r1-openai-endpoint.json)
-- [R1 OpenAI-compatible protocol](spec/compatibility/r1-openai-protocol.json)
+- [Initial OpenAI-compatible endpoint](spec/compatibility/r1-openai-endpoint.json)
+- [Initial OpenAI-compatible protocol](spec/compatibility/r1-openai-protocol.json)
 - [Runtime compatibility](spec/compatibility/runtime-matrix.json)
 - [Test log policy](spec/compatibility/test-log-policy.json)
 - [Test secret placeholders](spec/compatibility/test-secret-placeholders.json)

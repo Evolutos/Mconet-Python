@@ -1,4 +1,4 @@
-"""S0 package baseline tests."""
+"""Package baseline tests."""
 
 import importlib
 

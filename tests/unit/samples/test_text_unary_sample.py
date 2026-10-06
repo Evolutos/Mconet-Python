@@ -1,4 +1,4 @@
-"""Tests for the independently buildable S0 text-unary sample module."""
+"""Tests for the independently buildable text-unary sample module."""
 
 from pathlib import Path
 

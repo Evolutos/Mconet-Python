@@ -21,7 +21,7 @@ _EXPECTED_COLLECTIONS = {
     "schemas": Path("schemas/index.json"),
 }
 _FORMAT_VERSION = 1
-_R1_PROFILE = "r1.text-unary"
+_RELEASE_PROFILE = "r1.text-unary"
 
 
 class SpecValidationError(ValueError):
@@ -52,8 +52,8 @@ def _require_exact_keys(
     document: Mapping[str, object], expected: frozenset[str], path: Path
 ) -> None:
     """Reject missing and undocumented fields in a baseline index."""
-    # Exact keys keep the empty-module contract deterministic until a later
-    # work package explicitly versions an additional field.
+    # Exact keys keep the module contract deterministic until a versioned
+    # schema change explicitly introduces an additional field.
     actual = frozenset(document)
     if actual != expected:
         missing = sorted(expected - actual)
@@ -65,8 +65,7 @@ def _require_exact_keys(
 
 def _validate_resource_list(value: JsonValue, path: Path) -> None:
     """Require a unique, sorted list of relative resource paths."""
-    # Resource indexes are empty in S0, but enforcing their future shape now
-    # prevents platform-specific discovery rules from appearing later.
+    # Enforce one portable discovery shape for every resource collection.
     if not isinstance(value, list):
         raise SpecValidationError(f"resources must be a list of strings in {path}.")
 
@@ -90,7 +89,7 @@ def _validate_resource_list(value: JsonValue, path: Path) -> None:
 
 def _validate_collection(name: str, relative_path: Path) -> None:
     """Validate one independently addressable specification collection."""
-    # Resolve only paths declared by the fixed S0 manifest, avoiding arbitrary
+    # Resolve only paths declared by the fixed manifest, avoiding arbitrary
     # filesystem traversal from future untrusted manifest changes.
     path = _SPEC_ROOT / relative_path
     document = _load_json_object(path)
@@ -105,8 +104,10 @@ def _validate_collection(name: str, relative_path: Path) -> None:
         raise SpecValidationError(f"Unsupported format_version in {path}.")
     if not isinstance(document["purpose"], str) or not document["purpose"]:
         raise SpecValidationError(f"purpose must be a non-empty string in {path}.")
-    if name == "fixtures" and document["profile"] != _R1_PROFILE:
-        raise SpecValidationError(f"Fixture profile must be {_R1_PROFILE} in {path}.")
+    if name == "fixtures" and document["profile"] != _RELEASE_PROFILE:
+        raise SpecValidationError(
+            f"Fixture profile must be {_RELEASE_PROFILE} in {path}."
+        )
     _validate_resource_list(document["resources"], path)
 
 
@@ -124,8 +125,10 @@ def _validate_manifest() -> None:
         raise SpecValidationError("The spec module name must be mconet-spec.")
     if document["format_version"] != _FORMAT_VERSION:
         raise SpecValidationError("The spec module format_version must be 1.")
-    if document["profile"] != _R1_PROFILE:
-        raise SpecValidationError(f"The spec module profile must be {_R1_PROFILE}.")
+    if document["profile"] != _RELEASE_PROFILE:
+        raise SpecValidationError(
+            f"The spec module profile must be {_RELEASE_PROFILE}."
+        )
 
     collections_value = document["collections"]
     if not isinstance(collections_value, dict):
@@ -139,7 +142,7 @@ def _validate_manifest() -> None:
     expected = {name: path.as_posix() for name, path in _EXPECTED_COLLECTIONS.items()}
     if declared != expected:
         raise SpecValidationError(
-            "The spec manifest must declare the canonical S0 collection indexes."
+            "The spec manifest must declare the canonical collection indexes."
         )
 
     for name, relative_path in _EXPECTED_COLLECTIONS.items():
@@ -147,7 +150,7 @@ def _validate_manifest() -> None:
 
 
 def main() -> int:
-    """Return success only when the complete S0 specification module is valid."""
+    """Return success only when the specification module is valid."""
     # Convert validation failures into concise command-line diagnostics while
     # leaving unexpected programming errors visible to developers.
     try:

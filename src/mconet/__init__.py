@@ -1,6 +1,3 @@
-"""Mconet Python SDK.
-
-The public API will be introduced incrementally after the S0 engineering baseline.
-"""
+"""Mconet Python package."""
 
 __all__: tuple[str, ...] = ()

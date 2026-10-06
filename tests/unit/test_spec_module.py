@@ -1,4 +1,4 @@
-"""Tests for the independently validated S0 specification module."""
+"""Tests for the independently validated specification module."""
 
 import subprocess
 import sys

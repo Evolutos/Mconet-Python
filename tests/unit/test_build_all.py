@@ -1,4 +1,4 @@
-"""Tests for the S0 root build orchestration."""
+"""Tests for the root build orchestration."""
 
 import subprocess
 import sys

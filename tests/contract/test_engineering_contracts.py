@@ -1,4 +1,4 @@
-"""S0 architecture enforcement contract tests."""
+"""Architecture enforcement contract tests."""
 
 import subprocess
 import sys

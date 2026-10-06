@@ -1,4 +1,4 @@
-"""Conformance contract for the R1 OpenAI-compatible wire-field baseline."""
+"""Conformance contract for the OpenAI-compatible wire-field baseline."""
 
 import json
 from pathlib import Path
@@ -85,7 +85,7 @@ def test_protocol_metadata_matches_endpoint_profile() -> None:
 
 
 def test_protocol_shapes_have_frozen_order_and_optionality() -> None:
-    """Require every R1 wire shape to expose only its reviewed fields."""
+    """Require every wire shape to expose only its reviewed fields."""
     # Ordered definitions make later fixture generation deterministic, while the
     # required set prevents missing fields from being silently treated as null.
     protocol = _load_json_object(_PROTOCOL_PATH)

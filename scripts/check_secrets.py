@@ -62,7 +62,7 @@ class SecretScanError(RuntimeError):
 
 
 def _load_allowed_placeholders() -> frozenset[str]:
-    """Load the exact committed literals approved by the S0.33 policy."""
+    """Load the exact committed literals approved by the placeholder policy."""
     try:
         raw_document: object = json.loads(
             _PLACEHOLDER_POLICY.read_text(encoding="utf-8")
