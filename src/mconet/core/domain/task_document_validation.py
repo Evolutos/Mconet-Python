@@ -9,6 +9,10 @@ from mconet.core.domain.conversation_input_node import ConversationInputNode
 from mconet.core.domain.conversation_input_node_validation import (
     validate_conversation_input_node_fields,
 )
+from mconet.core.domain.generation_parameters_node import GenerationParametersNode
+from mconet.core.domain.generation_parameters_node_validation import (
+    validate_generation_parameters_node_fields,
+)
 from mconet.core.domain.json_value import JsonValue, validate_json_value_numbers
 from mconet.core.domain.task_document import TaskDocument
 from mconet.core.domain.task_group_node import TaskGroupNode
@@ -91,6 +95,8 @@ def _validate_tree(root: TaskGroupNode) -> tuple[set[str], tuple[TaskRelation, .
         # custom nodes remain open and require no SDK-side type registration.
         if isinstance(validated, ConversationInputNode):
             validate_conversation_input_node_fields(validated)
+        if isinstance(validated, GenerationParametersNode):
+            validate_generation_parameters_node_fields(validated)
         _register_node_id(validated.id, node_ids)
         relations.extend(node_relations)
 

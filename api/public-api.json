@@ -790,6 +790,10 @@
       "kind": "function",
       "signature": "(parameters: 'GenerationParameters') -> 'GenerationParameters'"
     },
+    "mconet.core.domain.validate_generation_parameters_node": {
+      "kind": "function",
+      "signature": "(node: 'GenerationParametersNode') -> 'GenerationParametersNode'"
+    },
     "mconet.core.domain.validate_json_value_numbers": {
       "kind": "function",
       "signature": "(value: 'JsonValue') -> 'JsonValue'"
