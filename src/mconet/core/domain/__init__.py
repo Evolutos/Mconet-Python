@@ -6,6 +6,7 @@ from mconet.core.domain.diagnostic import Diagnostic
 from mconet.core.domain.duration import Duration, validate_duration
 from mconet.core.domain.error_category import ErrorCategory
 from mconet.core.domain.extensions import Extensions
+from mconet.core.domain.header_field import HeaderField
 from mconet.core.domain.interaction_phase import InteractionPhase
 from mconet.core.domain.json_primitive import JsonPrimitive
 from mconet.core.domain.json_value import JsonValue, validate_json_value_numbers
@@ -36,6 +37,7 @@ __all__ = (
     "Duration",
     "ErrorCategory",
     "Extensions",
+    "HeaderField",
     "InteractionPhase",
     "JsonPrimitive",
     "JsonValue",

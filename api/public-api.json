@@ -40,6 +40,11 @@
       "kind": "value",
       "type": "GenericAlias"
     },
+    "mconet.core.domain.HeaderField": {
+      "kind": "class",
+      "members": {},
+      "signature": "(name: 'str', value: 'str') -> None"
+    },
     "mconet.core.domain.InteractionPhase": {
       "kind": "class",
       "members": {},
