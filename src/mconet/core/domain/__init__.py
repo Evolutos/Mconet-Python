@@ -13,6 +13,7 @@ from mconet.core.domain.extensions import Extensions
 from mconet.core.domain.header_field import HeaderField
 from mconet.core.domain.headers import Headers
 from mconet.core.domain.interaction_phase import InteractionPhase
+from mconet.core.domain.interaction_resource_limits import InteractionResourceLimits
 from mconet.core.domain.json_primitive import JsonPrimitive
 from mconet.core.domain.json_value import JsonValue, validate_json_value_numbers
 from mconet.core.domain.media_type import MediaType, parse_media_type
@@ -50,6 +51,7 @@ __all__ = (
     "HeaderField",
     "Headers",
     "InteractionPhase",
+    "InteractionResourceLimits",
     "JsonPrimitive",
     "JsonValue",
     "MediaType",

@@ -65,6 +65,11 @@
       "members": {},
       "signature": "(id: 'OpenIdentifier') -> None"
     },
+    "mconet.core.domain.InteractionResourceLimits": {
+      "kind": "class",
+      "members": {},
+      "signature": "(max_response_body_bytes: 'int | None' = None, max_streaming_error_body_bytes: 'int | None' = None, max_frame_bytes: 'int | None' = None) -> None"
+    },
     "mconet.core.domain.JsonPrimitive": {
       "kind": "value",
       "type": "UnionType"

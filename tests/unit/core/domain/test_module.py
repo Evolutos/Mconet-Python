@@ -18,6 +18,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "HeaderField",
         "Headers",
         "InteractionPhase",
+        "InteractionResourceLimits",
         "JsonPrimitive",
         "JsonValue",
         "MediaType",
