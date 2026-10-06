@@ -192,6 +192,16 @@
       "kind": "value",
       "type": "UnionType"
     },
+    "mconet.core.domain.LocalFileArtifactSource": {
+      "kind": "class",
+      "members": {
+        "kind": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(path: 'Path | None' = None, file_handle: 'BinaryIO | None' = None) -> None"
+    },
     "mconet.core.domain.MediaType": {
       "kind": "class",
       "members": {},
