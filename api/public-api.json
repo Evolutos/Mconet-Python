@@ -568,6 +568,36 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.domain.TaskDescriptor": {
+      "kind": "class",
+      "members": {
+        "extensions": {
+          "kind": "property",
+          "signature": null
+        },
+        "input_schema_id": {
+          "kind": "property",
+          "signature": null
+        },
+        "metadata": {
+          "kind": "property",
+          "signature": null
+        },
+        "output_schema_id": {
+          "kind": "property",
+          "signature": null
+        },
+        "type": {
+          "kind": "property",
+          "signature": null
+        },
+        "version": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.domain.TextMessageContent": {
       "kind": "class",
       "members": {

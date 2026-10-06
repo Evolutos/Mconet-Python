@@ -75,6 +75,7 @@ from mconet.core.domain.schema_version import SchemaVersion
 from mconet.core.domain.secret_value import AuthorizedSecretConsumer, SecretValue
 from mconet.core.domain.service_access import ServiceAccess
 from mconet.core.domain.service_access_validation import validate_service_access
+from mconet.core.domain.task_descriptor import TaskDescriptor
 from mconet.core.domain.text_message_content import TextMessageContent
 from mconet.core.domain.text_message_content_validation import (
     validate_text_message_content,
@@ -139,6 +140,7 @@ __all__ = (
     "SchemaVersion",
     "SecretValue",
     "ServiceAccess",
+    "TaskDescriptor",
     "TextMessageContent",
     "Timestamp",
     "UriArtifactSource",
