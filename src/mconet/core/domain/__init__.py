@@ -87,6 +87,9 @@ from mconet.core.domain.open_identifier import OpenIdentifier, validate_open_ide
 from mconet.core.domain.optional_field import OptionalField, serialize_optional_fields
 from mconet.core.domain.output_status import OutputStatus
 from mconet.core.domain.parsed_task_response import ParsedTaskResponse
+from mconet.core.domain.parsed_task_response_validation import (
+    validate_parsed_task_response,
+)
 from mconet.core.domain.protocol_state import ProtocolState
 from mconet.core.domain.query_parameter import QueryParameter
 from mconet.core.domain.query_parameters import QueryParameters
@@ -223,6 +226,7 @@ __all__ = (
     "validate_model_request",
     "validate_model_target",
     "validate_open_identifier",
+    "validate_parsed_task_response",
     "validate_resource_limits",
     "validate_service_access",
     "validate_task_descriptor",

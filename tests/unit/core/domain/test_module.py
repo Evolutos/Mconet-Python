@@ -107,6 +107,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "validate_model_request",
         "validate_model_target",
         "validate_open_identifier",
+        "validate_parsed_task_response",
         "validate_resource_limits",
         "validate_service_access",
         "validate_task_descriptor",

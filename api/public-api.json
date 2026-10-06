@@ -956,6 +956,10 @@
       "kind": "function",
       "signature": "(identifier: 'OpenIdentifier') -> 'OpenIdentifier'"
     },
+    "mconet.core.domain.validate_parsed_task_response": {
+      "kind": "function",
+      "signature": "(response: 'ParsedTaskResponse') -> 'ParsedTaskResponse'"
+    },
     "mconet.core.domain.validate_resource_limits": {
       "kind": "function",
       "signature": "(limits: 'InteractionResourceLimits | ResolvedInteractionResourceLimits') -> 'InteractionResourceLimits | ResolvedInteractionResourceLimits'"
