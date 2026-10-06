@@ -884,6 +884,10 @@
       "kind": "function",
       "signature": "(descriptor: 'ModelDescriptor') -> 'ModelDescriptor'"
     },
+    "mconet.core.domain.validate_model_request": {
+      "kind": "function",
+      "signature": "(request: 'ModelRequest') -> 'ModelRequest'"
+    },
     "mconet.core.domain.validate_model_target": {
       "kind": "function",
       "signature": "(target: 'ModelTarget') -> 'ModelTarget'"

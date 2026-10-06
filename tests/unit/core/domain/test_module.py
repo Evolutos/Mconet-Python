@@ -98,6 +98,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "validate_message_group",
         "validate_message_role",
         "validate_model_descriptor",
+        "validate_model_request",
         "validate_model_target",
         "validate_open_identifier",
         "validate_resource_limits",

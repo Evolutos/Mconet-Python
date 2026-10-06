@@ -75,6 +75,7 @@ from mconet.core.domain.model_descriptor import ModelDescriptor
 from mconet.core.domain.model_descriptor_validation import validate_model_descriptor
 from mconet.core.domain.model_interaction_error import ModelInteractionError
 from mconet.core.domain.model_request import ModelRequest
+from mconet.core.domain.model_request_validation import validate_model_request
 from mconet.core.domain.model_target import ModelTarget
 from mconet.core.domain.model_target_validation import validate_model_target
 from mconet.core.domain.model_task_request import ModelTaskRequest
@@ -207,6 +208,7 @@ __all__ = (
     "validate_message_group",
     "validate_message_role",
     "validate_model_descriptor",
+    "validate_model_request",
     "validate_model_target",
     "validate_open_identifier",
     "validate_resource_limits",
