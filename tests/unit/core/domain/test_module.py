@@ -41,6 +41,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "parse_media_type",
         "parse_timestamp",
         "preserve_unknown_fields",
+        "resolve_resource_limits",
         "restore_preserved_fields",
         "serialize_optional_fields",
         "serialize_timestamp",

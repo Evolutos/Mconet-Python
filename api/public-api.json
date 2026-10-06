@@ -262,6 +262,10 @@
       "kind": "function",
       "signature": "(fields: 'Mapping[str, JsonValue]', known_field_names: 'Collection[str]') -> 'Extensions'"
     },
+    "mconet.core.domain.resolve_resource_limits": {
+      "kind": "function",
+      "signature": "(sdk_defaults: 'ResolvedInteractionResourceLimits', *, client_limits: 'InteractionResourceLimits | None' = None, interaction_limits: 'InteractionResourceLimits | None' = None) -> 'ResolvedInteractionResourceLimits'"
+    },
     "mconet.core.domain.restore_preserved_fields": {
       "kind": "function",
       "signature": "(known_fields: 'Mapping[str, JsonValue]', preserved_fields: 'Extensions') -> 'Extensions'"
