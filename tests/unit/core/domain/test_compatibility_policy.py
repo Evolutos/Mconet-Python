@@ -5,7 +5,11 @@ from collections.abc import Callable
 from dataclasses import FrozenInstanceError
 from typing import cast
 
-from mconet.core.domain import CompatibilityPolicy, OpenIdentifier
+from mconet.core.domain import (
+    CompatibilityPolicy,
+    OpenIdentifier,
+    default_compatibility_policy,
+)
 
 _STANDARD_MODES = ("strict", "compatible", "permissive")
 
@@ -106,3 +110,26 @@ def test_compatibility_policy_requires_open_identifier() -> None:
         lambda: CompatibilityPolicy(cast(OpenIdentifier, "strict")),
         "mode must be an OpenIdentifier",
     )
+
+
+def test_default_compatibility_policy_uses_compatible_mode() -> None:
+    """Verify the no-override factory resolves deterministically to compatible."""
+    policy = default_compatibility_policy()
+
+    # The factory returns the ordinary validated public value rather than a
+    # special sentinel that later processing components would need to branch on.
+    assert policy == CompatibilityPolicy(OpenIdentifier("compatible"))
+    assert isinstance(policy.mode, OpenIdentifier)
+    assert str(policy) == "compatible"
+
+
+def test_default_compatibility_policy_is_stable_across_calls() -> None:
+    """Verify repeated default creation has stable compatible value semantics."""
+    first = default_compatibility_policy()
+    second = default_compatibility_policy()
+
+    # Callers depend on immutable value equality rather than object identity, so
+    # future implementations may safely construct or cache the same default.
+    assert first == second
+    assert hash(first) == hash(second)
+    assert str(first) == str(second) == "compatible"

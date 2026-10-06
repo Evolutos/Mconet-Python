@@ -2,7 +2,10 @@
 
 from mconet.core.domain.authorization import Authorization
 from mconet.core.domain.bytes_value import Bytes
-from mconet.core.domain.compatibility_policy import CompatibilityPolicy
+from mconet.core.domain.compatibility_policy import (
+    CompatibilityPolicy,
+    default_compatibility_policy,
+)
 from mconet.core.domain.diagnostic import Diagnostic
 from mconet.core.domain.duration import Duration, validate_duration
 from mconet.core.domain.error_category import ErrorCategory
@@ -64,6 +67,7 @@ __all__ = (
     "ServiceAccess",
     "Timestamp",
     "UriValue",
+    "default_compatibility_policy",
     "parse_media_type",
     "parse_timestamp",
     "preserve_unknown_fields",

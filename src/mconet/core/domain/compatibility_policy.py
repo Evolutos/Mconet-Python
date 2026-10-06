@@ -10,6 +10,8 @@ from mconet.core.domain.open_identifier import (
     validate_open_identifier,
 )
 
+_DEFAULT_MODE = OpenIdentifier("compatible")
+
 
 @dataclass(frozen=True, slots=True)
 class CompatibilityPolicy:
@@ -38,3 +40,15 @@ class CompatibilityPolicy:
         # String conversion is a lossless serialization boundary for both known
         # and unknown policy modes; it performs no fallback or normalization.
         return self.mode.value
+
+
+def default_compatibility_policy() -> CompatibilityPolicy:
+    """Create the stable compatible policy used when no override is supplied.
+
+    Returns:
+        A validated immutable policy whose mode is ``compatible``.
+    """
+    # Construct through the public value path so the default receives the same
+    # validation and value semantics as caller-supplied modes. The shared mode
+    # identifier is safe because OpenIdentifier is immutable.
+    return CompatibilityPolicy(_DEFAULT_MODE)

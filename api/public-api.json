@@ -236,6 +236,10 @@
       "members": {},
       "signature": "(value: 'str', is_absolute: 'bool') -> None"
     },
+    "mconet.core.domain.default_compatibility_policy": {
+      "kind": "function",
+      "signature": "() -> 'CompatibilityPolicy'"
+    },
     "mconet.core.domain.parse_media_type": {
       "kind": "function",
       "signature": "(value: 'str') -> 'MediaType'"
