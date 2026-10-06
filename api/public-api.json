@@ -37,6 +37,10 @@
       "kind": "function",
       "signature": "(value: 'str') -> 'Timestamp'"
     },
+    "mconet.core.domain.validate_duration": {
+      "kind": "function",
+      "signature": "(value: 'int', unit: \"Literal['seconds', 'milliseconds', 'microseconds', 'nanoseconds']\" = 'nanoseconds') -> 'Duration'"
+    },
     "mconet.core.domain.validate_open_identifier": {
       "kind": "function",
       "signature": "(identifier: 'OpenIdentifier') -> 'OpenIdentifier'"
