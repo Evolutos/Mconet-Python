@@ -133,6 +133,16 @@
       "kind": "function",
       "signature": "(uri: 'UriValue') -> 'UriValue'"
     },
+    "mconet.testing.SchemaLoader": {
+      "kind": "class",
+      "members": {
+        "load": {
+          "kind": "method",
+          "signature": "(self, identifier: 'OpenIdentifier') -> 'dict[str, JsonValue]'"
+        }
+      },
+      "signature": "(schemas: 'Mapping[OpenIdentifier, JsonValue]') -> 'None'"
+    },
     "mconet.testing.json_fixtures_equal": {
       "kind": "function",
       "signature": "(actual: 'JsonValue', expected: 'JsonValue') -> 'bool'"
