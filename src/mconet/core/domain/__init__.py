@@ -8,6 +8,7 @@ from mconet.core.domain.json_value import JsonValue
 from mconet.core.domain.media_type import MediaType, parse_media_type
 from mconet.core.domain.open_identifier import OpenIdentifier, validate_open_identifier
 from mconet.core.domain.schema_version import SchemaVersion
+from mconet.core.domain.secret_value import AuthorizedSecretConsumer, SecretValue
 from mconet.core.domain.timestamp import Timestamp, parse_timestamp
 from mconet.core.domain.unknown_fields import (
     preserve_unknown_fields,
@@ -16,6 +17,7 @@ from mconet.core.domain.unknown_fields import (
 from mconet.core.domain.uri import UriValue, validate_uri
 
 __all__ = (
+    "AuthorizedSecretConsumer",
     "Bytes",
     "Duration",
     "Extensions",
@@ -24,6 +26,7 @@ __all__ = (
     "MediaType",
     "OpenIdentifier",
     "SchemaVersion",
+    "SecretValue",
     "Timestamp",
     "UriValue",
     "parse_media_type",

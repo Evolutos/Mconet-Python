@@ -2,6 +2,11 @@
   "package": "mconet",
   "schema_version": 1,
   "symbols": {
+    "mconet.core.domain.AuthorizedSecretConsumer": {
+      "kind": "class",
+      "members": {},
+      "signature": "(*args: 'object', **kwargs: 'object') -> 'Self'"
+    },
     "mconet.core.domain.Bytes": {
       "kind": "value",
       "type": "NewType"
@@ -37,6 +42,16 @@
       "kind": "class",
       "members": {},
       "signature": "(value: 'str') -> None"
+    },
+    "mconet.core.domain.SecretValue": {
+      "kind": "class",
+      "members": {
+        "reveal": {
+          "kind": "method",
+          "signature": "(self, consumer: 'AuthorizedSecretConsumer') -> 'str | Bytes'"
+        }
+      },
+      "signature": "(value: 'str | Bytes') -> 'None'"
     },
     "mconet.core.domain.Timestamp": {
       "kind": "class",
