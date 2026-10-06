@@ -223,6 +223,11 @@
       },
       "signature": "(id: 'str', role: 'MessageRole', content: 'tuple[MessageContent, ...]', relations: 'tuple[MessageRelation, ...]' = (), metadata: 'Extensions' = <factory>, extensions: 'Extensions' = <factory>) -> None"
     },
+    "mconet.core.domain.MessageGroup": {
+      "kind": "class",
+      "members": {},
+      "signature": "(id: 'str', kind: 'MessageElementKind', sub_elements: 'tuple[MessageElement, ...]', name: 'str | None' = None, attributes: 'Extensions' = <factory>, value: 'MessageElementValue | None' = None, relations: 'tuple[MessageRelation, ...]' = (), metadata: 'Extensions' = <factory>, extensions: 'Extensions' = <factory>) -> None"
+    },
     "mconet.core.domain.MessageRelation": {
       "kind": "class",
       "members": {},

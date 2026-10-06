@@ -25,6 +25,7 @@ from mconet.core.domain.message_element_kind import MessageElementKind
 from mconet.core.domain.message_element_value import MessageElementValue
 from mconet.core.domain.message_entry import MessageEntry
 from mconet.core.domain.message_entry_validation import validate_message_entry
+from mconet.core.domain.message_group import MessageGroup
 from mconet.core.domain.message_relation import MessageRelation
 from mconet.core.domain.message_role import MessageRole
 from mconet.core.domain.message_role_validation import validate_message_role
@@ -83,6 +84,7 @@ __all__ = (
     "MessageElementKind",
     "MessageElementValue",
     "MessageEntry",
+    "MessageGroup",
     "MessageRelation",
     "MessageRole",
     "ModelDescriptor",

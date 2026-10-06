@@ -29,6 +29,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "MessageElementKind",
         "MessageElementValue",
         "MessageEntry",
+        "MessageGroup",
         "MessageRelation",
         "MessageRole",
         "ModelDescriptor",
