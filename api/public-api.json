@@ -608,6 +608,11 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.domain.TaskDocument": {
+      "kind": "class",
+      "members": {},
+      "signature": "(version: 'str', root: 'TaskGroupNode', metadata: 'Extensions' = <factory>, extensions: 'Extensions' = <factory>) -> None"
+    },
     "mconet.core.domain.TaskGroupNode": {
       "kind": "class",
       "members": {},
