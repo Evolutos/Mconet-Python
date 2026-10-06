@@ -143,6 +143,21 @@
       },
       "signature": "(schemas: 'Mapping[OpenIdentifier, JsonValue]') -> 'None'"
     },
+    "mconet.testing.SchemaValidationIssue": {
+      "kind": "class",
+      "members": {},
+      "signature": "(path: 'str', keyword: 'str', message: 'str') -> None"
+    },
+    "mconet.testing.SchemaValidatorAdapter": {
+      "kind": "class",
+      "members": {
+        "validate": {
+          "kind": "method",
+          "signature": "(self, schema_id: 'OpenIdentifier', instance: 'JsonValue') -> 'tuple[SchemaValidationIssue, ...]'"
+        }
+      },
+      "signature": "(loader: 'SchemaLoader') -> 'None'"
+    },
     "mconet.testing.json_fixtures_equal": {
       "kind": "function",
       "signature": "(actual: 'JsonValue', expected: 'JsonValue') -> 'bool'"
