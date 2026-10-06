@@ -25,3 +25,15 @@ def test_build_stage_blocks_unit_until_all_projects_build() -> None:
 
     assert "- run: python scripts/build_all.py" in build_job
     assert "needs: build" in unit_job
+
+
+def test_unit_stage_blocks_contract_across_supported_python_versions() -> None:
+    """Verify the unit matrix and its blocking edge to contract tests."""
+    # Each supported interpreter must execute the same unit entry point; the
+    # contract stage may start only after every matrix entry succeeds.
+    unit_job = _job_block("unit", "contract")
+    contract_job = _job_block("contract", "conformance")
+
+    assert 'python-version: ["3.11", "3.12", "3.13", "3.14"]' in unit_job
+    assert "- run: pytest tests/unit --cov=mconet --cov-report=term-missing" in unit_job
+    assert "needs: unit" in contract_job
