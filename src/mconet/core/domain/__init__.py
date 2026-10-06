@@ -2,6 +2,9 @@
 
 from mconet.core.domain.artifact import Artifact
 from mconet.core.domain.artifact_catalog import ArtifactCatalog
+from mconet.core.domain.artifact_catalog_scope import (
+    validate_empty_artifact_catalog_scope,
+)
 from mconet.core.domain.artifact_catalog_validation import validate_artifact_catalog
 from mconet.core.domain.artifact_descriptor import ArtifactDescriptor
 from mconet.core.domain.artifact_kind import ArtifactKind
@@ -152,6 +155,7 @@ __all__ = (
     "validate_artifact",
     "validate_artifact_catalog",
     "validate_duration",
+    "validate_empty_artifact_catalog_scope",
     "validate_json_value_numbers",
     "validate_message_document",
     "validate_message_entry",

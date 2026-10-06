@@ -646,6 +646,10 @@
       "kind": "function",
       "signature": "(value: 'int', unit: \"Literal['seconds', 'milliseconds', 'microseconds', 'nanoseconds']\" = 'nanoseconds') -> 'Duration'"
     },
+    "mconet.core.domain.validate_empty_artifact_catalog_scope": {
+      "kind": "function",
+      "signature": "(catalog: 'ArtifactCatalog') -> 'ArtifactCatalog'"
+    },
     "mconet.core.domain.validate_json_value_numbers": {
       "kind": "function",
       "signature": "(value: 'JsonValue') -> 'JsonValue'"
