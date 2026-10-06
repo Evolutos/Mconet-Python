@@ -17,6 +17,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "JsonValue",
         "MediaType",
         "OpenIdentifier",
+        "RecoveryHint",
         "SchemaVersion",
         "SecretValue",
         "Timestamp",

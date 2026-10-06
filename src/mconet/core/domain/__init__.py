@@ -9,6 +9,7 @@ from mconet.core.domain.json_primitive import JsonPrimitive
 from mconet.core.domain.json_value import JsonValue
 from mconet.core.domain.media_type import MediaType, parse_media_type
 from mconet.core.domain.open_identifier import OpenIdentifier, validate_open_identifier
+from mconet.core.domain.recovery_hint import RecoveryHint
 from mconet.core.domain.schema_version import SchemaVersion
 from mconet.core.domain.secret_value import AuthorizedSecretConsumer, SecretValue
 from mconet.core.domain.timestamp import Timestamp, parse_timestamp
@@ -29,6 +30,7 @@ __all__ = (
     "JsonValue",
     "MediaType",
     "OpenIdentifier",
+    "RecoveryHint",
     "SchemaVersion",
     "SecretValue",
     "Timestamp",
