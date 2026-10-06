@@ -129,6 +129,10 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.domain.MessageElementValue": {
+      "kind": "value",
+      "type": "UnionType"
+    },
     "mconet.core.domain.MessageRelation": {
       "kind": "class",
       "members": {},
