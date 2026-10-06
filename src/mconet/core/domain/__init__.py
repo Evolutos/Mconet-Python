@@ -29,6 +29,7 @@ from mconet.core.domain.extensions import Extensions
 from mconet.core.domain.header_field import HeaderField
 from mconet.core.domain.headers import Headers
 from mconet.core.domain.inline_artifact_source import InlineArtifactSource
+from mconet.core.domain.interaction_mode import InteractionMode
 from mconet.core.domain.interaction_phase import InteractionPhase
 from mconet.core.domain.interaction_resource_limits import InteractionResourceLimits
 from mconet.core.domain.json_primitive import JsonPrimitive
@@ -109,6 +110,7 @@ __all__ = (
     "HeaderField",
     "Headers",
     "InlineArtifactSource",
+    "InteractionMode",
     "InteractionPhase",
     "InteractionResourceLimits",
     "JsonPrimitive",
