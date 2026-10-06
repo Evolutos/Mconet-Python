@@ -24,6 +24,10 @@ class ResolvedInteractionConfiguration:
     contract but its field is explicit. This object stores references only and
     never materializes authorization plaintext or a secret snapshot.
 
+    The selected ServiceAccess remains unresolved. It is neither a
+    ResolvedServiceAccess nor a replacement for passing all four original access
+    sources to the later field-level ServiceAccessResolver.
+
     The type is intentionally internal and contains no runtime components,
     monitors, normalizers, or public option containers.
     """
@@ -32,7 +36,7 @@ class ResolvedInteractionConfiguration:
     """The selected interaction target."""
 
     service_access: ServiceAccess | None
-    """Selected unresolved access input, or None for later integration fallback."""
+    """The winning whole access input, not a field-merged access result."""
 
     compatibility_policy: CompatibilityPolicy
     """The selected compatibility strategy."""
