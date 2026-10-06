@@ -1,0 +1,1260 @@
+{
+  "$defs": {
+    "artifact": {
+      "additionalProperties": false,
+      "properties": {
+        "descriptor": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/artifactDescriptor"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "extensions": {
+          "type": "object"
+        },
+        "id": {
+          "$ref": "#/$defs/nonWhitespaceString"
+        },
+        "kind": {
+          "$ref": "#/$defs/artifactKind"
+        },
+        "mediaType": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/mediaType"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "metadata": {
+          "type": "object"
+        },
+        "source": {
+          "$ref": "#/$defs/artifactSource"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "source"
+      ],
+      "type": "object"
+    },
+    "artifactCatalog": {
+      "additionalProperties": false,
+      "properties": {
+        "artifacts": {
+          "items": {
+            "$ref": "#/$defs/artifact"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "artifacts"
+      ],
+      "type": "object"
+    },
+    "artifactDescriptor": {
+      "additionalProperties": true,
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/openIdentifier"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "type": "object"
+    },
+    "artifactKind": {
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "type": "object"
+        },
+        "id": {
+          "$ref": "#/$defs/openIdentifier"
+        },
+        "semantic": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "artifactSource": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/inlineSource"
+        },
+        {
+          "$ref": "#/$defs/uriSource"
+        },
+        {
+          "$ref": "#/$defs/localFileSource"
+        },
+        {
+          "$ref": "#/$defs/openSource"
+        }
+      ]
+    },
+    "containerElement": {
+      "additionalProperties": false,
+      "properties": {
+        "attributes": {
+          "type": "object"
+        },
+        "extensions": {
+          "type": "object"
+        },
+        "id": {
+          "$ref": "#/$defs/nonWhitespaceString"
+        },
+        "kind": {
+          "additionalProperties": false,
+          "properties": {
+            "category": {
+              "type": "string"
+            },
+            "composition": {
+              "const": "container"
+            },
+            "id": {
+              "$ref": "#/$defs/openIdentifier"
+            }
+          },
+          "required": [
+            "category",
+            "composition",
+            "id"
+          ],
+          "type": "object"
+        },
+        "metadata": {
+          "type": "object"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "relations": {
+          "items": {
+            "$ref": "#/$defs/messageRelation"
+          },
+          "type": "array"
+        },
+        "subElements": {
+          "items": {
+            "$ref": "#/$defs/messageElement"
+          },
+          "type": "array"
+        },
+        "value": {}
+      },
+      "required": [
+        "id",
+        "kind",
+        "subElements"
+      ],
+      "type": "object"
+    },
+    "conversationInputNode": {
+      "additionalProperties": false,
+      "properties": {
+        "children": {
+          "const": []
+        },
+        "extensions": {
+          "type": "object"
+        },
+        "id": {
+          "$ref": "#/$defs/nonWhitespaceString"
+        },
+        "kind": {
+          "additionalProperties": false,
+          "properties": {
+            "composition": {
+              "const": "leaf"
+            },
+            "id": {
+              "const": "task.input"
+            }
+          },
+          "required": [
+            "composition",
+            "id"
+          ],
+          "type": "object"
+        },
+        "messages": {
+          "$ref": "#/$defs/messageDocument"
+        },
+        "metadata": {
+          "type": "object"
+        },
+        "relations": {
+          "items": {
+            "$ref": "#/$defs/taskRelation"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "children",
+        "id",
+        "kind",
+        "messages"
+      ],
+      "type": "object"
+    },
+    "generationParameters": {
+      "additionalProperties": false,
+      "properties": {
+        "maxOutputTokens": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "seed": {
+          "maximum": 9007199254740991,
+          "minimum": -9007199254740991,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "stop": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "temperature": {
+          "minimum": 0,
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "topP": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "generationParametersNode": {
+      "additionalProperties": false,
+      "properties": {
+        "children": {
+          "const": []
+        },
+        "extensions": {
+          "type": "object"
+        },
+        "id": {
+          "$ref": "#/$defs/nonWhitespaceString"
+        },
+        "kind": {
+          "additionalProperties": false,
+          "properties": {
+            "composition": {
+              "const": "leaf"
+            },
+            "id": {
+              "const": "task.configuration"
+            }
+          },
+          "required": [
+            "composition",
+            "id"
+          ],
+          "type": "object"
+        },
+        "metadata": {
+          "type": "object"
+        },
+        "parameters": {
+          "$ref": "#/$defs/generationParameters"
+        },
+        "relations": {
+          "items": {
+            "$ref": "#/$defs/taskRelation"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "children",
+        "id",
+        "kind",
+        "parameters"
+      ],
+      "type": "object"
+    },
+    "inlineSource": {
+      "additionalProperties": false,
+      "properties": {
+        "bytes": {
+          "pattern": "^(?:[0-9a-f]{2})*$",
+          "type": "string"
+        },
+        "kind": {
+          "const": "artifact.inline"
+        }
+      },
+      "required": [
+        "bytes",
+        "kind"
+      ],
+      "type": "object"
+    },
+    "leafElement": {
+      "additionalProperties": false,
+      "properties": {
+        "attributes": {
+          "type": "object"
+        },
+        "extensions": {
+          "type": "object"
+        },
+        "id": {
+          "$ref": "#/$defs/nonWhitespaceString"
+        },
+        "kind": {
+          "additionalProperties": false,
+          "properties": {
+            "category": {
+              "type": "string"
+            },
+            "composition": {
+              "const": "leaf"
+            },
+            "id": {
+              "$ref": "#/$defs/openIdentifier",
+              "not": {
+                "const": "message.entry"
+              }
+            }
+          },
+          "required": [
+            "category",
+            "composition",
+            "id"
+          ],
+          "type": "object"
+        },
+        "metadata": {
+          "type": "object"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "relations": {
+          "items": {
+            "$ref": "#/$defs/messageRelation"
+          },
+          "type": "array"
+        },
+        "subElements": {
+          "const": []
+        },
+        "value": {}
+      },
+      "required": [
+        "id",
+        "kind",
+        "subElements"
+      ],
+      "type": "object"
+    },
+    "localFileSource": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "artifact.local_file"
+        },
+        "path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "path"
+      ],
+      "type": "object"
+    },
+    "mediaType": {
+      "pattern": "^[ \\t]*[!#$%&'*+.^_`|~0-9A-Za-z-]+/[!#$%&'*+.^_`|~0-9A-Za-z-]+(?:[ \\t]*;[ \\t]*[!#$%&'*+.^_`|~0-9A-Za-z-]+=(?:[!#$%&'*+.^_`|~0-9A-Za-z-]+|\"(?:[\\t !#-\\[\\]-~\\u0080-\\u00FF]|\\\\[\\t !-~\\u0080-\\u00FF])*\")[ \\t]*)*[ \\t]*$",
+      "type": "string"
+    },
+    "messageContent": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/textContent"
+        },
+        {
+          "$ref": "#/$defs/openContent"
+        }
+      ]
+    },
+    "messageDocument": {
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "type": "object"
+        },
+        "metadata": {
+          "type": "object"
+        },
+        "purpose": {
+          "enum": [
+            "input",
+            "output",
+            "context",
+            "custom"
+          ]
+        },
+        "root": {
+          "$ref": "#/$defs/messageRootGroup"
+        },
+        "version": {
+          "$ref": "#/$defs/nonWhitespaceString"
+        }
+      },
+      "required": [
+        "purpose",
+        "root",
+        "version"
+      ],
+      "type": "object"
+    },
+    "messageElement": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/messageEntry"
+        },
+        {
+          "$ref": "#/$defs/leafElement"
+        },
+        {
+          "$ref": "#/$defs/containerElement"
+        }
+      ]
+    },
+    "messageEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "attributes": {
+          "const": {}
+        },
+        "content": {
+          "items": {
+            "$ref": "#/$defs/messageContent"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "extensions": {
+          "type": "object"
+        },
+        "id": {
+          "$ref": "#/$defs/nonWhitespaceString"
+        },
+        "kind": {
+          "additionalProperties": false,
+          "properties": {
+            "category": {
+              "const": "entry"
+            },
+            "composition": {
+              "const": "leaf"
+            },
+            "id": {
+              "const": "message.entry"
+            }
+          },
+          "required": [
+            "category",
+            "composition",
+            "id"
+          ],
+          "type": "object"
+        },
+        "metadata": {
+          "type": "object"
+        },
+        "name": {
+          "const": null
+        },
+        "relations": {
+          "items": {
+            "$ref": "#/$defs/messageRelation"
+          },
+          "type": "array"
+        },
+        "role": {
+          "$ref": "#/$defs/role"
+        },
+        "subElements": {
+          "const": []
+        },
+        "value": {
+          "const": null
+        }
+      },
+      "required": [
+        "content",
+        "id",
+        "kind",
+        "role",
+        "subElements"
+      ],
+      "type": "object"
+    },
+    "messageRelation": {
+      "additionalProperties": false,
+      "properties": {
+        "metadata": {
+          "type": "object"
+        },
+        "source": {
+          "$ref": "#/$defs/nonWhitespaceString"
+        },
+        "target": {
+          "$ref": "#/$defs/nonWhitespaceString"
+        },
+        "type": {
+          "$ref": "#/$defs/openIdentifier"
+        }
+      },
+      "required": [
+        "source",
+        "target",
+        "type"
+      ],
+      "type": "object"
+    },
+    "messageRootGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "attributes": {
+          "type": "object"
+        },
+        "extensions": {
+          "type": "object"
+        },
+        "id": {
+          "$ref": "#/$defs/nonWhitespaceString"
+        },
+        "kind": {
+          "additionalProperties": false,
+          "properties": {
+            "category": {
+              "type": "string"
+            },
+            "composition": {
+              "const": "container"
+            },
+            "id": {
+              "const": "message.root"
+            }
+          },
+          "required": [
+            "category",
+            "composition",
+            "id"
+          ],
+          "type": "object"
+        },
+        "metadata": {
+          "type": "object"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "relations": {
+          "items": {
+            "$ref": "#/$defs/messageRelation"
+          },
+          "type": "array"
+        },
+        "subElements": {
+          "items": {
+            "$ref": "#/$defs/messageElement"
+          },
+          "type": "array"
+        },
+        "value": {}
+      },
+      "required": [
+        "id",
+        "kind",
+        "subElements"
+      ],
+      "type": "object"
+    },
+    "modelTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "deploymentId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "extensions": {
+          "type": "object"
+        },
+        "model": {
+          "additionalProperties": false,
+          "properties": {
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "displayName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "extensions": {
+              "type": "object"
+            },
+            "family": {
+              "maxLength": 128,
+              "pattern": "^[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?)*$",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "metadata": {
+              "type": "object"
+            },
+            "name": {
+              "pattern": "^[\\s\\S]*\\S[\\s\\S]*$",
+              "type": "string"
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "type": "object"
+        },
+        "protocolId": {
+          "maxLength": 128,
+          "pattern": "^[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?)*$",
+          "type": "string"
+        },
+        "serviceId": {
+          "maxLength": 128,
+          "pattern": "^[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?)*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model",
+        "protocolId",
+        "serviceId"
+      ],
+      "type": "object"
+    },
+    "modelTaskRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "artifacts": {
+          "$ref": "#/$defs/artifactCatalog"
+        },
+        "descriptor": {
+          "$ref": "#/$defs/taskDescriptor"
+        },
+        "document": {
+          "$ref": "#/$defs/taskDocument"
+        },
+        "extensions": {
+          "type": "object"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "artifacts",
+        "descriptor",
+        "document"
+      ],
+      "type": "object"
+    },
+    "nonWhitespaceString": {
+      "pattern": "^[\\s\\S]*\\S[\\s\\S]*$",
+      "type": "string"
+    },
+    "openContainerNode": {
+      "additionalProperties": true,
+      "properties": {
+        "children": {
+          "items": {
+            "$ref": "#/$defs/taskNode"
+          },
+          "type": "array"
+        },
+        "extensions": {
+          "type": "object"
+        },
+        "id": {
+          "$ref": "#/$defs/nonWhitespaceString"
+        },
+        "kind": {
+          "additionalProperties": false,
+          "properties": {
+            "composition": {
+              "const": "container"
+            },
+            "id": {
+              "$ref": "#/$defs/openIdentifier",
+              "not": {
+                "enum": [
+                  "task.configuration",
+                  "task.input",
+                  "task.root"
+                ]
+              }
+            }
+          },
+          "required": [
+            "composition",
+            "id"
+          ],
+          "type": "object"
+        },
+        "metadata": {
+          "type": "object"
+        },
+        "relations": {
+          "items": {
+            "$ref": "#/$defs/taskRelation"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "children",
+        "id",
+        "kind"
+      ],
+      "type": "object"
+    },
+    "openContent": {
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "type": "object"
+        },
+        "id": {
+          "$ref": "#/$defs/nonWhitespaceString"
+        },
+        "kind": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/openIdentifier",
+              "not": {
+                "const": "content.text"
+              }
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "type": "object"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "kind"
+      ],
+      "type": "object"
+    },
+    "openIdentifier": {
+      "maxLength": 128,
+      "pattern": "^[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?)*$",
+      "type": "string"
+    },
+    "openLeafNode": {
+      "additionalProperties": true,
+      "properties": {
+        "children": {
+          "const": []
+        },
+        "extensions": {
+          "type": "object"
+        },
+        "id": {
+          "$ref": "#/$defs/nonWhitespaceString"
+        },
+        "kind": {
+          "additionalProperties": false,
+          "properties": {
+            "composition": {
+              "const": "leaf"
+            },
+            "id": {
+              "$ref": "#/$defs/openIdentifier",
+              "not": {
+                "enum": [
+                  "task.configuration",
+                  "task.input",
+                  "task.root"
+                ]
+              }
+            }
+          },
+          "required": [
+            "composition",
+            "id"
+          ],
+          "type": "object"
+        },
+        "metadata": {
+          "type": "object"
+        },
+        "relations": {
+          "items": {
+            "$ref": "#/$defs/taskRelation"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "children",
+        "id",
+        "kind"
+      ],
+      "type": "object"
+    },
+    "openSource": {
+      "additionalProperties": true,
+      "properties": {
+        "extensions": {
+          "type": "object"
+        },
+        "kind": {
+          "$ref": "#/$defs/openIdentifier",
+          "not": {
+            "enum": [
+              "artifact.inline",
+              "artifact.local_file",
+              "artifact.uri"
+            ]
+          }
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "type": "object"
+    },
+    "role": {
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "type": "object"
+        },
+        "id": {
+          "$ref": "#/$defs/openIdentifier"
+        },
+        "rawValue": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "semantic": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "serviceAccess": {
+      "additionalProperties": false,
+      "properties": {
+        "apiVersion": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "endpoint": {
+          "pattern": "^(?![\\s\\S]*[^A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%])[A-Za-z][A-Za-z0-9+.-]*:",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "extensions": {
+          "type": "object"
+        },
+        "headers": {
+          "additionalProperties": false,
+          "properties": {
+            "values": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "pattern": "^(?![\\s\\S]*[^!#$%&'*+\\-.^_`|~0-9A-Za-z])[!#$%&'*+\\-.^_`|~0-9A-Za-z]+$",
+                    "type": "string"
+                  },
+                  "value": {
+                    "pattern": "^(?![\\s\\S]*[\\u0000-\\u001F\\u007F])[\\s\\S]*$",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "value"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "values"
+          ],
+          "type": "object"
+        },
+        "projectId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "query": {
+          "additionalProperties": false,
+          "properties": {
+            "values": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "value"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "values"
+          ],
+          "type": "object"
+        },
+        "tenantId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "taskDescriptor": {
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "type": "object"
+        },
+        "inputSchemaId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "metadata": {
+          "type": "object"
+        },
+        "outputSchemaId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "type": {
+          "$ref": "#/$defs/openIdentifier"
+        },
+        "version": {
+          "pattern": "^[\\s\\S]*\\S[\\s\\S]*$",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "taskDocument": {
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "type": "object"
+        },
+        "metadata": {
+          "type": "object"
+        },
+        "root": {
+          "$ref": "#/$defs/taskRootGroup"
+        },
+        "version": {
+          "$ref": "#/$defs/nonWhitespaceString"
+        }
+      },
+      "required": [
+        "root",
+        "version"
+      ],
+      "type": "object"
+    },
+    "taskNode": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/conversationInputNode"
+        },
+        {
+          "$ref": "#/$defs/generationParametersNode"
+        },
+        {
+          "$ref": "#/$defs/openLeafNode"
+        },
+        {
+          "$ref": "#/$defs/openContainerNode"
+        }
+      ]
+    },
+    "taskRelation": {
+      "additionalProperties": false,
+      "properties": {
+        "metadata": {
+          "type": "object"
+        },
+        "source": {
+          "$ref": "#/$defs/nonWhitespaceString"
+        },
+        "target": {
+          "$ref": "#/$defs/nonWhitespaceString"
+        },
+        "type": {
+          "$ref": "#/$defs/openIdentifier"
+        }
+      },
+      "required": [
+        "source",
+        "target",
+        "type"
+      ],
+      "type": "object"
+    },
+    "taskRootGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "children": {
+          "items": {
+            "$ref": "#/$defs/taskNode"
+          },
+          "type": "array"
+        },
+        "extensions": {
+          "type": "object"
+        },
+        "id": {
+          "$ref": "#/$defs/nonWhitespaceString"
+        },
+        "kind": {
+          "additionalProperties": false,
+          "properties": {
+            "composition": {
+              "const": "container"
+            },
+            "id": {
+              "const": "task.root"
+            }
+          },
+          "required": [
+            "composition",
+            "id"
+          ],
+          "type": "object"
+        },
+        "metadata": {
+          "type": "object"
+        },
+        "relations": {
+          "items": {
+            "$ref": "#/$defs/taskRelation"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "children",
+        "id",
+        "kind"
+      ],
+      "type": "object"
+    },
+    "textContent": {
+      "additionalProperties": false,
+      "properties": {
+        "extensions": {
+          "type": "object"
+        },
+        "id": {
+          "$ref": "#/$defs/nonWhitespaceString"
+        },
+        "kind": {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "const": "content.text"
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "type": "object"
+        },
+        "metadata": {
+          "type": "object"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "text"
+      ],
+      "type": "object"
+    },
+    "uriSource": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "artifact.uri"
+        },
+        "uri": {
+          "additionalProperties": false,
+          "properties": {
+            "isAbsolute": {
+              "type": "boolean"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "isAbsolute",
+            "value"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "kind",
+        "uri"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "schema.model_request",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "extensions": {
+      "type": "object"
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "serviceAccess": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/serviceAccess"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "target": {
+      "$ref": "#/$defs/modelTarget"
+    },
+    "task": {
+      "$ref": "#/$defs/modelTaskRequest"
+    }
+  },
+  "required": [
+    "target",
+    "task"
+  ],
+  "type": "object"
+}
