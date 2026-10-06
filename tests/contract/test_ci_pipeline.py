@@ -37,3 +37,16 @@ def test_unit_stage_blocks_contract_across_supported_python_versions() -> None:
     assert 'python-version: ["3.11", "3.12", "3.13", "3.14"]' in unit_job
     assert "- run: pytest tests/unit --cov=mconet --cov-report=term-missing" in unit_job
     assert "needs: unit" in contract_job
+
+
+def test_contract_stage_is_independent_and_blocks_conformance() -> None:
+    """Verify contract failures are isolated and block conformance tests."""
+    # A dedicated job and test path make failures attributable to component
+    # contracts instead of mixing them into unit or conformance diagnostics.
+    contract_job = _job_block("contract", "conformance")
+    conformance_job = _job_block("conformance", "package")
+
+    assert "name: Contract" in contract_job
+    assert "needs: unit" in contract_job
+    assert "- run: pytest tests/contract" in contract_job
+    assert "needs: contract" in conformance_job
