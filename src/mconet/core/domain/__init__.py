@@ -78,6 +78,7 @@ from mconet.core.domain.service_access import ServiceAccess
 from mconet.core.domain.service_access_validation import validate_service_access
 from mconet.core.domain.task_descriptor import TaskDescriptor
 from mconet.core.domain.task_descriptor_validation import validate_task_descriptor
+from mconet.core.domain.task_group_node import TaskGroupNode
 from mconet.core.domain.task_node import TaskNode
 from mconet.core.domain.task_node_kind import TaskNodeKind
 from mconet.core.domain.task_relation import TaskRelation
@@ -147,6 +148,7 @@ __all__ = (
     "SecretValue",
     "ServiceAccess",
     "TaskDescriptor",
+    "TaskGroupNode",
     "TaskNode",
     "TaskNodeKind",
     "TaskRelation",

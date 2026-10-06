@@ -60,6 +60,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "SecretValue",
         "ServiceAccess",
         "TaskDescriptor",
+        "TaskGroupNode",
         "TaskNode",
         "TaskNodeKind",
         "TaskRelation",
