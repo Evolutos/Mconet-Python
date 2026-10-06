@@ -17,6 +17,7 @@ python scripts/check_api_compatibility.py
 python scripts/check_experimental_api_policy.py
 python scripts/check_package_names.py
 python scripts/check_runtime_compatibility.py
+python scripts/check_secrets.py
 python scripts/check_version_policy.py
 python scripts/check_spec_module.py
 pytest tests/unit

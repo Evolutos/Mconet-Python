@@ -26,6 +26,7 @@ def test_build_stage_blocks_unit_until_all_projects_build() -> None:
     assert "- run: python scripts/check_experimental_api_policy.py" in build_job
     assert "- run: python scripts/check_package_names.py" in build_job
     assert "- run: python scripts/check_runtime_compatibility.py" in build_job
+    assert "- run: python scripts/check_secrets.py" in build_job
     assert "- run: python scripts/check_version_policy.py" in build_job
     assert "- run: python scripts/build_all.py" in build_job
     assert "needs: build" in unit_job
