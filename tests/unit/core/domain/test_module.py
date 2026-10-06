@@ -23,6 +23,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "JsonPrimitive",
         "JsonValue",
         "MediaType",
+        "MessageContent",
         "MessageContentKind",
         "MessageElement",
         "MessageElementKind",

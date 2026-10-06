@@ -18,6 +18,7 @@ from mconet.core.domain.interaction_resource_limits import InteractionResourceLi
 from mconet.core.domain.json_primitive import JsonPrimitive
 from mconet.core.domain.json_value import JsonValue, validate_json_value_numbers
 from mconet.core.domain.media_type import MediaType, parse_media_type
+from mconet.core.domain.message_content import MessageContent
 from mconet.core.domain.message_content_kind import MessageContentKind
 from mconet.core.domain.message_element import MessageElement
 from mconet.core.domain.message_element_kind import MessageElementKind
@@ -70,6 +71,7 @@ __all__ = (
     "JsonPrimitive",
     "JsonValue",
     "MediaType",
+    "MessageContent",
     "MessageContentKind",
     "MessageElement",
     "MessageElementKind",
