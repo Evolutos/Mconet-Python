@@ -144,6 +144,16 @@
       },
       "signature": "(id: 'str', messages: 'MessageDocument', relations: 'tuple[TaskRelation, ...]' = (), metadata: 'Extensions' = <factory>, extensions: 'Extensions' = <factory>) -> None"
     },
+    "mconet.core.domain.ConversationTaskRequest": {
+      "kind": "class",
+      "members": {
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(document: 'TaskDocument', artifacts: 'ArtifactCatalog' = <factory>, metadata: 'Extensions' = <factory>, extensions: 'Extensions' = <factory>) -> None"
+    },
     "mconet.core.domain.Diagnostic": {
       "kind": "class",
       "members": {},

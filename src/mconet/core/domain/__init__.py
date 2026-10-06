@@ -26,6 +26,7 @@ from mconet.core.domain.conversation_input_node import ConversationInputNode
 from mconet.core.domain.conversation_input_node_validation import (
     validate_conversation_input_node,
 )
+from mconet.core.domain.conversation_task_request import ConversationTaskRequest
 from mconet.core.domain.diagnostic import Diagnostic
 from mconet.core.domain.duration import Duration, validate_duration
 from mconet.core.domain.error_category import ErrorCategory
@@ -124,6 +125,7 @@ __all__ = (
     "CancellationSignal",
     "CompatibilityPolicy",
     "ConversationInputNode",
+    "ConversationTaskRequest",
     "Diagnostic",
     "Duration",
     "ErrorCategory",
