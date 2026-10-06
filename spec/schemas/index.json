@@ -1,0 +1,6 @@
+{
+  "collection": "schemas",
+  "format_version": 1,
+  "purpose": "Language-neutral schemas shared by every SDK implementation.",
+  "resources": []
+}

@@ -14,6 +14,7 @@ ruff check .
 pyright
 python scripts/check_import_boundaries.py
 python scripts/check_api_compatibility.py
+python scripts/check_spec_module.py
 pytest
 python -m build
 ```

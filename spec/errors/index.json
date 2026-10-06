@@ -1,0 +1,6 @@
+{
+  "collection": "errors",
+  "format_version": 1,
+  "purpose": "Stable language-neutral error definitions.",
+  "resources": []
+}

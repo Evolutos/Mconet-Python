@@ -1,0 +1,11 @@
+{
+  "collections": {
+    "compatibility": "compatibility/index.json",
+    "errors": "errors/index.json",
+    "fixtures": "fixtures/r1-text-unary/index.json",
+    "schemas": "schemas/index.json"
+  },
+  "format_version": 1,
+  "module": "mconet-spec",
+  "profile": "r1.text-unary"
+}

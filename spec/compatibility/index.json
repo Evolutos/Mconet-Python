@@ -1,0 +1,6 @@
+{
+  "collection": "compatibility",
+  "format_version": 1,
+  "purpose": "Version and compatibility rules shared by every SDK implementation.",
+  "resources": []
+}
