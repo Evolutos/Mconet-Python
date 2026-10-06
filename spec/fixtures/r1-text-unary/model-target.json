@@ -1,0 +1,205 @@
+{
+  "format_version": 1,
+  "invalidCases": [
+    {
+      "expectedIssues": [
+        {
+          "keyword": "required",
+          "message": "Required property is missing.",
+          "path": "/model"
+        }
+      ],
+      "input": {
+        "protocolId": "protocol.native",
+        "serviceId": "service.local"
+      },
+      "name": "missing-model"
+    },
+    {
+      "expectedIssues": [
+        {
+          "keyword": "pattern",
+          "message": "String does not match pattern.",
+          "path": "/serviceId"
+        }
+      ],
+      "input": {
+        "model": {
+          "name": "model"
+        },
+        "protocolId": "protocol.native",
+        "serviceId": "Invalid Service"
+      },
+      "name": "invalid-service-identifier"
+    },
+    {
+      "expectedIssues": [
+        {
+          "keyword": "pattern",
+          "message": "String does not match pattern.",
+          "path": "/protocolId"
+        }
+      ],
+      "input": {
+        "model": {
+          "name": "model"
+        },
+        "protocolId": "Invalid Protocol",
+        "serviceId": "service.local"
+      },
+      "name": "invalid-protocol-identifier"
+    },
+    {
+      "expectedIssues": [
+        {
+          "keyword": "pattern",
+          "message": "String does not match pattern.",
+          "path": "/model/name"
+        }
+      ],
+      "input": {
+        "model": {
+          "name": "   "
+        },
+        "protocolId": "protocol.native",
+        "serviceId": "service.local"
+      },
+      "name": "blank-model-name"
+    },
+    {
+      "expectedIssues": [
+        {
+          "keyword": "type",
+          "message": "Value has an unexpected JSON type.",
+          "path": "/extensions"
+        }
+      ],
+      "input": {
+        "extensions": [],
+        "model": {
+          "name": "model"
+        },
+        "protocolId": "protocol.native",
+        "serviceId": "service.local"
+      },
+      "name": "invalid-target-extensions"
+    },
+    {
+      "expectedIssues": [
+        {
+          "keyword": "additionalProperties",
+          "message": "Additional property is not allowed.",
+          "path": "/endpoint"
+        }
+      ],
+      "input": {
+        "endpoint": "https://example.com",
+        "model": {
+          "name": "model"
+        },
+        "protocolId": "protocol.native",
+        "serviceId": "service.local"
+      },
+      "name": "misplaced-access-field"
+    }
+  ],
+  "schemaId": "schema.model_target",
+  "unknownExtensionCases": [
+    {
+      "expected": {
+        "deploymentId": "production-east",
+        "extensions": {
+          "vendor.futureRouting": {
+            "fallbackRegions": [
+              "west",
+              "central"
+            ],
+            "priority": 7
+          }
+        },
+        "model": {
+          "description": "Provider-defined model",
+          "displayName": "Future Model",
+          "extensions": {
+            "vendor.futureCapability": {
+              "enabled": true,
+              "modes": [
+                "fast",
+                "balanced"
+              ]
+            }
+          },
+          "family": "vendor.future_family",
+          "metadata": {
+            "contextWindow": 128000
+          },
+          "name": "future-model",
+          "version": "2026-10"
+        },
+        "protocolId": "protocol.compatible",
+        "serviceId": "service.vendor"
+      },
+      "input": {
+        "deploymentId": "production-east",
+        "extensions": {
+          "vendor.futureRouting": {
+            "fallbackRegions": [
+              "west",
+              "central"
+            ],
+            "priority": 7
+          }
+        },
+        "model": {
+          "description": "Provider-defined model",
+          "displayName": "Future Model",
+          "extensions": {
+            "vendor.futureCapability": {
+              "enabled": true,
+              "modes": [
+                "fast",
+                "balanced"
+              ]
+            }
+          },
+          "family": "vendor.future_family",
+          "metadata": {
+            "contextWindow": 128000
+          },
+          "name": "future-model",
+          "version": "2026-10"
+        },
+        "protocolId": "protocol.compatible",
+        "serviceId": "service.vendor"
+      },
+      "name": "nested-unknown-extensions"
+    }
+  ],
+  "validCases": [
+    {
+      "input": {
+        "model": {
+          "name": "model"
+        },
+        "protocolId": "protocol.native",
+        "serviceId": "service.local"
+      },
+      "name": "minimal-target"
+    },
+    {
+      "input": {
+        "deploymentId": null,
+        "model": {
+          "description": null,
+          "displayName": null,
+          "family": null,
+          "name": "provider/model",
+          "version": null
+        },
+        "protocolId": "protocol.compatible",
+        "serviceId": "service.vendor"
+      },
+      "name": "explicit-null-optionals"
+    }
+  ]
+}

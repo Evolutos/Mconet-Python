@@ -5,6 +5,7 @@
   "purpose": "Golden fixtures for the initial text unary conformance profile.",
   "resources": [
     "configuration-precedence.json",
-    "foundation-values.json"
+    "foundation-values.json",
+    "model-target.json"
   ]
 }
