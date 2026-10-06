@@ -56,6 +56,14 @@
       "kind": "function",
       "signature": "(value: 'str') -> 'Timestamp'"
     },
+    "mconet.core.domain.preserve_unknown_fields": {
+      "kind": "function",
+      "signature": "(fields: 'Mapping[str, JsonValue]', known_field_names: 'Collection[str]') -> 'Extensions'"
+    },
+    "mconet.core.domain.restore_preserved_fields": {
+      "kind": "function",
+      "signature": "(known_fields: 'Mapping[str, JsonValue]', preserved_fields: 'Extensions') -> 'Extensions'"
+    },
     "mconet.core.domain.validate_duration": {
       "kind": "function",
       "signature": "(value: 'int', unit: \"Literal['seconds', 'milliseconds', 'microseconds', 'nanoseconds']\" = 'nanoseconds') -> 'Duration'"

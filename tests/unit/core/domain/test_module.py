@@ -19,6 +19,8 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "UriValue",
         "parse_media_type",
         "parse_timestamp",
+        "preserve_unknown_fields",
+        "restore_preserved_fields",
         "validate_duration",
         "validate_open_identifier",
         "validate_uri",
