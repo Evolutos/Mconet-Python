@@ -23,6 +23,9 @@ from mconet.core.domain.compatibility_policy import (
     default_compatibility_policy,
 )
 from mconet.core.domain.conversation_input_node import ConversationInputNode
+from mconet.core.domain.conversation_input_node_validation import (
+    validate_conversation_input_node,
+)
 from mconet.core.domain.diagnostic import Diagnostic
 from mconet.core.domain.duration import Duration, validate_duration
 from mconet.core.domain.error_category import ErrorCategory
@@ -173,6 +176,7 @@ __all__ = (
     "serialize_timestamp",
     "validate_artifact",
     "validate_artifact_catalog",
+    "validate_conversation_input_node",
     "validate_duration",
     "validate_empty_artifact_catalog_scope",
     "validate_json_value_numbers",

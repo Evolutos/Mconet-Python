@@ -81,6 +81,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "serialize_timestamp",
         "validate_artifact",
         "validate_artifact_catalog",
+        "validate_conversation_input_node",
         "validate_duration",
         "validate_empty_artifact_catalog_scope",
         "validate_json_value_numbers",

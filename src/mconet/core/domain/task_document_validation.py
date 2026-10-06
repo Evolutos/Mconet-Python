@@ -5,6 +5,10 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import cast
 
+from mconet.core.domain.conversation_input_node import ConversationInputNode
+from mconet.core.domain.conversation_input_node_validation import (
+    validate_conversation_input_node_fields,
+)
 from mconet.core.domain.json_value import JsonValue, validate_json_value_numbers
 from mconet.core.domain.task_document import TaskDocument
 from mconet.core.domain.task_group_node import TaskGroupNode
@@ -83,6 +87,10 @@ def _validate_tree(root: TaskGroupNode) -> tuple[set[str], tuple[TaskRelation, .
         active_objects.add(identity)
         pending.append((node, True))
         validated, children, node_relations = validate_task_node_snapshot(node)
+        # Known concrete leaves add payload invariants after the shared node pass;
+        # custom nodes remain open and require no SDK-side type registration.
+        if isinstance(validated, ConversationInputNode):
+            validate_conversation_input_node_fields(validated)
         _register_node_id(validated.id, node_ids)
         relations.extend(node_relations)
 

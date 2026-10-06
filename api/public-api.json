@@ -755,6 +755,10 @@
       "kind": "function",
       "signature": "(catalog: 'ArtifactCatalog') -> 'ArtifactCatalog'"
     },
+    "mconet.core.domain.validate_conversation_input_node": {
+      "kind": "function",
+      "signature": "(node: 'ConversationInputNode') -> 'ConversationInputNode'"
+    },
     "mconet.core.domain.validate_duration": {
       "kind": "function",
       "signature": "(value: 'int', unit: \"Literal['seconds', 'milliseconds', 'microseconds', 'nanoseconds']\" = 'nanoseconds') -> 'Duration'"
