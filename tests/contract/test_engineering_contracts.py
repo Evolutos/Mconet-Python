@@ -44,3 +44,11 @@ def test_package_names_match_frozen_mapping() -> None:
     # disagree about which architecture modules are publicly addressable.
     result = _run_script("check_package_names.py")
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_project_version_follows_frozen_policy() -> None:
+    """Verify version syntax, equivalence, and rollback rules are approved."""
+    # Use the production governance command so release metadata is checked by
+    # the same rules in local runs, tests, and CI.
+    result = _run_script("check_version_policy.py")
+    assert result.returncode == 0, result.stdout + result.stderr

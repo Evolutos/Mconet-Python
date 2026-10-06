@@ -1,0 +1,37 @@
+{
+  "canonical_scheme": "semver-2.0.0",
+  "equivalence": [
+    {
+      "python": "MAJOR.MINOR.PATCH",
+      "semver": "MAJOR.MINOR.PATCH"
+    },
+    {
+      "python": "MAJOR.MINOR.PATCHaN",
+      "semver": "MAJOR.MINOR.PATCH-alpha.N"
+    },
+    {
+      "python": "MAJOR.MINOR.PATCHbN",
+      "semver": "MAJOR.MINOR.PATCH-beta.N"
+    },
+    {
+      "python": "MAJOR.MINOR.PATCHrcN",
+      "semver": "MAJOR.MINOR.PATCH-rc.N"
+    },
+    {
+      "python": "MAJOR.MINOR.PATCH.devN",
+      "semver": "MAJOR.MINOR.PATCH-dev.N"
+    }
+  ],
+  "format_version": 1,
+  "platform": "python",
+  "platform_scheme": "pep-440",
+  "release_model": "lockstep",
+  "rollback": {
+    "failed_release_visibility": "yank",
+    "prerelease_replacement": "increment_prerelease",
+    "published_artifacts": "immutable",
+    "stable_replacement": "increment_patch",
+    "version_reuse": "forbidden"
+  },
+  "version_source": "pyproject.toml:project.version"
+}

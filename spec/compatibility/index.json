@@ -4,6 +4,7 @@
   "purpose": "Version and compatibility rules shared by every SDK implementation.",
   "resources": [
     "package-names.json",
-    "runtime-matrix.json"
+    "runtime-matrix.json",
+    "version-policy.json"
   ]
 }
