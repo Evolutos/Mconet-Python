@@ -36,3 +36,11 @@ def test_runtime_compatibility_matches_frozen_matrix() -> None:
     # minimum-version change cannot update only one consumer of the matrix.
     result = _run_script("check_runtime_compatibility.py")
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_package_names_match_frozen_mapping() -> None:
+    """Verify distribution metadata and public modules use approved names."""
+    # Execute the shared governance command so local and CI validation cannot
+    # disagree about which architecture modules are publicly addressable.
+    result = _run_script("check_package_names.py")
+    assert result.returncode == 0, result.stdout + result.stderr

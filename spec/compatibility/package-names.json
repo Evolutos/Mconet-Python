@@ -1,0 +1,17 @@
+{
+  "distribution_name": "mconet-sdk",
+  "format_version": 1,
+  "import_namespace": "mconet",
+  "platform": "python",
+  "public_modules": {
+    "auth-basic": "mconet.auth.basic",
+    "client-api": "mconet.client",
+    "codec-json": "mconet.codec.json",
+    "core-domain": "mconet.core.domain",
+    "core-runtime": "mconet.core.runtime",
+    "core-spi": "mconet.core.spi",
+    "integration-openai-compatible": "mconet.integration.openai_compatible",
+    "testing": "mconet.testing",
+    "transport-http-system": "mconet.transport.http_system"
+  }
+}
