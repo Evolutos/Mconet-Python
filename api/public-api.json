@@ -144,6 +144,28 @@
       },
       "signature": "(id: 'str', messages: 'MessageDocument', relations: 'tuple[TaskRelation, ...]' = (), metadata: 'Extensions' = <factory>, extensions: 'Extensions' = <factory>) -> None"
     },
+    "mconet.core.domain.ConversationTaskBuilder": {
+      "kind": "class",
+      "members": {
+        "build": {
+          "kind": "method",
+          "signature": "(self) -> 'ConversationTaskRequest'"
+        },
+        "with_artifacts": {
+          "kind": "method",
+          "signature": "(self, artifacts: 'ArtifactCatalog') -> 'Self'"
+        },
+        "with_extensions": {
+          "kind": "method",
+          "signature": "(self, extensions: 'Extensions') -> 'Self'"
+        },
+        "with_metadata": {
+          "kind": "method",
+          "signature": "(self, metadata: 'Extensions') -> 'Self'"
+        }
+      },
+      "signature": "(document: 'TaskDocument') -> 'None'"
+    },
     "mconet.core.domain.ConversationTaskRequest": {
       "kind": "class",
       "members": {

@@ -20,6 +20,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "CancellationSignal",
         "CompatibilityPolicy",
         "ConversationInputNode",
+        "ConversationTaskBuilder",
         "ConversationTaskRequest",
         "ConversationTaskResult",
         "Diagnostic",
