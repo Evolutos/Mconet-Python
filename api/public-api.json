@@ -788,6 +788,10 @@
       "kind": "function",
       "signature": "(descriptor: 'TaskDescriptor') -> 'TaskDescriptor'"
     },
+    "mconet.core.domain.validate_task_node": {
+      "kind": "function",
+      "signature": "(node: 'TaskNode') -> 'TaskNode'"
+    },
     "mconet.core.domain.validate_text_message_content": {
       "kind": "function",
       "signature": "(content: 'TextMessageContent', *, maximum_code_points: 'int | None' = None) -> 'TextMessageContent'"
