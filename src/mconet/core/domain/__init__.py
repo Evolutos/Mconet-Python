@@ -124,6 +124,9 @@ from mconet.core.domain.text_message_content_validation import (
 )
 from mconet.core.domain.timestamp import Timestamp, parse_timestamp, serialize_timestamp
 from mconet.core.domain.token_usage import TokenUsage
+from mconet.core.domain.unary_interaction_mode import (
+    validate_unary_interaction_mode,
+)
 from mconet.core.domain.unknown_fields import (
     preserve_unknown_fields,
     restore_preserved_fields,
@@ -244,5 +247,6 @@ __all__ = (
     "validate_task_node",
     "validate_text_message_content",
     "validate_text_message_content_scope",
+    "validate_unary_interaction_mode",
     "validate_uri",
 )

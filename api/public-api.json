@@ -1086,6 +1086,10 @@
       "kind": "function",
       "signature": "(document: 'MessageDocument') -> 'MessageDocument'"
     },
+    "mconet.core.domain.validate_unary_interaction_mode": {
+      "kind": "function",
+      "signature": "(request: 'ModelRequest', mode: 'InteractionMode') -> 'InteractionMode'"
+    },
     "mconet.core.domain.validate_uri": {
       "kind": "function",
       "signature": "(uri: 'UriValue') -> 'UriValue'"
