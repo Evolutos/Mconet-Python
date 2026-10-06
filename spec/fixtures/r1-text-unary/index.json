@@ -4,6 +4,7 @@
   "profile": "r1.text-unary",
   "purpose": "Golden fixtures for the initial text unary conformance profile.",
   "resources": [
+    "artifact.json",
     "configuration-overrides.json",
     "configuration-precedence.json",
     "foundation-values.json",

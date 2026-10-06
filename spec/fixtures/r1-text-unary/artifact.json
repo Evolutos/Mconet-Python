@@ -1,0 +1,285 @@
+{
+  "artifactSchemaId": "schema.artifact",
+  "catalogSchemaId": "schema.artifact_catalog",
+  "duplicateIdCases": [
+    {
+      "catalog": {
+        "artifacts": [
+          {
+            "id": "duplicate-item",
+            "kind": {
+              "id": "artifact.file"
+            },
+            "mediaType": "application/octet-stream",
+            "source": {
+              "bytes": "00ff",
+              "kind": "artifact.inline"
+            }
+          },
+          {
+            "id": "duplicate-item",
+            "kind": {
+              "id": "artifact.file"
+            },
+            "mediaType": "application/octet-stream",
+            "source": {
+              "kind": "artifact.uri",
+              "uri": {
+                "isAbsolute": true,
+                "value": "https://content.example.test/duplicate-item"
+              }
+            }
+          }
+        ]
+      },
+      "expectedError": {
+        "category": "invalid_request",
+        "code": "duplicate_artifact_id",
+        "message": "ArtifactCatalog artifact IDs must be unique.",
+        "phase": "validation"
+      },
+      "name": "duplicate-id-precedes-reference-resolution",
+      "reference": {
+        "artifactId": "duplicate-item"
+      }
+    }
+  ],
+  "format_version": 1,
+  "referenceCases": [
+    {
+      "catalog": {
+        "artifacts": [
+          {
+            "id": "inline-input",
+            "kind": {
+              "id": "artifact.file"
+            },
+            "source": {
+              "bytes": "000102ff",
+              "kind": "artifact.inline"
+            }
+          },
+          {
+            "id": "uri-input",
+            "kind": {
+              "id": "artifact.file"
+            },
+            "source": {
+              "kind": "artifact.uri",
+              "uri": {
+                "isAbsolute": true,
+                "value": "https://content.example.test/a%2Fb?version=1"
+              }
+            }
+          },
+          {
+            "id": "local-input",
+            "kind": {
+              "id": "artifact.file"
+            },
+            "source": {
+              "kind": "artifact.local_file",
+              "path": "../fixtures/content/input.bin"
+            }
+          }
+        ]
+      },
+      "expectedArtifactId": "local-input",
+      "name": "resolve-catalog-local-id",
+      "reference": {
+        "artifactId": "local-input",
+        "metadata": {
+          "sequence": 3
+        },
+        "relation": "artifact.input"
+      }
+    },
+    {
+      "catalog": {
+        "artifacts": [
+          {
+            "id": "available-item",
+            "kind": {
+              "id": "artifact.file"
+            },
+            "source": {
+              "bytes": "",
+              "kind": "artifact.inline"
+            }
+          }
+        ]
+      },
+      "expectedError": {
+        "category": "invalid_request",
+        "code": "artifact_reference_not_found",
+        "message": "ArtifactReference does not match an artifact in the supplied catalog.",
+        "phase": "artifact_resolution"
+      },
+      "otherCatalog": {
+        "artifacts": [
+          {
+            "id": "missing-item",
+            "kind": {
+              "id": "artifact.file"
+            },
+            "source": {
+              "bytes": "ff",
+              "kind": "artifact.inline"
+            }
+          }
+        ]
+      },
+      "name": "missing-id-stays-catalog-local",
+      "reference": {
+        "artifactId": "missing-item",
+        "relation": "artifact.input"
+      }
+    }
+  ],
+  "sourceCases": [
+    {
+      "expected": {
+        "extensions": {
+          "vendor.checksum": "sha256:fixture"
+        },
+        "id": "inline-source",
+        "kind": {
+          "id": "artifact.file"
+        },
+        "mediaType": "application/octet-stream",
+        "metadata": {
+          "sequence": 1
+        },
+        "source": {
+          "bytes": "00017fff",
+          "kind": "artifact.inline"
+        }
+      },
+      "input": {
+        "extensions": {
+          "vendor.checksum": "sha256:fixture"
+        },
+        "id": "inline-source",
+        "kind": {
+          "id": "artifact.file"
+        },
+        "mediaType": "application/octet-stream",
+        "metadata": {
+          "sequence": 1
+        },
+        "source": {
+          "bytes": "00017fff",
+          "kind": "artifact.inline"
+        }
+      },
+      "name": "inline-bytes"
+    },
+    {
+      "expected": {
+        "id": "uri-source",
+        "kind": {
+          "id": "artifact.file"
+        },
+        "mediaType": "application/json; charset=utf-8",
+        "source": {
+          "kind": "artifact.uri",
+          "uri": {
+            "isAbsolute": true,
+            "value": "https://content.example.test/a%2Fb?version=1#payload"
+          }
+        }
+      },
+      "input": {
+        "id": "uri-source",
+        "kind": {
+          "id": "artifact.file"
+        },
+        "mediaType": "application/json; charset=utf-8",
+        "source": {
+          "kind": "artifact.uri",
+          "uri": {
+            "isAbsolute": true,
+            "value": "https://content.example.test/a%2Fb?version=1#payload"
+          }
+        }
+      },
+      "name": "absolute-uri"
+    },
+    {
+      "expected": {
+        "id": "local-file-source",
+        "kind": {
+          "id": "artifact.file"
+        },
+        "source": {
+          "kind": "artifact.local_file",
+          "path": "../fixtures/content/input.bin"
+        }
+      },
+      "input": {
+        "id": "local-file-source",
+        "kind": {
+          "id": "artifact.file"
+        },
+        "source": {
+          "kind": "artifact.local_file",
+          "path": "../fixtures/content/input.bin"
+        }
+      },
+      "name": "lexical-local-path"
+    }
+  ],
+  "unknownKindCases": [
+    {
+      "expected": {
+        "extensions": {
+          "vendor.trace": {
+            "enabled": true
+          }
+        },
+        "id": "depth-map",
+        "kind": {
+          "extensions": {
+            "vendor.version": 2
+          },
+          "id": "vendor.depth_map",
+          "semantic": "Depth values aligned to an image plane."
+        },
+        "mediaType": "application/vnd.vendor.depth+binary; version=2",
+        "metadata": {
+          "height": 480,
+          "width": 640
+        },
+        "source": {
+          "bytes": "01020304",
+          "kind": "artifact.inline"
+        }
+      },
+      "input": {
+        "extensions": {
+          "vendor.trace": {
+            "enabled": true
+          }
+        },
+        "id": "depth-map",
+        "kind": {
+          "extensions": {
+            "vendor.version": 2
+          },
+          "id": "vendor.depth_map",
+          "semantic": "Depth values aligned to an image plane."
+        },
+        "mediaType": "application/vnd.vendor.depth+binary; version=2",
+        "metadata": {
+          "height": 480,
+          "width": 640
+        },
+        "source": {
+          "bytes": "01020304",
+          "kind": "artifact.inline"
+        }
+      },
+      "name": "provider-defined-kind-round-trip"
+    }
+  ]
+}
