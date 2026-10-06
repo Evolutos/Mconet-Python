@@ -70,3 +70,19 @@ def test_conformance_stage_reports_differences_and_blocks_packaging() -> None:
     assert "path: conformance-report.xml" in conformance_job
     assert "if: always()" in conformance_job
     assert "needs: conformance" in package_job
+
+
+def test_package_stage_builds_and_consumes_all_candidate_artifacts() -> None:
+    """Verify packaging tests SDK and sample wheels in an isolated consumer."""
+    # The package job must exercise local candidate dependency resolution before
+    # uploading both projects, rather than importing the editable checkout.
+    workflow = _WORKFLOW_PATH.read_text(encoding="utf-8")
+    package_start = workflow.index("  package:\n")
+    package_job = workflow[package_start:]
+
+    assert "needs: conformance" in package_job
+    assert "- run: python scripts/build_all.py" in package_job
+    assert "- run: python scripts/verify_release_consumption.py" in package_job
+    assert "name: distributions" in package_job
+    assert "dist/" in package_job
+    assert "samples/text-unary/dist/" in package_job
