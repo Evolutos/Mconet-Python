@@ -21,6 +21,7 @@ from mconet.core.domain.media_type import MediaType, parse_media_type
 from mconet.core.domain.message_content import MessageContent
 from mconet.core.domain.message_content_kind import MessageContentKind
 from mconet.core.domain.message_document import MessageDocument
+from mconet.core.domain.message_document_builder import MessageDocumentBuilder
 from mconet.core.domain.message_document_validation import validate_message_document
 from mconet.core.domain.message_element import MessageElement
 from mconet.core.domain.message_element_kind import MessageElementKind
@@ -85,6 +86,7 @@ __all__ = (
     "MessageContent",
     "MessageContentKind",
     "MessageDocument",
+    "MessageDocumentBuilder",
     "MessageElement",
     "MessageElementKind",
     "MessageElementValue",

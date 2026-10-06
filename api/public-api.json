@@ -138,6 +138,24 @@
       "members": {},
       "signature": "(version: 'str', purpose: \"Literal['input', 'output', 'context', 'custom']\", root: 'MessageGroup', metadata: 'Extensions' = <factory>, extensions: 'Extensions' = <factory>) -> None"
     },
+    "mconet.core.domain.MessageDocumentBuilder": {
+      "kind": "class",
+      "members": {
+        "build": {
+          "kind": "method",
+          "signature": "(self) -> 'MessageDocument'"
+        },
+        "with_extensions": {
+          "kind": "method",
+          "signature": "(self, extensions: 'Extensions') -> 'Self'"
+        },
+        "with_metadata": {
+          "kind": "method",
+          "signature": "(self, metadata: 'Extensions') -> 'Self'"
+        }
+      },
+      "signature": "(version: 'str', purpose: \"Literal['input', 'output', 'context', 'custom']\", root: 'MessageGroup') -> 'None'"
+    },
     "mconet.core.domain.MessageElement": {
       "kind": "class",
       "members": {

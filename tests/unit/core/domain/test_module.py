@@ -26,6 +26,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "MessageContent",
         "MessageContentKind",
         "MessageDocument",
+        "MessageDocumentBuilder",
         "MessageElement",
         "MessageElementKind",
         "MessageElementValue",
