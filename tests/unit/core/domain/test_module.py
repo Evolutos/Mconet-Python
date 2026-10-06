@@ -17,6 +17,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "JsonPrimitive",
         "JsonValue",
         "MediaType",
+        "ModelInteractionError",
         "OpenIdentifier",
         "RecoveryHint",
         "SchemaVersion",

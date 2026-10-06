@@ -9,6 +9,7 @@ from mconet.core.domain.interaction_phase import InteractionPhase
 from mconet.core.domain.json_primitive import JsonPrimitive
 from mconet.core.domain.json_value import JsonValue
 from mconet.core.domain.media_type import MediaType, parse_media_type
+from mconet.core.domain.model_interaction_error import ModelInteractionError
 from mconet.core.domain.open_identifier import OpenIdentifier, validate_open_identifier
 from mconet.core.domain.recovery_hint import RecoveryHint
 from mconet.core.domain.schema_version import SchemaVersion
@@ -31,6 +32,7 @@ __all__ = (
     "JsonPrimitive",
     "JsonValue",
     "MediaType",
+    "ModelInteractionError",
     "OpenIdentifier",
     "RecoveryHint",
     "SchemaVersion",

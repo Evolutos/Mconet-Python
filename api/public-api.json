@@ -48,6 +48,11 @@
       "members": {},
       "signature": "(type: 'str', subtype: 'str', parameters: 'tuple[tuple[str, str], ...]' = ()) -> None"
     },
+    "mconet.core.domain.ModelInteractionError": {
+      "kind": "class",
+      "members": {},
+      "signature": "(category: 'ErrorCategory', phase: 'InteractionPhase', code: 'str', message: 'str', status_code: 'int | None' = None, service_error_code: 'str | None' = None, request_id: 'str | None' = None, recovery: 'RecoveryHint | None' = None, cause: 'BaseException | None' = None) -> None"
+    },
     "mconet.core.domain.OpenIdentifier": {
       "kind": "class",
       "members": {},
