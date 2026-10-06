@@ -518,6 +518,32 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.domain.ModelTaskRequest": {
+      "kind": "class",
+      "members": {
+        "artifacts": {
+          "kind": "property",
+          "signature": null
+        },
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "document": {
+          "kind": "property",
+          "signature": null
+        },
+        "extensions": {
+          "kind": "property",
+          "signature": null
+        },
+        "metadata": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.domain.MonitoringMergeMode": {
       "kind": "class",
       "members": {},

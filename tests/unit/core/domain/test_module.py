@@ -51,6 +51,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "ModelDescriptor",
         "ModelInteractionError",
         "ModelTarget",
+        "ModelTaskRequest",
         "MonitoringMergeMode",
         "NamedModel",
         "OpenIdentifier",
