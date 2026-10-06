@@ -164,6 +164,10 @@
         "document": {
           "kind": "property",
           "signature": null
+        },
+        "text": {
+          "kind": "property",
+          "signature": null
         }
       },
       "signature": "(messages: 'MessageDocument', artifacts: 'ArtifactCatalog' = <factory>, metadata: 'Extensions' = <factory>, extensions: 'Extensions' = <factory>) -> None"

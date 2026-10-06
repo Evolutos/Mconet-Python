@@ -11,13 +11,17 @@ from mconet.core.domain.artifact_catalog import ArtifactCatalog
 from mconet.core.domain.extensions import Extensions
 from mconet.core.domain.json_value import JsonValue
 from mconet.core.domain.message_document import MessageDocument
+from mconet.core.domain.message_element import MessageElement
+from mconet.core.domain.message_entry import MessageEntry
 from mconet.core.domain.open_identifier import OpenIdentifier
 from mconet.core.domain.task_descriptor import TaskDescriptor
 from mconet.core.domain.task_document import TaskDocument
 from mconet.core.domain.task_group_node import TaskGroupNode
 from mconet.core.domain.task_node_kind import TaskNodeKind
+from mconet.core.domain.text_message_content import TextMessageContent
 
 _EMPTY_EXTENSIONS: Extensions = MappingProxyType({})
+_ASSISTANT_ROLE_ID = OpenIdentifier("message.assistant")
 _CONVERSATION_TASK_TYPE = OpenIdentifier("conversation.generate")
 _CONVERSATION_RESULT_KIND_ID = OpenIdentifier("task.result")
 _TASK_ROOT_KIND_ID = OpenIdentifier("task.root")
@@ -257,6 +261,48 @@ class ConversationTaskResult:
         # The document is built once during construction and remains authoritative;
         # callers cannot replace it or create a second MessageDocument copy.
         return self._document
+
+    @property
+    def text(self) -> str:
+        """Project assistant text from the authoritative message tree.
+
+        Entries are visited in document preorder, and text content within each
+        assistant entry retains its tuple order. Segments are concatenated
+        exactly without inserting separators or normalizing Unicode. Text from
+        other roles and non-text assistant content does not enter the view.
+
+        Returns:
+            The stable concatenation of all standard assistant text segments, or
+            an empty string when the message document contains none.
+        """
+        segments: list[str] = []
+        pending: list[MessageElement] = [self.messages.root]
+
+        # Use an explicit stack so deeply nested, valid message trees do not rely
+        # on Python recursion depth. Reversing children before pushing preserves
+        # their declared left-to-right order when the stack is subsequently read.
+        while pending:
+            element = pending.pop()
+            if isinstance(element, MessageEntry):
+                # Only the exact standard assistant role contributes to this
+                # convenience view; semantic hints on unknown roles are not role
+                # identity and therefore cannot silently reclassify an entry.
+                if element.role.id == _ASSISTANT_ROLE_ID:
+                    for content in element.content:
+                        # Concrete text content is projected in tuple order.
+                        # Provider-defined and future content remains available
+                        # through messages without being coerced into display text.
+                        if isinstance(content, TextMessageContent):
+                            segments.append(content.text)
+                continue
+
+            # Non-entry elements may be standard groups or future containers.
+            # Their structural children remain the sole source of traversal order.
+            pending.extend(reversed(element.sub_elements))
+
+        # Joining with an empty separator preserves producer-defined whitespace
+        # and matches ordered text-delta accumulation without inventing formatting.
+        return "".join(segments)
 
 
 def _snapshot_mapping(value: Extensions, field_name: str) -> Extensions:

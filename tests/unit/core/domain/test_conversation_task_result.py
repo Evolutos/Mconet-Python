@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import inspect
 from collections.abc import Callable
-from dataclasses import FrozenInstanceError, dataclass
+from dataclasses import FrozenInstanceError, dataclass, field
 from typing import Literal, Protocol, cast, runtime_checkable
 
 from mconet.core.domain import (
@@ -12,13 +12,16 @@ from mconet.core.domain import (
     ConversationTaskResult,
     Extensions,
     JsonValue,
+    MessageContentKind,
     MessageDocument,
     MessageElementKind,
+    MessageEntry,
     MessageGroup,
     ModelTaskResult,
     OpenIdentifier,
     TaskDescriptor,
     TaskNode,
+    TextMessageContent,
     validate_task_document,
 )
 
@@ -35,6 +38,62 @@ class _MessageKind:
 
     composition: Literal["leaf", "container"]
     """Message tree composition retained for document validation."""
+
+
+def _empty_extensions() -> Extensions:
+    """Create independently owned empty extension storage for fixtures."""
+    # Returning a fresh dictionary prevents test roles and contents from sharing
+    # mutable state while satisfying the public read-only mapping annotation.
+    return {}
+
+
+@dataclass(frozen=True, slots=True)
+class _Role:
+    """Provide a complete open role for text projection fixtures."""
+
+    id: OpenIdentifier
+    """Standard or provider-defined role identity."""
+
+    semantic: str | None = None
+    """Optional role guidance that never replaces identity."""
+
+    raw_value: str | None = None
+    """Optional exact role spelling received from a provider."""
+
+    extensions: Extensions = field(default_factory=_empty_extensions)
+    """Unknown role fields retained without interpretation."""
+
+
+@dataclass(frozen=True, slots=True)
+class _ContentKind:
+    """Provide an open non-text content identity for projection tests."""
+
+    id: OpenIdentifier
+    """Provider-defined content representation identifier."""
+
+
+def _opaque_content_kind() -> MessageContentKind:
+    """Create one structurally complete provider-defined content Kind."""
+    # A fresh immutable fixture value keeps content construction explicit while
+    # returning the open public protocol rather than a test-only concrete type.
+    return _ContentKind(OpenIdentifier("vendor.opaque"))
+
+
+@dataclass(frozen=True, slots=True)
+class _OpaqueContent:
+    """Represent valid assistant content that has no text projection."""
+
+    id: str
+    """Stable content identifier inside the fixture document."""
+
+    kind: MessageContentKind = field(default_factory=_opaque_content_kind)
+    """Non-text content Kind retained through the authoritative messages."""
+
+    metadata: Extensions = field(default_factory=_empty_extensions)
+    """Descriptive content metadata unused by text projection."""
+
+    extensions: Extensions = field(default_factory=_empty_extensions)
+    """Unknown content fields retained without text coercion."""
 
 
 @runtime_checkable
@@ -83,6 +142,29 @@ def _messages(
         purpose,
         MessageGroup("message-root", kind, ()),
     )
+
+
+def _entry(entry_id: str, role_id: str, *segments: str) -> MessageEntry:
+    """Create one entry whose ordered text contents have deterministic IDs."""
+    # Derive fixture-only content IDs from position while preserving every text
+    # value exactly, including empty strings and caller-provided whitespace.
+    content = tuple(
+        TextMessageContent(f"{entry_id}-content-{index}", text)
+        for index, text in enumerate(segments)
+    )
+    return MessageEntry(entry_id, _Role(OpenIdentifier(role_id)), content)
+
+
+def _group(group_id: str, *children: MessageEntry | MessageGroup) -> MessageGroup:
+    """Create one valid ordered group for nested projection scenarios."""
+    # Each fixture group is a concrete container; child tuple order is supplied
+    # directly so projection tests can detect breadth-first or reversed traversal.
+    kind: MessageElementKind = _MessageKind(
+        OpenIdentifier("message.group"),
+        "group",
+        "container",
+    )
+    return MessageGroup(group_id, kind, children)
 
 
 def _mutate_mapping(mapping: dict[str, JsonValue]) -> None:
@@ -157,6 +239,75 @@ def test_conversation_task_result_embeds_messages_once_in_valid_task_tree() -> N
     assert node.messages is messages
     assert result.messages is messages
     assert validate_task_document(document) is document
+
+
+def test_conversation_text_projects_assistant_segments_in_document_order() -> None:
+    """Verify nested entries and content segments use one stable preorder."""
+    first = MessageEntry(
+        "assistant-1",
+        _Role(OpenIdentifier("message.assistant")),
+        (
+            TextMessageContent("assistant-1-content-0", "Hello"),
+            _OpaqueContent("assistant-1-content-1"),
+            TextMessageContent("assistant-1-content-2", " "),
+        ),
+    )
+    ignored_user = _entry("user-1", "message.user", "do not include")
+    nested = _group(
+        "nested",
+        _entry("assistant-2", "message.assistant", "世界", "!"),
+    )
+    last = _entry("assistant-3", "message.assistant", "\nDone")
+    root = _group("root", first, ignored_user, nested, last)
+    messages = MessageDocument("1.0", "output", root)
+    result = ConversationTaskResult(messages)
+
+    # The projection follows root preorder and each entry's content tuple order.
+    # Non-text content stays in messages but is not coerced. No separator is
+    # invented, so producer whitespace and newlines remain exact.
+    assert result.text == "Hello 世界!\nDone"
+    assert isinstance(first.content[1], _OpaqueContent)
+    assert result.messages is messages
+    assert result.messages.root is root
+
+
+def test_conversation_text_requires_standard_assistant_role_identity() -> None:
+    """Verify role hints cannot reclassify user or provider-defined entries."""
+    semantic_only = MessageEntry(
+        "custom",
+        _Role(
+            OpenIdentifier("vendor.responder"),
+            semantic="assistant",
+            raw_value="assistant",
+        ),
+        (TextMessageContent("custom-content", "ignored"),),
+    )
+    user = _entry("user", "message.user", "also ignored")
+    assistant = _entry("assistant", "message.assistant", "kept")
+    messages = MessageDocument(
+        "1.0",
+        "output",
+        _group("root", semantic_only, user, assistant),
+    )
+
+    # Only the open identifier is authoritative. Semantic and raw provider text
+    # remain preservation fields and cannot opt unknown roles into the projection.
+    assert ConversationTaskResult(messages).text == "kept"
+
+
+def test_conversation_text_is_empty_without_assistant_text() -> None:
+    """Verify an empty or non-assistant document has an empty projection."""
+    empty_messages = _messages()
+    user_messages = MessageDocument(
+        "1.0",
+        "output",
+        _group("root", _entry("user", "message.user", "question")),
+    )
+
+    # Returning an ordinary empty string gives callers one total read-only view
+    # without manufacturing an assistant entry or mutating either source tree.
+    assert ConversationTaskResult(empty_messages).text == ""
+    assert ConversationTaskResult(user_messages).text == ""
 
 
 def test_conversation_task_result_preserves_catalog_and_mapping_ownership() -> None:
