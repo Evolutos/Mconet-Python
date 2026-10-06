@@ -1,0 +1,14 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mconet-text-unary-sample"
+version = "0.0.0"
+description = "R1 text unary usage samples for Mconet"
+requires-python = ">=3.11"
+dependencies = ["mconet-sdk==0.1.0.dev0"]
+authors = [{ name = "Mcont", email = "Mcont@gmail.com" }]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mconet_text_unary_sample"]
