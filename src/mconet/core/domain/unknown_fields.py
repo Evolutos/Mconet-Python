@@ -7,7 +7,7 @@ from types import MappingProxyType
 from typing import cast
 
 from mconet.core.domain.extensions import Extensions
-from mconet.core.domain.json_value import JsonValue
+from mconet.core.domain.json_value import JsonValue, validate_json_value_numbers
 
 
 def preserve_unknown_fields(
@@ -86,7 +86,10 @@ def _require_field_mapping(
     mapping = cast(Mapping[object, object], candidate)
     if any(not isinstance(name, str) for name in mapping):
         raise TypeError(f"{field} keys must be strings.")
-    return cast(Mapping[str, JsonValue], mapping)
+    typed_mapping = cast(Mapping[str, JsonValue], mapping)
+    for json_value in typed_mapping.values():
+        validate_json_value_numbers(json_value)
+    return typed_mapping
 
 
 def _require_field_names(value: Collection[str]) -> frozenset[str]:

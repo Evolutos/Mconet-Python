@@ -6,7 +6,11 @@ from dataclasses import dataclass
 from typing import Literal, cast
 
 from mconet.core.domain.interaction_phase import InteractionPhase
-from mconet.core.domain.json_value import JsonValue, is_json_value
+from mconet.core.domain.json_value import (
+    JsonValue,
+    is_json_value,
+    validate_json_value_numbers,
+)
 from mconet.core.domain.open_identifier import (
     OpenIdentifier,
     validate_open_identifier,
@@ -68,5 +72,7 @@ class Diagnostic:
                     "Diagnostic service_id must be an OpenIdentifier or None."
                 )
             validate_open_identifier(service_id)
-        if details is not None and not is_json_value(details):
-            raise TypeError("Diagnostic details must be a JsonValue or None.")
+        if details is not None:
+            if not is_json_value(details):
+                raise TypeError("Diagnostic details must be a JsonValue or None.")
+            validate_json_value_numbers(cast(JsonValue, details))

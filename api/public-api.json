@@ -117,6 +117,10 @@
       "kind": "function",
       "signature": "(value: 'int', unit: \"Literal['seconds', 'milliseconds', 'microseconds', 'nanoseconds']\" = 'nanoseconds') -> 'Duration'"
     },
+    "mconet.core.domain.validate_json_value_numbers": {
+      "kind": "function",
+      "signature": "(value: 'JsonValue') -> 'JsonValue'"
+    },
     "mconet.core.domain.validate_open_identifier": {
       "kind": "function",
       "signature": "(identifier: 'OpenIdentifier') -> 'OpenIdentifier'"

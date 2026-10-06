@@ -7,7 +7,7 @@ from mconet.core.domain.error_category import ErrorCategory
 from mconet.core.domain.extensions import Extensions
 from mconet.core.domain.interaction_phase import InteractionPhase
 from mconet.core.domain.json_primitive import JsonPrimitive
-from mconet.core.domain.json_value import JsonValue
+from mconet.core.domain.json_value import JsonValue, validate_json_value_numbers
 from mconet.core.domain.media_type import MediaType, parse_media_type
 from mconet.core.domain.model_interaction_error import ModelInteractionError
 from mconet.core.domain.open_identifier import OpenIdentifier, validate_open_identifier
@@ -47,6 +47,7 @@ __all__ = (
     "restore_preserved_fields",
     "serialize_optional_fields",
     "validate_duration",
+    "validate_json_value_numbers",
     "validate_open_identifier",
     "validate_uri",
 )

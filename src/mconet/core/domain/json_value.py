@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from typing import TypeAlias, cast
 
 from mconet.core.domain.json_primitive import JsonPrimitive
@@ -10,6 +11,9 @@ from mconet.core.domain.json_primitive import JsonPrimitive
 # without accidentally admitting tuples, bytes, or arbitrary collection types.
 JsonValue: TypeAlias = JsonPrimitive | list["JsonValue"] | dict[str, "JsonValue"]
 """A recursive JSON primitive, array, or string-keyed object."""
+
+_MIN_SAFE_INTEGER = -(2**53 - 1)
+_MAX_SAFE_INTEGER = 2**53 - 1
 
 
 def is_json_value(value: object) -> bool:
@@ -45,3 +49,48 @@ def is_json_value(value: object) -> bool:
             continue
         return False
     return True
+
+
+def validate_json_value_numbers(value: JsonValue) -> JsonValue:
+    """Validate portable numeric values throughout a recursive JSON value.
+
+    Integers use the inclusive interoperable range ``-(2**53 - 1)`` through
+    ``2**53 - 1`` so TypeScript and other binary64-based consumers retain them
+    exactly. Floating-point values must be finite IEEE 754 binary64 values;
+    NaN and positive or negative infinity are not JSON numbers.
+
+    Args:
+        value: A primitive, array, or string-keyed object to validate.
+
+    Returns:
+        The original value after successful recursive validation.
+
+    Raises:
+        TypeError: If ``value`` is not structurally a :class:`JsonValue`.
+        ValueError: If an integer is unsafe or a float is non-finite.
+    """
+    candidate = cast(object, value)
+    if not is_json_value(candidate):
+        raise TypeError("value must be a structurally valid JsonValue.")
+
+    pending: list[object] = [candidate]
+    while pending:
+        current = pending.pop()
+        if isinstance(current, bool) or current is None or isinstance(current, str):
+            continue
+        if isinstance(current, int):
+            if not _MIN_SAFE_INTEGER <= current <= _MAX_SAFE_INTEGER:
+                raise ValueError(
+                    "JSON integer must be within the interoperable safe range."
+                )
+            continue
+        if isinstance(current, float):
+            if not math.isfinite(current):
+                raise ValueError("JSON floating-point value must be finite.")
+            continue
+        if isinstance(current, list):
+            pending.extend(cast(list[object], current))
+            continue
+        mapping = cast(dict[str, object], current)
+        pending.extend(mapping.values())
+    return value

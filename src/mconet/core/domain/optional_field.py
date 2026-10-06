@@ -8,7 +8,11 @@ from types import MappingProxyType
 from typing import cast
 
 from mconet.core.domain.extensions import Extensions
-from mconet.core.domain.json_value import JsonValue, is_json_value
+from mconet.core.domain.json_value import (
+    JsonValue,
+    is_json_value,
+    validate_json_value_numbers,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -38,6 +42,7 @@ class OptionalField:
             return
         if not is_json_value(value):
             raise TypeError("A present OptionalField value must be a JsonValue.")
+        validate_json_value_numbers(cast(JsonValue, value))
 
 
 def serialize_optional_fields(
