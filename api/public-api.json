@@ -36,6 +36,11 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.domain.ArtifactCatalog": {
+      "kind": "class",
+      "members": {},
+      "signature": "(artifacts: 'tuple[Artifact, ...]' = ()) -> None"
+    },
     "mconet.core.domain.ArtifactDescriptor": {
       "kind": "class",
       "members": {
