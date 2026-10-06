@@ -29,6 +29,7 @@ python scripts/build_all.py
 - [Task, Message, and Artifact boundaries](docs/adr/0001-task-message-artifact-boundaries.md)
 - [Direct injection without registries](docs/adr/0002-direct-injection-without-registry.md)
 - [Default JSON and system HTTP](docs/adr/0003-default-json-and-system-http.md)
+- [R1 text unary scope](docs/adr/0004-r1-text-unary-only.md)
 - [Experimental API policy](spec/compatibility/experimental-api-policy.json)
 - [Package names](spec/compatibility/package-names.json)
 - [Runtime compatibility](spec/compatibility/runtime-matrix.json)
