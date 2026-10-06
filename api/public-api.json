@@ -23,6 +23,11 @@
       "members": {},
       "signature": "(value: 'str') -> None"
     },
+    "mconet.core.domain.Timestamp": {
+      "kind": "class",
+      "members": {},
+      "signature": "(epoch_seconds: 'int', nanosecond: 'int' = 0) -> None"
+    },
     "mconet.core.domain.validate_open_identifier": {
       "kind": "function",
       "signature": "(identifier: 'OpenIdentifier') -> 'OpenIdentifier'"
