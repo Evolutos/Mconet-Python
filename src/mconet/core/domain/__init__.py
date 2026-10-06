@@ -4,6 +4,7 @@ from mconet.core.domain.bytes_value import Bytes
 from mconet.core.domain.duration import Duration, validate_duration
 from mconet.core.domain.error_category import ErrorCategory
 from mconet.core.domain.extensions import Extensions
+from mconet.core.domain.interaction_phase import InteractionPhase
 from mconet.core.domain.json_primitive import JsonPrimitive
 from mconet.core.domain.json_value import JsonValue
 from mconet.core.domain.media_type import MediaType, parse_media_type
@@ -23,6 +24,7 @@ __all__ = (
     "Duration",
     "ErrorCategory",
     "Extensions",
+    "InteractionPhase",
     "JsonPrimitive",
     "JsonValue",
     "MediaType",

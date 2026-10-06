@@ -25,6 +25,11 @@
       "kind": "value",
       "type": "GenericAlias"
     },
+    "mconet.core.domain.InteractionPhase": {
+      "kind": "class",
+      "members": {},
+      "signature": "(id: 'OpenIdentifier') -> None"
+    },
     "mconet.core.domain.JsonPrimitive": {
       "kind": "value",
       "type": "UnionType"
