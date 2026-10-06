@@ -16,6 +16,11 @@
       "members": {},
       "signature": "(total_nanoseconds: 'int') -> None"
     },
+    "mconet.core.domain.ErrorCategory": {
+      "kind": "class",
+      "members": {},
+      "signature": "(id: 'OpenIdentifier') -> None"
+    },
     "mconet.core.domain.Extensions": {
       "kind": "value",
       "type": "GenericAlias"

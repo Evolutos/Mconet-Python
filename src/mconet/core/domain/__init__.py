@@ -2,6 +2,7 @@
 
 from mconet.core.domain.bytes_value import Bytes
 from mconet.core.domain.duration import Duration, validate_duration
+from mconet.core.domain.error_category import ErrorCategory
 from mconet.core.domain.extensions import Extensions
 from mconet.core.domain.json_primitive import JsonPrimitive
 from mconet.core.domain.json_value import JsonValue
@@ -20,6 +21,7 @@ __all__ = (
     "AuthorizedSecretConsumer",
     "Bytes",
     "Duration",
+    "ErrorCategory",
     "Extensions",
     "JsonPrimitive",
     "JsonValue",
