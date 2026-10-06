@@ -1,0 +1,381 @@
+{
+  "cases": [
+    {
+      "expected": {
+        "resolved": {
+          "cancellationSignal": "interaction",
+          "compatibilityPolicy": "strict",
+          "resourceLimits": {
+            "maxFrameBytes": 311,
+            "maxResponseBodyBytes": 111,
+            "maxStreamingErrorBodyBytes": 211
+          },
+          "serviceAccess": "interaction",
+          "target": "request"
+        },
+        "safeSnapshot": {
+          "cancellationConfigured": true,
+          "compatibilityPolicy": "strict",
+          "deploymentId": "deployment-request",
+          "maxFrameBytes": 311,
+          "maxResponseBodyBytes": 111,
+          "maxStreamingErrorBodyBytes": 211,
+          "modelName": "model-request",
+          "protocolId": "protocol.request",
+          "serviceAccessConfigured": true,
+          "serviceId": "service.request"
+        },
+        "selectedSources": {
+          "cancellationSignal": "interaction",
+          "compatibilityPolicy": "interaction",
+          "resourceLimits": {
+            "maxFrameBytes": "interaction",
+            "maxResponseBodyBytes": "interaction",
+            "maxStreamingErrorBodyBytes": "interaction"
+          },
+          "serviceAccess": "interaction",
+          "target": "request"
+        }
+      },
+      "name": "interaction-overrides-applicable-fields",
+      "sources": {
+        "client": {
+          "cancellationSignal": "client",
+          "compatibilityPolicy": "permissive",
+          "resourceLimits": {
+            "maxFrameBytes": 321,
+            "maxResponseBodyBytes": 121,
+            "maxStreamingErrorBodyBytes": 221
+          },
+          "serviceAccess": "client",
+          "target": "client"
+        },
+        "integration": {
+          "cancellationSignal": "integration",
+          "compatibilityPolicy": "integration_policy",
+          "resourceLimits": {
+            "maxFrameBytes": 341,
+            "maxResponseBodyBytes": 141,
+            "maxStreamingErrorBodyBytes": 241
+          },
+          "serviceAccess": "integration",
+          "target": "integration"
+        },
+        "interaction": {
+          "cancellationSignal": "interaction",
+          "compatibilityPolicy": "strict",
+          "resourceLimits": {
+            "maxFrameBytes": 311,
+            "maxResponseBodyBytes": 111,
+            "maxStreamingErrorBodyBytes": 211
+          },
+          "serviceAccess": "interaction",
+          "target": "interaction"
+        },
+        "request": {
+          "cancellationSignal": "request",
+          "compatibilityPolicy": "request_policy",
+          "resourceLimits": {
+            "maxFrameBytes": 331,
+            "maxResponseBodyBytes": 131,
+            "maxStreamingErrorBodyBytes": 231
+          },
+          "serviceAccess": "request",
+          "target": "request"
+        }
+      }
+    },
+    {
+      "expected": {
+        "resolved": {
+          "cancellationSignal": null,
+          "compatibilityPolicy": "permissive",
+          "resourceLimits": {
+            "maxFrameBytes": 322,
+            "maxResponseBodyBytes": 122,
+            "maxStreamingErrorBodyBytes": 222
+          },
+          "serviceAccess": "request",
+          "target": "request"
+        },
+        "safeSnapshot": {
+          "cancellationConfigured": false,
+          "compatibilityPolicy": "permissive",
+          "deploymentId": "deployment-request",
+          "maxFrameBytes": 322,
+          "maxResponseBodyBytes": 122,
+          "maxStreamingErrorBodyBytes": 222,
+          "modelName": "model-request",
+          "protocolId": "protocol.request",
+          "serviceAccessConfigured": true,
+          "serviceId": "service.request"
+        },
+        "selectedSources": {
+          "cancellationSignal": null,
+          "compatibilityPolicy": "client",
+          "resourceLimits": {
+            "maxFrameBytes": "client",
+            "maxResponseBodyBytes": "client",
+            "maxStreamingErrorBodyBytes": "client"
+          },
+          "serviceAccess": "request",
+          "target": "request"
+        }
+      },
+      "name": "request-and-client-fallbacks",
+      "sources": {
+        "client": {
+          "cancellationSignal": "client",
+          "compatibilityPolicy": "permissive",
+          "resourceLimits": {
+            "maxFrameBytes": 322,
+            "maxResponseBodyBytes": 122,
+            "maxStreamingErrorBodyBytes": 222
+          },
+          "serviceAccess": "client",
+          "target": "client"
+        },
+        "integration": {
+          "cancellationSignal": "integration",
+          "compatibilityPolicy": "integration_policy",
+          "serviceAccess": "integration"
+        },
+        "interaction": {},
+        "request": {
+          "cancellationSignal": "request",
+          "compatibilityPolicy": "request_policy",
+          "resourceLimits": {
+            "maxFrameBytes": 332,
+            "maxResponseBodyBytes": 132,
+            "maxStreamingErrorBodyBytes": 232
+          },
+          "serviceAccess": "request",
+          "target": "request"
+        }
+      }
+    },
+    {
+      "expected": {
+        "resolved": {
+          "cancellationSignal": null,
+          "compatibilityPolicy": "compatible",
+          "resourceLimits": {
+            "maxFrameBytes": 300,
+            "maxResponseBodyBytes": 100,
+            "maxStreamingErrorBodyBytes": 200
+          },
+          "serviceAccess": "client",
+          "target": "client"
+        },
+        "safeSnapshot": {
+          "cancellationConfigured": false,
+          "compatibilityPolicy": "compatible",
+          "deploymentId": "deployment-client",
+          "maxFrameBytes": 300,
+          "maxResponseBodyBytes": 100,
+          "maxStreamingErrorBodyBytes": 200,
+          "modelName": "model-client",
+          "protocolId": "protocol.client",
+          "serviceAccessConfigured": true,
+          "serviceId": "service.client"
+        },
+        "selectedSources": {
+          "cancellationSignal": null,
+          "compatibilityPolicy": "sdk_safe_default",
+          "resourceLimits": {
+            "maxFrameBytes": "sdk_safe_default",
+            "maxResponseBodyBytes": "sdk_safe_default",
+            "maxStreamingErrorBodyBytes": "sdk_safe_default"
+          },
+          "serviceAccess": "client",
+          "target": "client"
+        }
+      },
+      "name": "client-and-sdk-fallbacks",
+      "sources": {
+        "client": {
+          "serviceAccess": "client",
+          "target": "client"
+        },
+        "integration": {
+          "serviceAccess": "integration",
+          "target": "integration"
+        },
+        "interaction": {
+          "target": "interaction"
+        },
+        "request": {}
+      }
+    },
+    {
+      "expected": {
+        "resolved": {
+          "cancellationSignal": null,
+          "compatibilityPolicy": "compatible",
+          "resourceLimits": {
+            "maxFrameBytes": 300,
+            "maxResponseBodyBytes": 100,
+            "maxStreamingErrorBodyBytes": 200
+          },
+          "serviceAccess": "integration",
+          "target": "client"
+        },
+        "safeSnapshot": {
+          "cancellationConfigured": false,
+          "compatibilityPolicy": "compatible",
+          "deploymentId": "deployment-client",
+          "maxFrameBytes": 300,
+          "maxResponseBodyBytes": 100,
+          "maxStreamingErrorBodyBytes": 200,
+          "modelName": "model-client",
+          "protocolId": "protocol.client",
+          "serviceAccessConfigured": true,
+          "serviceId": "service.client"
+        },
+        "selectedSources": {
+          "cancellationSignal": null,
+          "compatibilityPolicy": "sdk_safe_default",
+          "resourceLimits": {
+            "maxFrameBytes": "sdk_safe_default",
+            "maxResponseBodyBytes": "sdk_safe_default",
+            "maxStreamingErrorBodyBytes": "sdk_safe_default"
+          },
+          "serviceAccess": "integration",
+          "target": "client"
+        }
+      },
+      "name": "integration-access-fallback",
+      "sources": {
+        "client": {
+          "target": "client"
+        },
+        "integration": {
+          "serviceAccess": "integration"
+        },
+        "interaction": {},
+        "request": {}
+      }
+    },
+    {
+      "expected": {
+        "resolved": {
+          "cancellationSignal": null,
+          "compatibilityPolicy": "compatible",
+          "resourceLimits": {
+            "maxFrameBytes": 300,
+            "maxResponseBodyBytes": 100,
+            "maxStreamingErrorBodyBytes": 200
+          },
+          "serviceAccess": null,
+          "target": "request"
+        },
+        "safeSnapshot": {
+          "cancellationConfigured": false,
+          "compatibilityPolicy": "compatible",
+          "deploymentId": "deployment-request",
+          "maxFrameBytes": 300,
+          "maxResponseBodyBytes": 100,
+          "maxStreamingErrorBodyBytes": 200,
+          "modelName": "model-request",
+          "protocolId": "protocol.request",
+          "serviceAccessConfigured": false,
+          "serviceId": "service.request"
+        },
+        "selectedSources": {
+          "cancellationSignal": null,
+          "compatibilityPolicy": "sdk_safe_default",
+          "resourceLimits": {
+            "maxFrameBytes": "sdk_safe_default",
+            "maxResponseBodyBytes": "sdk_safe_default",
+            "maxStreamingErrorBodyBytes": "sdk_safe_default"
+          },
+          "serviceAccess": null,
+          "target": "request"
+        }
+      },
+      "name": "optional-access-absent",
+      "sources": {
+        "client": {},
+        "integration": {
+          "resourceLimits": {
+            "maxFrameBytes": 345,
+            "maxResponseBodyBytes": 145,
+            "maxStreamingErrorBodyBytes": 245
+          }
+        },
+        "interaction": {},
+        "request": {
+          "resourceLimits": {
+            "maxFrameBytes": 335,
+            "maxResponseBodyBytes": 135,
+            "maxStreamingErrorBodyBytes": 235
+          },
+          "target": "request"
+        }
+      }
+    },
+    {
+      "expected": {
+        "resolved": {
+          "cancellationSignal": null,
+          "compatibilityPolicy": "compatible",
+          "resourceLimits": {
+            "maxFrameBytes": 300,
+            "maxResponseBodyBytes": 116,
+            "maxStreamingErrorBodyBytes": 226
+          },
+          "serviceAccess": null,
+          "target": "request"
+        },
+        "safeSnapshot": {
+          "cancellationConfigured": false,
+          "compatibilityPolicy": "compatible",
+          "deploymentId": "deployment-request",
+          "maxFrameBytes": 300,
+          "maxResponseBodyBytes": 116,
+          "maxStreamingErrorBodyBytes": 226,
+          "modelName": "model-request",
+          "protocolId": "protocol.request",
+          "serviceAccessConfigured": false,
+          "serviceId": "service.request"
+        },
+        "selectedSources": {
+          "cancellationSignal": null,
+          "compatibilityPolicy": "sdk_safe_default",
+          "resourceLimits": {
+            "maxFrameBytes": "sdk_safe_default",
+            "maxResponseBodyBytes": "interaction",
+            "maxStreamingErrorBodyBytes": "client"
+          },
+          "serviceAccess": null,
+          "target": "request"
+        }
+      },
+      "name": "resource-fields-resolve-independently",
+      "sources": {
+        "client": {
+          "resourceLimits": {
+            "maxResponseBodyBytes": 126,
+            "maxStreamingErrorBodyBytes": 226
+          }
+        },
+        "integration": {},
+        "interaction": {
+          "resourceLimits": {
+            "maxResponseBodyBytes": 116
+          }
+        },
+        "request": {
+          "target": "request"
+        }
+      }
+    }
+  ],
+  "format_version": 1,
+  "precedenceResource": "configuration-precedence.json",
+  "sdkResourceLimits": {
+    "maxFrameBytes": 300,
+    "maxResponseBodyBytes": 100,
+    "maxStreamingErrorBodyBytes": 200
+  }
+}
