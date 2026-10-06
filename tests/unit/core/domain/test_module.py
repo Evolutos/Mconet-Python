@@ -1,10 +1,10 @@
-"""Tests for the S0 core-domain module boundary."""
+"""Tests for the public core-domain module boundary."""
 
 import mconet.core.domain
 
 
-def test_core_domain_imports_without_public_types() -> None:
-    """Verify the empty domain module builds and exposes no premature API."""
-    # S0 establishes only the package boundary; domain types are introduced by
-    # their own later work packages and must not be anticipated here.
-    assert mconet.core.domain.__all__ == ()
+def test_core_domain_exports_only_completed_public_types() -> None:
+    """Verify the domain root exposes only its implemented S1 types."""
+    # Each later work package extends this explicit tuple only after its own
+    # implementation and tests are complete.
+    assert mconet.core.domain.__all__ == ("OpenIdentifier",)

@@ -1,5 +1,11 @@
 {
   "package": "mconet",
   "schema_version": 1,
-  "symbols": {}
+  "symbols": {
+    "mconet.core.domain.OpenIdentifier": {
+      "kind": "class",
+      "members": {},
+      "signature": "(value: 'str') -> None"
+    }
+  }
 }
