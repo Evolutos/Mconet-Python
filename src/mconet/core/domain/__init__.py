@@ -7,6 +7,7 @@ from mconet.core.domain.json_primitive import JsonPrimitive
 from mconet.core.domain.json_value import JsonValue
 from mconet.core.domain.open_identifier import OpenIdentifier, validate_open_identifier
 from mconet.core.domain.timestamp import Timestamp, parse_timestamp
+from mconet.core.domain.uri import UriValue
 
 __all__ = (
     "Bytes",
@@ -16,6 +17,7 @@ __all__ = (
     "JsonValue",
     "OpenIdentifier",
     "Timestamp",
+    "UriValue",
     "parse_timestamp",
     "validate_duration",
     "validate_open_identifier",

@@ -33,6 +33,11 @@
       "members": {},
       "signature": "(epoch_seconds: 'int', nanosecond: 'int' = 0) -> None"
     },
+    "mconet.core.domain.UriValue": {
+      "kind": "class",
+      "members": {},
+      "signature": "(value: 'str', is_absolute: 'bool') -> None"
+    },
     "mconet.core.domain.parse_timestamp": {
       "kind": "function",
       "signature": "(value: 'str') -> 'Timestamp'"
