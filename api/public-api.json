@@ -630,6 +630,10 @@
       "kind": "function",
       "signature": "(timestamp: 'Timestamp', precision: \"Literal['seconds', 'milliseconds', 'microseconds', 'nanoseconds']\" = 'nanoseconds') -> 'str'"
     },
+    "mconet.core.domain.validate_artifact": {
+      "kind": "function",
+      "signature": "(artifact: 'Artifact') -> 'Artifact'"
+    },
     "mconet.core.domain.validate_duration": {
       "kind": "function",
       "signature": "(value: 'int', unit: \"Literal['seconds', 'milliseconds', 'microseconds', 'nanoseconds']\" = 'nanoseconds') -> 'Duration'"

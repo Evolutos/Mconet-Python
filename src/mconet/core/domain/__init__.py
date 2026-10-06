@@ -7,6 +7,7 @@ from mconet.core.domain.artifact_kind import ArtifactKind
 from mconet.core.domain.artifact_metadata import ArtifactMetadata
 from mconet.core.domain.artifact_reference import ArtifactReference
 from mconet.core.domain.artifact_source import ArtifactSource
+from mconet.core.domain.artifact_validation import validate_artifact
 from mconet.core.domain.authorization import Authorization
 from mconet.core.domain.bytes_value import Bytes
 from mconet.core.domain.cancellation_signal import CancellationSignal
@@ -140,6 +141,7 @@ __all__ = (
     "restore_preserved_fields",
     "serialize_optional_fields",
     "serialize_timestamp",
+    "validate_artifact",
     "validate_duration",
     "validate_json_value_numbers",
     "validate_message_document",
