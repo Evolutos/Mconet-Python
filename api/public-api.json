@@ -148,6 +148,11 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.domain.MonitoringMergeMode": {
+      "kind": "class",
+      "members": {},
+      "signature": "(mode: 'OpenIdentifier') -> None"
+    },
     "mconet.core.domain.NamedModel": {
       "kind": "class",
       "members": {},
