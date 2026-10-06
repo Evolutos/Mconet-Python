@@ -48,6 +48,40 @@
       "members": {},
       "signature": "(type: 'str', subtype: 'str', parameters: 'tuple[tuple[str, str], ...]' = ()) -> None"
     },
+    "mconet.core.domain.ModelDescriptor": {
+      "kind": "class",
+      "members": {
+        "description": {
+          "kind": "property",
+          "signature": null
+        },
+        "display_name": {
+          "kind": "property",
+          "signature": null
+        },
+        "extensions": {
+          "kind": "property",
+          "signature": null
+        },
+        "family": {
+          "kind": "property",
+          "signature": null
+        },
+        "metadata": {
+          "kind": "property",
+          "signature": null
+        },
+        "name": {
+          "kind": "property",
+          "signature": null
+        },
+        "version": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.domain.ModelInteractionError": {
       "kind": "class",
       "members": {},

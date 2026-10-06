@@ -9,6 +9,7 @@ from mconet.core.domain.interaction_phase import InteractionPhase
 from mconet.core.domain.json_primitive import JsonPrimitive
 from mconet.core.domain.json_value import JsonValue, validate_json_value_numbers
 from mconet.core.domain.media_type import MediaType, parse_media_type
+from mconet.core.domain.model_descriptor import ModelDescriptor
 from mconet.core.domain.model_interaction_error import ModelInteractionError
 from mconet.core.domain.open_identifier import OpenIdentifier, validate_open_identifier
 from mconet.core.domain.optional_field import OptionalField, serialize_optional_fields
@@ -33,6 +34,7 @@ __all__ = (
     "JsonPrimitive",
     "JsonValue",
     "MediaType",
+    "ModelDescriptor",
     "ModelInteractionError",
     "OpenIdentifier",
     "OptionalField",
