@@ -2,6 +2,7 @@
 
 from mconet.core.domain.artifact import Artifact
 from mconet.core.domain.artifact_catalog import ArtifactCatalog
+from mconet.core.domain.artifact_catalog_validation import validate_artifact_catalog
 from mconet.core.domain.artifact_descriptor import ArtifactDescriptor
 from mconet.core.domain.artifact_kind import ArtifactKind
 from mconet.core.domain.artifact_metadata import ArtifactMetadata
@@ -142,6 +143,7 @@ __all__ = (
     "serialize_optional_fields",
     "serialize_timestamp",
     "validate_artifact",
+    "validate_artifact_catalog",
     "validate_duration",
     "validate_json_value_numbers",
     "validate_message_document",

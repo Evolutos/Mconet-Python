@@ -634,6 +634,10 @@
       "kind": "function",
       "signature": "(artifact: 'Artifact') -> 'Artifact'"
     },
+    "mconet.core.domain.validate_artifact_catalog": {
+      "kind": "function",
+      "signature": "(catalog: 'ArtifactCatalog') -> 'ArtifactCatalog'"
+    },
     "mconet.core.domain.validate_duration": {
       "kind": "function",
       "signature": "(value: 'int', unit: \"Literal['seconds', 'milliseconds', 'microseconds', 'nanoseconds']\" = 'nanoseconds') -> 'Duration'"

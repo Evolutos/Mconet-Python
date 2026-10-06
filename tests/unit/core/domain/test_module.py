@@ -71,6 +71,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "serialize_optional_fields",
         "serialize_timestamp",
         "validate_artifact",
+        "validate_artifact_catalog",
         "validate_duration",
         "validate_json_value_numbers",
         "validate_message_document",
