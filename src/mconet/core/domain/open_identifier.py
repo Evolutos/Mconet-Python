@@ -57,10 +57,14 @@ def validate_open_identifier(identifier: OpenIdentifier) -> OpenIdentifier:
         ValueError: If the preserved value violates a portable format rule.
     """
     candidate = cast(object, identifier)
+    # Require the nominal value object so callers cannot bypass its immutable
+    # storage contract with an arbitrary string-like value.
     if not isinstance(candidate, OpenIdentifier):
         raise TypeError("identifier must be an OpenIdentifier.")
 
     value = candidate.value
+    # Report independent boundary failures before applying the compact grammar,
+    # which keeps validation errors stable and actionable.
     if not value:
         raise ValueError("OpenIdentifier must not be empty.")
     if len(value) > _MAX_OPEN_IDENTIFIER_LENGTH:
@@ -74,4 +78,6 @@ def validate_open_identifier(identifier: OpenIdentifier) -> OpenIdentifier:
     if _OPEN_IDENTIFIER_PATTERN.fullmatch(value) is None:
         raise ValueError("OpenIdentifier has an invalid namespace format.")
 
+    # Validation is non-normalizing so unknown future identifiers round-trip
+    # byte-for-byte through older implementations.
     return candidate

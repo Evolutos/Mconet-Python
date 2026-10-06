@@ -33,6 +33,8 @@ class RecoveryHint:
         retry_after = cast(object, self.retry_after)
         processed = cast(object, self.request_may_have_been_processed)
 
+        # Exact bool checks preserve the tri-state contract and prevent integer
+        # values from masquerading as logical recovery facts.
         if type(transient) is not bool:
             raise TypeError("RecoveryHint transient must be a boolean.")
         if retry_after is not None and not isinstance(retry_after, Duration):
@@ -44,6 +46,8 @@ class RecoveryHint:
             )
         if retry_after is None:
             return
+        # A supplied delay must be non-negative, portable, and meaningful only
+        # for a failure explicitly identified as transient.
         if retry_after.total_nanoseconds < 0:
             raise ValueError("RecoveryHint retry_after must not be negative.")
         validate_duration(retry_after.total_nanoseconds)

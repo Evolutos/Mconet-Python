@@ -69,10 +69,14 @@ def parse_timestamp(value: str) -> Timestamp:
     if not isinstance(candidate, str):
         raise TypeError("Timestamp text must be a string.")
 
+    # Full matching prevents trailing data and admits only the explicitly
+    # supported RFC 3339 precision and offset forms.
     match = _TIMESTAMP_PATTERN.fullmatch(candidate)
     if match is None:
         raise ValueError("Timestamp must use RFC 3339 date-time syntax.")
 
+    # Parse the declared offset before calendar construction so unknown and
+    # out-of-range offsets receive stable domain errors.
     offset = _parse_utc_offset(match.group("offset"))
     try:
         local_time = datetime(
@@ -87,6 +91,8 @@ def parse_timestamp(value: str) -> Timestamp:
     except ValueError as error:
         raise ValueError("Timestamp contains an invalid calendar value.") from error
 
+    # Normalize the instant through UTC and compute seconds with timedelta
+    # integer fields, avoiding platform timestamp and float precision limits.
     try:
         utc_time = local_time.astimezone(UTC)
         elapsed = utc_time - _UNIX_EPOCH
@@ -94,12 +100,16 @@ def parse_timestamp(value: str) -> Timestamp:
         raise ValueError("Timestamp is outside the supported UTC range.") from error
     epoch_seconds = elapsed.days * 86_400 + elapsed.seconds
     fraction = match.group("fraction")
+    # Right-padding preserves the supplied decimal fraction exactly at the
+    # canonical nine-digit nanosecond scale.
     nanosecond = int(fraction.ljust(9, "0")) if fraction is not None else 0
     return Timestamp(epoch_seconds=epoch_seconds, nanosecond=nanosecond)
 
 
 def _parse_utc_offset(value: str) -> timezone:
     """Return a concrete timezone for a validated RFC 3339 offset token."""
+    # Z is the canonical zero-offset token; -00:00 instead signals an unknown
+    # local offset and cannot identify an absolute instant.
     if value == "Z":
         return UTC
     if value == "-00:00":
@@ -110,6 +120,8 @@ def _parse_utc_offset(value: str) -> timezone:
     if hours > 23 or minutes > 59:
         raise ValueError("Timestamp offset must be between -23:59 and +23:59.")
     total_minutes = hours * 60 + minutes
+    # Apply the sign only after magnitude validation so both directions share
+    # identical limits.
     if value[0] == "-":
         total_minutes = -total_minutes
     return timezone(timedelta(minutes=total_minutes))

@@ -32,8 +32,12 @@ def preserve_unknown_fields(
     Raises:
         TypeError: If a mapping or field-name contract is violated.
     """
+    # Validate the complete decoded object before filtering so malformed known
+    # fields cannot be hidden merely by excluding them from the preserved set.
     source = _require_field_mapping(fields, "fields")
     known_names = _require_field_names(known_field_names)
+    # A new dictionary freezes membership and encounter order independently of
+    # later mutations to a caller-owned mapping.
     preserved = {
         name: value for name, value in source.items() if name not in known_names
     }
@@ -63,6 +67,8 @@ def restore_preserved_fields(
     """
     known = _require_field_mapping(known_fields, "known_fields")
     preserved = _require_field_mapping(preserved_fields, "preserved_fields")
+    # Refuse ambiguous ownership instead of silently choosing the current or
+    # preserved representation when a formerly unknown field becomes known.
     collisions = known.keys() & preserved.keys()
     if collisions:
         first_collision = min(collisions)
@@ -87,6 +93,8 @@ def _require_field_mapping(
     if any(not isinstance(name, str) for name in mapping):
         raise TypeError(f"{field} keys must be strings.")
     typed_mapping = cast(Mapping[str, JsonValue], mapping)
+    # Validate values at the object boundary so callers never receive a mapping
+    # containing structurally invalid or non-portable JSON data.
     for json_value in typed_mapping.values():
         validate_json_value_numbers(json_value)
     return typed_mapping
@@ -100,4 +108,6 @@ def _require_field_names(value: Collection[str]) -> frozenset[str]:
     names = cast(Collection[object], candidate)
     if any(not isinstance(name, str) for name in names):
         raise TypeError("known_field_names must contain only strings.")
+    # A set gives deterministic membership semantics and detaches validation
+    # from mutation of the caller's collection.
     return frozenset(cast(Collection[str], names))

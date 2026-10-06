@@ -30,6 +30,8 @@ class Duration:
     def __post_init__(self) -> None:
         """Require an exact integer without accepting boolean coercion."""
         value = cast(object, self.total_nanoseconds)
+        # bool is an int subclass, so an exact type check preserves the numeric
+        # contract instead of admitting logical values as durations.
         if type(value) is not int:
             raise TypeError("Duration total_nanoseconds must be an integer.")
 
@@ -58,6 +60,7 @@ def validate_duration(
         ValueError: If the unit is unsupported or conversion exceeds the range.
     """
     quantity = cast(object, value)
+    # Reject coercion up front; conversion must remain exact in the source unit.
     if type(quantity) is not int:
         raise TypeError("Duration value must be an integer.")
 
@@ -68,6 +71,8 @@ def validate_duration(
     if factor is None:
         raise ValueError(f"Unsupported Duration unit: {unit_value!r}.")
 
+    # Integer multiplication preserves sub-second precision. Range checking is
+    # performed after conversion because the portable limit is in nanoseconds.
     total_nanoseconds = quantity * factor
     if not (
         _MIN_PORTABLE_NANOSECONDS <= total_nanoseconds <= _MAX_PORTABLE_NANOSECONDS

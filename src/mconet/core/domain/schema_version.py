@@ -29,6 +29,8 @@ class SchemaVersion:
     def __post_init__(self) -> None:
         """Require canonical ASCII version text without normalizing input."""
         value = cast(object, self.value)
+        # Reject non-canonical input rather than rewriting it, preserving a
+        # single stable textual representation for equality and serialization.
         if not isinstance(value, str):
             raise TypeError("SchemaVersion value must be a string.")
         if _SCHEMA_VERSION_PATTERN.fullmatch(value) is None:
@@ -42,6 +44,8 @@ class SchemaVersion:
 
     def __lt__(self, other: object) -> bool:
         """Compare schema versions numerically without bounded integers."""
+        # Returning NotImplemented lets Python negotiate mixed-type comparison
+        # instead of inventing an ordering across unrelated domain values.
         if not isinstance(other, SchemaVersion):
             return NotImplemented
         return self._comparison_key() < other._comparison_key()
@@ -49,4 +53,6 @@ class SchemaVersion:
     def _comparison_key(self) -> tuple[int, str, int, str]:
         """Build a magnitude-preserving key from canonical decimal components."""
         major, minor = self.value.split(".")
+        # Canonical decimal components have no leading zeroes, so digit count
+        # followed by lexical value equals unbounded numeric comparison.
         return len(major), major, len(minor), minor

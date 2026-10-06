@@ -54,6 +54,8 @@ class Diagnostic:
         service_id = cast(object, self.service_id)
         details = cast(object, self.details)
 
+        # Validate scalar fields independently so producer errors are reported
+        # at the exact field boundary rather than during later serialization.
         if not isinstance(code, str):
             raise TypeError("Diagnostic code must be a string.")
         if not isinstance(severity, str):
@@ -66,12 +68,16 @@ class Diagnostic:
             raise TypeError("Diagnostic message must be a string.")
         if path is not None and not isinstance(path, str):
             raise TypeError("Diagnostic path must be a string or None.")
+        # Optional identifiers retain their open value set but still obey the
+        # portable identifier grammar.
         if service_id is not None:
             if not isinstance(service_id, OpenIdentifier):
                 raise TypeError(
                     "Diagnostic service_id must be an OpenIdentifier or None."
                 )
             validate_open_identifier(service_id)
+        # Structured details require both a valid recursive shape and portable
+        # number semantics before becoming part of a diagnostic.
         if details is not None:
             if not is_json_value(details):
                 raise TypeError("Diagnostic details must be a JsonValue or None.")

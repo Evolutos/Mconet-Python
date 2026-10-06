@@ -58,6 +58,8 @@ class ModelInteractionError(Exception):
         recovery = cast(object, self.recovery)
         cause = cast(object, self.cause)
 
+        # Required domain values and text fields are checked first so exception
+        # construction cannot hide an invalid normalized error contract.
         if not isinstance(category, ErrorCategory):
             raise TypeError("ModelInteractionError category must be an ErrorCategory.")
         if not isinstance(phase, InteractionPhase):
@@ -66,6 +68,8 @@ class ModelInteractionError(Exception):
             raise TypeError("ModelInteractionError code must be a string.")
         if not isinstance(message, str):
             raise TypeError("ModelInteractionError message must be a string.")
+        # bool is an int subclass, so status_code requires an exact integer when
+        # present; all other optional metadata preserves its declared type.
         if status_code is not None and type(status_code) is not int:
             raise TypeError(
                 "ModelInteractionError status_code must be an integer or None."
@@ -87,6 +91,8 @@ class ModelInteractionError(Exception):
                 "ModelInteractionError cause must be a BaseException or None."
             )
 
+        # Initialize BaseException only after validation, then connect the
+        # retained cause to Python's explicit traceback chain without mutation.
         Exception.__init__(self, message)
         if cause is not None:
             object.__setattr__(self, "__cause__", cause)

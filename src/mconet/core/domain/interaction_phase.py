@@ -26,6 +26,8 @@ class InteractionPhase:
     def __post_init__(self) -> None:
         """Require the nominal identifier type and its portable syntax."""
         identifier = cast(object, self.id)
+        # Validate syntax without comparing against a closed list so phases from
+        # newer runtimes remain representable and lossless.
         if not isinstance(identifier, OpenIdentifier):
             raise TypeError("InteractionPhase id must be an OpenIdentifier.")
         validate_open_identifier(identifier)

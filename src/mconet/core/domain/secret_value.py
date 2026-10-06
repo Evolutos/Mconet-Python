@@ -22,6 +22,8 @@ class AuthorizedSecretConsumer:
 
     def __new__(cls, *args: object, **kwargs: object) -> Self:
         """Create only concrete consumer subclasses."""
+        # Constructor arguments belong to subclasses; the marker discards them
+        # and enforces only that authorization has a concrete nominal type.
         del args, kwargs
         if cls is AuthorizedSecretConsumer:
             raise TypeError(
@@ -52,6 +54,8 @@ class SecretValue:
 
     def __getattribute__(self, name: str) -> object:
         """Prevent ordinary attribute and inspection access to plaintext."""
+        # Block the mangled slot even for callers that know its implementation
+        # name; reveal() uses object.__getattribute__ after authorization.
         if name == _SECRET_ATTRIBUTE:
             raise AttributeError(
                 "SecretValue plaintext is only accessible through reveal()."
@@ -76,6 +80,8 @@ class SecretValue:
             TypeError: If the caller is not an authorized secret consumer.
         """
         candidate = cast(object, consumer)
+        # Nominal membership makes plaintext access an explicit capability and
+        # avoids accidental authorization through structural duck typing.
         if not isinstance(candidate, AuthorizedSecretConsumer):
             raise TypeError("SecretValue consumer is not authorized.")
         return cast(
@@ -97,6 +103,8 @@ class SecretValue:
 
     def __dir__(self) -> list[str]:
         """Exclude the plaintext slot from ordinary inspection results."""
+        # Preserve normal discoverability for safe methods while removing the
+        # single storage attribute that could invite direct access attempts.
         return [name for name in object.__dir__(self) if name != _SECRET_ATTRIBUTE]
 
     def __getstate__(self) -> Never:

@@ -32,6 +32,8 @@ class MediaType:
         media_type = cast(object, self.type)
         subtype = cast(object, self.subtype)
         parameters = cast(object, self.parameters)
+        # Construction enforces only storage shape. Token syntax, case folding,
+        # quoting, and duplicates remain responsibilities of the parser.
         if not isinstance(media_type, str):
             raise TypeError("MediaType type must be a string.")
         if not isinstance(subtype, str):
@@ -83,6 +85,8 @@ def parse_media_type(value: str) -> MediaType:
     if not isinstance(candidate, str):
         raise TypeError("Media type text must be a string.")
 
+    # Optional whitespace is allowed at the outside and around semicolon
+    # separators, but token consumers intentionally reject it around / and =.
     index = _skip_optional_whitespace(candidate, 0)
     media_type, index = _consume_token(candidate, index, "type")
     if index >= len(candidate) or candidate[index] != "/":
@@ -93,6 +97,8 @@ def parse_media_type(value: str) -> MediaType:
     parameters: list[tuple[str, str]] = []
     parameter_names: set[str] = set()
 
+    # Parse parameters left-to-right so their source order remains available to
+    # callers even though names are matched case-insensitively.
     while index < len(candidate):
         if candidate[index] != ";":
             raise ValueError("Media type contains invalid trailing syntax.")
@@ -111,6 +117,8 @@ def parse_media_type(value: str) -> MediaType:
                 "parameter value",
             )
 
+        # Normalize only case-insensitive grammar components; parameter values
+        # remain exact after quoted-pair decoding.
         normalized_name = name.lower()
         if normalized_name in parameter_names:
             raise ValueError("Media type contains a duplicate parameter name.")
@@ -123,6 +131,8 @@ def parse_media_type(value: str) -> MediaType:
 
 def _skip_optional_whitespace(value: str, index: int) -> int:
     """Advance past HTTP optional whitespace without accepting other controls."""
+    # RFC optional whitespace consists only of SP and HTAB; broader str.isspace
+    # would incorrectly admit line breaks and Unicode whitespace.
     while index < len(value) and value[index] in _OPTIONAL_WHITESPACE:
         index += 1
     return index
@@ -131,6 +141,8 @@ def _skip_optional_whitespace(value: str, index: int) -> int:
 def _consume_token(value: str, index: int, field: str) -> tuple[str, int]:
     """Consume one non-empty RFC 9110 token from ``index``."""
     start = index
+    # Stop before the first delimiter so the caller retains control of the
+    # surrounding grammar and can issue field-specific errors.
     while index < len(value) and _is_token_character(value[index]):
         index += 1
     if index == start:
@@ -151,6 +163,8 @@ def _is_token_character(character: str) -> bool:
 
 def _consume_quoted_string(value: str, index: int) -> tuple[str, int]:
     """Decode one RFC 9110 quoted-string and its quoted-pair escapes."""
+    # The caller has already verified the opening quote; returned index points
+    # immediately after the matching closing quote.
     index += 1
     decoded: list[str] = []
     while index < len(value):
@@ -158,6 +172,8 @@ def _consume_quoted_string(value: str, index: int) -> tuple[str, int]:
         if character == '"':
             return "".join(decoded), index + 1
         if character == "\\":
+            # Quoted-pair removes exactly one escape marker while preserving the
+            # escaped character's original value.
             index += 1
             if index >= len(value) or not _is_quoted_pair_character(value[index]):
                 raise ValueError("Media type contains an invalid quoted-pair.")

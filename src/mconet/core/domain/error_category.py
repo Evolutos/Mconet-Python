@@ -26,6 +26,8 @@ class ErrorCategory:
     def __post_init__(self) -> None:
         """Require the nominal identifier type and its portable syntax."""
         identifier = cast(object, self.id)
+        # Keep category openness in OpenIdentifier while requiring every stored
+        # category to satisfy the same portable wire grammar.
         if not isinstance(identifier, OpenIdentifier):
             raise TypeError("ErrorCategory id must be an OpenIdentifier.")
         validate_open_identifier(identifier)

@@ -34,12 +34,18 @@ class OptionalField:
         """Require a valid presence flag and JSON value state."""
         present = cast(object, self.is_present)
         value = cast(object, self.value)
+        # Exact bool checking prevents integer truthiness from changing whether
+        # a field is emitted.
         if type(present) is not bool:
             raise TypeError("OptionalField is_present must be a boolean.")
+        # The missing state has one canonical representation; present null is
+        # represented separately by is_present=True with value=None.
         if not present:
             if value is not None:
                 raise ValueError("A missing OptionalField cannot contain a value.")
             return
+        # Present values must satisfy both JSON shape and portable number rules
+        # before they can reach serialization.
         if not is_json_value(value):
             raise TypeError("A present OptionalField value must be a JsonValue.")
         validate_json_value_numbers(cast(JsonValue, value))
@@ -67,6 +73,8 @@ def serialize_optional_fields(
         raise TypeError("fields must be a mapping.")
     source = cast(Mapping[object, object], candidate)
     serialized: dict[str, JsonValue] = {}
+    # Presence is the only omission criterion; nulls, defaults, and empty
+    # collections remain observable values.
     for name, field in source.items():
         if not isinstance(name, str):
             raise TypeError("fields keys must be strings.")
@@ -74,4 +82,6 @@ def serialize_optional_fields(
             raise TypeError("fields values must be OptionalField instances.")
         if field.is_present:
             serialized[name] = field.value
+    # Snapshot the selected members so later source-mapping changes cannot
+    # alter serialized output.
     return MappingProxyType(serialized)

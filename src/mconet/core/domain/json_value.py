@@ -18,6 +18,8 @@ _MAX_SAFE_INTEGER = 2**53 - 1
 
 def is_json_value(value: object) -> bool:
     """Check recursive JSON structure without applying numeric policies."""
+    # Enter/leave markers provide depth-first cycle detection without relying
+    # on Python recursion, while still allowing the same container in siblings.
     pending: list[tuple[object, bool]] = [(value, False)]
     active_containers: set[int] = set()
     while pending:
@@ -45,6 +47,8 @@ def is_json_value(value: object) -> bool:
                 return False
             pending.extend((item, False) for item in reversed(tuple(mapping.values())))
             continue
+        # Numeric range is deliberately deferred so structural callers can
+        # distinguish invalid JSON shapes from portability policy failures.
         if current is None or isinstance(current, (bool, int, float, str)):
             continue
         return False
@@ -70,12 +74,16 @@ def validate_json_value_numbers(value: JsonValue) -> JsonValue:
         ValueError: If an integer is unsafe or a float is non-finite.
     """
     candidate = cast(object, value)
+    # Validate shape and cycles once before the numeric walk. Every remaining
+    # container is therefore a concrete list or string-keyed dictionary.
     if not is_json_value(candidate):
         raise TypeError("value must be a structurally valid JsonValue.")
 
     pending: list[object] = [candidate]
     while pending:
         current = pending.pop()
+        # bool precedes int because Python models bool as an int subclass while
+        # JSON defines booleans as a separate primitive kind.
         if isinstance(current, bool) or current is None or isinstance(current, str):
             continue
         if isinstance(current, int):
@@ -88,6 +96,8 @@ def validate_json_value_numbers(value: JsonValue) -> JsonValue:
             if not math.isfinite(current):
                 raise ValueError("JSON floating-point value must be finite.")
             continue
+        # Push child values only; object keys were already checked as strings by
+        # the structural pass and never participate in numeric validation.
         if isinstance(current, list):
             pending.extend(cast(list[object], current))
             continue
