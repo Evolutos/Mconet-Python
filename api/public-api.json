@@ -294,6 +294,10 @@
       "kind": "function",
       "signature": "(identifier: 'OpenIdentifier') -> 'OpenIdentifier'"
     },
+    "mconet.core.domain.validate_resource_limits": {
+      "kind": "function",
+      "signature": "(limits: 'InteractionResourceLimits | ResolvedInteractionResourceLimits') -> 'InteractionResourceLimits | ResolvedInteractionResourceLimits'"
+    },
     "mconet.core.domain.validate_service_access": {
       "kind": "function",
       "signature": "(access: 'ServiceAccess') -> 'ServiceAccess'"

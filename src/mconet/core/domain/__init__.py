@@ -31,6 +31,7 @@ from mconet.core.domain.recovery_hint import RecoveryHint
 from mconet.core.domain.resolved_interaction_resource_limits import (
     ResolvedInteractionResourceLimits,
 )
+from mconet.core.domain.resource_limits_validation import validate_resource_limits
 from mconet.core.domain.schema_version import SchemaVersion
 from mconet.core.domain.secret_value import AuthorizedSecretConsumer, SecretValue
 from mconet.core.domain.service_access import ServiceAccess
@@ -85,6 +86,7 @@ __all__ = (
     "validate_model_descriptor",
     "validate_model_target",
     "validate_open_identifier",
+    "validate_resource_limits",
     "validate_service_access",
     "validate_uri",
 )
