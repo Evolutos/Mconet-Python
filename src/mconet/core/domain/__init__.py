@@ -74,6 +74,7 @@ from mconet.core.domain.message_role_validation import validate_message_role
 from mconet.core.domain.model_descriptor import ModelDescriptor
 from mconet.core.domain.model_descriptor_validation import validate_model_descriptor
 from mconet.core.domain.model_interaction_error import ModelInteractionError
+from mconet.core.domain.model_request import ModelRequest
 from mconet.core.domain.model_target import ModelTarget
 from mconet.core.domain.model_target_validation import validate_model_target
 from mconet.core.domain.model_task_request import ModelTaskRequest
@@ -159,6 +160,7 @@ __all__ = (
     "MessageRole",
     "ModelDescriptor",
     "ModelInteractionError",
+    "ModelRequest",
     "ModelTarget",
     "ModelTaskRequest",
     "MonitoringMergeMode",
