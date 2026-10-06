@@ -690,6 +690,10 @@
       "kind": "function",
       "signature": "(content: 'TextMessageContent', *, maximum_code_points: 'int | None' = None) -> 'TextMessageContent'"
     },
+    "mconet.core.domain.validate_text_message_content_scope": {
+      "kind": "function",
+      "signature": "(document: 'MessageDocument') -> 'MessageDocument'"
+    },
     "mconet.core.domain.validate_uri": {
       "kind": "function",
       "signature": "(uri: 'UriValue') -> 'UriValue'"

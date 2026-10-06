@@ -34,6 +34,9 @@ from mconet.core.domain.local_file_artifact_source import LocalFileArtifactSourc
 from mconet.core.domain.media_type import MediaType, parse_media_type
 from mconet.core.domain.message_content import MessageContent
 from mconet.core.domain.message_content_kind import MessageContentKind
+from mconet.core.domain.message_content_scope import (
+    validate_text_message_content_scope,
+)
 from mconet.core.domain.message_document import MessageDocument
 from mconet.core.domain.message_document_builder import MessageDocumentBuilder
 from mconet.core.domain.message_document_validation import validate_message_document
@@ -160,5 +163,6 @@ __all__ = (
     "validate_resource_limits",
     "validate_service_access",
     "validate_text_message_content",
+    "validate_text_message_content_scope",
     "validate_uri",
 )
