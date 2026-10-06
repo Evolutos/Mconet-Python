@@ -86,6 +86,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "validate_open_identifier",
         "validate_resource_limits",
         "validate_service_access",
+        "validate_task_descriptor",
         "validate_text_message_content",
         "validate_text_message_content_scope",
         "validate_uri",

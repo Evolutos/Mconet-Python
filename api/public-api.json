@@ -720,6 +720,10 @@
       "kind": "function",
       "signature": "(access: 'ServiceAccess') -> 'ServiceAccess'"
     },
+    "mconet.core.domain.validate_task_descriptor": {
+      "kind": "function",
+      "signature": "(descriptor: 'TaskDescriptor') -> 'TaskDescriptor'"
+    },
     "mconet.core.domain.validate_text_message_content": {
       "kind": "function",
       "signature": "(content: 'TextMessageContent', *, maximum_code_points: 'int | None' = None) -> 'TextMessageContent'"

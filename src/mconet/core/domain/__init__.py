@@ -76,6 +76,7 @@ from mconet.core.domain.secret_value import AuthorizedSecretConsumer, SecretValu
 from mconet.core.domain.service_access import ServiceAccess
 from mconet.core.domain.service_access_validation import validate_service_access
 from mconet.core.domain.task_descriptor import TaskDescriptor
+from mconet.core.domain.task_descriptor_validation import validate_task_descriptor
 from mconet.core.domain.text_message_content import TextMessageContent
 from mconet.core.domain.text_message_content_validation import (
     validate_text_message_content,
@@ -168,6 +169,7 @@ __all__ = (
     "validate_open_identifier",
     "validate_resource_limits",
     "validate_service_access",
+    "validate_task_descriptor",
     "validate_text_message_content",
     "validate_text_message_content_scope",
     "validate_uri",
