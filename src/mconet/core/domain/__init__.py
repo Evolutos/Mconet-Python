@@ -2,6 +2,7 @@
 
 from mconet.core.domain.authorization import Authorization
 from mconet.core.domain.bytes_value import Bytes
+from mconet.core.domain.cancellation_signal import CancellationSignal
 from mconet.core.domain.compatibility_policy import (
     CompatibilityPolicy,
     default_compatibility_policy,
@@ -49,6 +50,7 @@ __all__ = (
     "Authorization",
     "AuthorizedSecretConsumer",
     "Bytes",
+    "CancellationSignal",
     "CompatibilityPolicy",
     "Diagnostic",
     "Duration",

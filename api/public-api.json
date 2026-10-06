@@ -21,6 +21,24 @@
       "kind": "value",
       "type": "NewType"
     },
+    "mconet.core.domain.CancellationSignal": {
+      "kind": "class",
+      "members": {
+        "is_cancelled": {
+          "kind": "property",
+          "signature": null
+        },
+        "reason": {
+          "kind": "property",
+          "signature": null
+        },
+        "subscribe": {
+          "kind": "method",
+          "signature": "(self, callback: 'Callable[[str | None], None]') -> 'Callable[[], None]'"
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.domain.CompatibilityPolicy": {
       "kind": "class",
       "members": {},
