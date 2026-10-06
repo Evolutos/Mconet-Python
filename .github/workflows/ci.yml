@@ -24,6 +24,7 @@ jobs:
       - run: pyright
       - run: python scripts/check_import_boundaries.py
       - run: python scripts/check_api_compatibility.py
+      - run: python scripts/check_experimental_api_policy.py
       - run: python scripts/check_package_names.py
       - run: python scripts/check_runtime_compatibility.py
       - run: python scripts/check_version_policy.py

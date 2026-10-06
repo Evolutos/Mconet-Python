@@ -1,0 +1,41 @@
+{
+  "addition": {
+    "compatibility_guarantee": "none",
+    "required_evidence": [
+      "documented_use_case",
+      "introduced_version",
+      "named_owner",
+      "public_documentation",
+      "tests",
+      "tracking_issue"
+    ]
+  },
+  "designation": {
+    "documentation_label": "Experimental",
+    "metadata_attribute": "__mconet_stability__",
+    "metadata_value": "experimental"
+  },
+  "format_version": 1,
+  "platform": "python",
+  "promotion": {
+    "minimum_minor_releases": 1,
+    "required_evidence": [
+      "adoption_evidence",
+      "api_review",
+      "contract_tests",
+      "migration_notes",
+      "no_open_blockers"
+    ],
+    "target": "stable"
+  },
+  "removal": {
+    "allowed_release": "minor_or_major",
+    "minimum_deprecation_minor_releases": 1,
+    "rename_treatment": "removal_and_addition",
+    "required_evidence": [
+      "deprecation_notice",
+      "migration_path",
+      "release_notes"
+    ]
+  }
+}

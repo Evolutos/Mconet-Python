@@ -52,3 +52,11 @@ def test_project_version_follows_frozen_policy() -> None:
     # the same rules in local runs, tests, and CI.
     result = _run_script("check_version_policy.py")
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_experimental_api_lifecycle_matches_frozen_policy() -> None:
+    """Verify experimental API changes require the approved evidence."""
+    # Run the standalone policy checker used by CI so local lifecycle review
+    # cannot accept rules that the build gate would reject.
+    result = _run_script("check_experimental_api_policy.py")
+    assert result.returncode == 0, result.stdout + result.stderr
