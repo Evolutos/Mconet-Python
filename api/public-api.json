@@ -164,6 +164,16 @@
       },
       "signature": "(values: 'tuple[HeaderField, ...]' = ()) -> None"
     },
+    "mconet.core.domain.InlineArtifactSource": {
+      "kind": "class",
+      "members": {
+        "kind": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(bytes: 'Bytes') -> None"
+    },
     "mconet.core.domain.InteractionPhase": {
       "kind": "class",
       "members": {},
