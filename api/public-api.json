@@ -23,6 +23,11 @@
       "kind": "value",
       "type": "UnionType"
     },
+    "mconet.core.domain.MediaType": {
+      "kind": "class",
+      "members": {},
+      "signature": "(type: 'str', subtype: 'str', parameters: 'tuple[tuple[str, str], ...]' = ()) -> None"
+    },
     "mconet.core.domain.OpenIdentifier": {
       "kind": "class",
       "members": {},
