@@ -20,6 +20,16 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.domain.ArtifactSource": {
+      "kind": "class",
+      "members": {
+        "kind": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.domain.Authorization": {
       "kind": "class",
       "members": {

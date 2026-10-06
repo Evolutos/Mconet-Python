@@ -8,6 +8,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
     # Keep exports explicit so incomplete types cannot enter the public API.
     assert mconet.core.domain.__all__ == (
         "ArtifactKind",
+        "ArtifactSource",
         "Authorization",
         "AuthorizedSecretConsumer",
         "Bytes",
