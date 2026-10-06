@@ -24,6 +24,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "Duration",
         "ErrorCategory",
         "Extensions",
+        "GenerationParameters",
         "HeaderField",
         "Headers",
         "InlineArtifactSource",

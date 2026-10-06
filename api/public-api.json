@@ -163,6 +163,11 @@
       "kind": "value",
       "type": "GenericAlias"
     },
+    "mconet.core.domain.GenerationParameters": {
+      "kind": "class",
+      "members": {},
+      "signature": "(temperature: 'float | None' = None, top_p: 'float | None' = None, max_output_tokens: 'int | None' = None, stop: 'tuple[str, ...]' = (), seed: 'int | None' = None) -> None"
+    },
     "mconet.core.domain.HeaderField": {
       "kind": "class",
       "members": {},
