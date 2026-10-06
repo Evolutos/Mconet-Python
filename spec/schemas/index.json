@@ -4,6 +4,7 @@
   "purpose": "Language-neutral schemas shared by every SDK implementation.",
   "resources": [
     "foundation-values.json",
-    "model-descriptor.json"
+    "model-descriptor.json",
+    "model-target.json"
   ]
 }
