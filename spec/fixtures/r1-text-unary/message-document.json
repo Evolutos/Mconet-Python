@@ -1,0 +1,482 @@
+{
+  "format_version": 1,
+  "invalidCases": [
+    {
+      "expectedIssues": [
+        {
+          "keyword": "required",
+          "message": "Required property is missing.",
+          "path": "/root"
+        }
+      ],
+      "input": {
+        "purpose": "input",
+        "version": "1.0"
+      },
+      "name": "missing-root"
+    },
+    {
+      "expectedIssues": [
+        {
+          "keyword": "oneOf",
+          "message": "Value must match exactly one schema alternative.",
+          "path": "/root/subElements/0"
+        }
+      ],
+      "input": {
+        "purpose": "input",
+        "root": {
+          "id": "root",
+          "kind": {
+            "category": "group",
+            "composition": "container",
+            "id": "message.root"
+          },
+          "subElements": [
+            {
+              "content": [],
+              "id": "entry-1",
+              "kind": {
+                "category": "entry",
+                "composition": "leaf",
+                "id": "message.entry"
+              },
+              "role": {
+                "id": "message.user"
+              },
+              "subElements": []
+            }
+          ]
+        },
+        "version": "1.0"
+      },
+      "name": "empty-entry-content"
+    },
+    {
+      "expectedIssues": [
+        {
+          "keyword": "oneOf",
+          "message": "Value must match exactly one schema alternative.",
+          "path": "/root/subElements/0"
+        }
+      ],
+      "input": {
+        "purpose": "input",
+        "root": {
+          "id": "root",
+          "kind": {
+            "category": "group",
+            "composition": "container",
+            "id": "message.root"
+          },
+          "subElements": [
+            {
+              "content": [
+                {
+                  "id": "content-1",
+                  "kind": {
+                    "id": "content.text"
+                  }
+                }
+              ],
+              "id": "entry-1",
+              "kind": {
+                "category": "entry",
+                "composition": "leaf",
+                "id": "message.entry"
+              },
+              "role": {
+                "id": "message.user"
+              },
+              "subElements": []
+            }
+          ]
+        },
+        "version": "1.0"
+      },
+      "name": "text-content-missing-text"
+    },
+    {
+      "expectedIssues": [
+        {
+          "keyword": "oneOf",
+          "message": "Value must match exactly one schema alternative.",
+          "path": "/root/subElements/0"
+        }
+      ],
+      "input": {
+        "purpose": "custom",
+        "root": {
+          "id": "root",
+          "kind": {
+            "category": "group",
+            "composition": "container",
+            "id": "message.root"
+          },
+          "subElements": [
+            {
+              "id": "leaf-1",
+              "kind": {
+                "category": "note",
+                "composition": "leaf",
+                "id": "vendor.note"
+              },
+              "subElements": [
+                {
+                  "id": "child-1",
+                  "kind": {
+                    "category": "note",
+                    "composition": "leaf",
+                    "id": "vendor.note"
+                  },
+                  "subElements": []
+                }
+              ]
+            }
+          ]
+        },
+        "version": "1.0"
+      },
+      "name": "leaf-with-child"
+    },
+    {
+      "expectedIssues": [
+        {
+          "keyword": "additionalProperties",
+          "message": "Additional property is not allowed.",
+          "path": "/temperature"
+        }
+      ],
+      "input": {
+        "purpose": "input",
+        "root": {
+          "id": "root",
+          "kind": {
+            "category": "group",
+            "composition": "container",
+            "id": "message.root"
+          },
+          "subElements": []
+        },
+        "temperature": 0.2,
+        "version": "1.0"
+      },
+      "name": "misplaced-task-field"
+    }
+  ],
+  "schemaId": "schema.message_document",
+  "unknownRoleCases": [
+    {
+      "expected": {
+        "extensions": {
+          "vendor.trace": {
+            "enabled": true
+          }
+        },
+        "metadata": {
+          "case": "unknown-role"
+        },
+        "purpose": "custom",
+        "root": {
+          "id": "root",
+          "kind": {
+            "category": "group",
+            "composition": "container",
+            "id": "message.root"
+          },
+          "subElements": [
+            {
+              "id": "current",
+              "kind": {
+                "category": "group",
+                "composition": "container",
+                "id": "message.current"
+              },
+              "subElements": [
+                {
+                  "content": [
+                    {
+                      "extensions": {
+                        "vendor.format": "annotated"
+                      },
+                      "id": "content-review",
+                      "kind": {
+                        "id": "content.text"
+                      },
+                      "metadata": {
+                        "language": "zh-CN"
+                      },
+                      "text": "审阅完成 ✅"
+                    }
+                  ],
+                  "extensions": {
+                    "vendor.entry": true
+                  },
+                  "id": "entry-review",
+                  "kind": {
+                    "category": "entry",
+                    "composition": "leaf",
+                    "id": "message.entry"
+                  },
+                  "metadata": {
+                    "sequence": 1
+                  },
+                  "role": {
+                    "extensions": {
+                      "vendor.policy": "quality"
+                    },
+                    "id": "vendor.reviewer",
+                    "rawValue": "Reviewer",
+                    "semantic": "Reviews the generated response."
+                  },
+                  "subElements": []
+                }
+              ]
+            }
+          ]
+        },
+        "version": "future-version"
+      },
+      "input": {
+        "extensions": {
+          "vendor.trace": {
+            "enabled": true
+          }
+        },
+        "metadata": {
+          "case": "unknown-role"
+        },
+        "purpose": "custom",
+        "root": {
+          "id": "root",
+          "kind": {
+            "category": "group",
+            "composition": "container",
+            "id": "message.root"
+          },
+          "subElements": [
+            {
+              "id": "current",
+              "kind": {
+                "category": "group",
+                "composition": "container",
+                "id": "message.current"
+              },
+              "subElements": [
+                {
+                  "content": [
+                    {
+                      "extensions": {
+                        "vendor.format": "annotated"
+                      },
+                      "id": "content-review",
+                      "kind": {
+                        "id": "content.text"
+                      },
+                      "metadata": {
+                        "language": "zh-CN"
+                      },
+                      "text": "审阅完成 ✅"
+                    }
+                  ],
+                  "extensions": {
+                    "vendor.entry": true
+                  },
+                  "id": "entry-review",
+                  "kind": {
+                    "category": "entry",
+                    "composition": "leaf",
+                    "id": "message.entry"
+                  },
+                  "metadata": {
+                    "sequence": 1
+                  },
+                  "role": {
+                    "extensions": {
+                      "vendor.policy": "quality"
+                    },
+                    "id": "vendor.reviewer",
+                    "rawValue": "Reviewer",
+                    "semantic": "Reviews the generated response."
+                  },
+                  "subElements": []
+                }
+              ]
+            }
+          ]
+        },
+        "version": "future-version"
+      },
+      "name": "provider-defined-role-round-trip"
+    }
+  ],
+  "validCases": [
+    {
+      "input": {
+        "purpose": "context",
+        "root": {
+          "id": "root",
+          "kind": {
+            "category": "group",
+            "composition": "container",
+            "id": "message.root"
+          },
+          "subElements": []
+        },
+        "version": "1.0"
+      },
+      "name": "empty-root"
+    },
+    {
+      "input": {
+        "metadata": {
+          "locale": "zh-CN"
+        },
+        "purpose": "input",
+        "root": {
+          "id": "root",
+          "kind": {
+            "category": "group",
+            "composition": "container",
+            "id": "message.root"
+          },
+          "subElements": [
+            {
+              "id": "instructions",
+              "kind": {
+                "category": "group",
+                "composition": "container",
+                "id": "message.instructions"
+              },
+              "subElements": [
+                {
+                  "content": [
+                    {
+                      "id": "content-system",
+                      "kind": {
+                        "id": "content.text"
+                      },
+                      "text": "你是一个严谨的助手。"
+                    }
+                  ],
+                  "id": "entry-system",
+                  "kind": {
+                    "category": "entry",
+                    "composition": "leaf",
+                    "id": "message.entry"
+                  },
+                  "role": {
+                    "id": "message.system"
+                  },
+                  "subElements": []
+                }
+              ]
+            },
+            {
+              "id": "history",
+              "kind": {
+                "category": "group",
+                "composition": "container",
+                "id": "message.history"
+              },
+              "subElements": [
+                {
+                  "content": [
+                    {
+                      "id": "content-user-1",
+                      "kind": {
+                        "id": "content.text"
+                      },
+                      "text": "你好，世界 👋\n第二行"
+                    }
+                  ],
+                  "id": "entry-user-1",
+                  "kind": {
+                    "category": "entry",
+                    "composition": "leaf",
+                    "id": "message.entry"
+                  },
+                  "role": {
+                    "id": "message.user"
+                  },
+                  "subElements": []
+                },
+                {
+                  "content": [
+                    {
+                      "id": "content-assistant-1a",
+                      "kind": {
+                        "id": "content.text"
+                      },
+                      "text": "Café"
+                    },
+                    {
+                      "id": "content-assistant-1b",
+                      "kind": {
+                        "id": "content.text"
+                      },
+                      "text": "é — preserved combining form"
+                    }
+                  ],
+                  "id": "entry-assistant-1",
+                  "kind": {
+                    "category": "entry",
+                    "composition": "leaf",
+                    "id": "message.entry"
+                  },
+                  "relations": [
+                    {
+                      "metadata": {
+                        "order": 1
+                      },
+                      "source": "entry-assistant-1",
+                      "target": "entry-user-2",
+                      "type": "message.precedes"
+                    }
+                  ],
+                  "role": {
+                    "id": "message.assistant"
+                  },
+                  "subElements": []
+                }
+              ]
+            },
+            {
+              "id": "current",
+              "kind": {
+                "category": "group",
+                "composition": "container",
+                "id": "message.current"
+              },
+              "subElements": [
+                {
+                  "content": [
+                    {
+                      "id": "content-user-2",
+                      "kind": {
+                        "id": "content.text"
+                      },
+                      "text": "東京の天気は？ ☀️"
+                    }
+                  ],
+                  "id": "entry-user-2",
+                  "kind": {
+                    "category": "entry",
+                    "composition": "leaf",
+                    "id": "message.entry"
+                  },
+                  "role": {
+                    "id": "message.user"
+                  },
+                  "subElements": []
+                }
+              ]
+            }
+          ]
+        },
+        "version": "1.0"
+      },
+      "name": "ordered-multi-turn-unicode"
+    }
+  ]
+}

@@ -7,6 +7,7 @@
     "configuration-overrides.json",
     "configuration-precedence.json",
     "foundation-values.json",
+    "message-document.json",
     "model-target.json",
     "service-access.json"
   ]
