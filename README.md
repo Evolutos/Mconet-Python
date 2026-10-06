@@ -34,5 +34,6 @@ python scripts/build_all.py
 - [Experimental API policy](spec/compatibility/experimental-api-policy.json)
 - [Package names](spec/compatibility/package-names.json)
 - [Runtime compatibility](spec/compatibility/runtime-matrix.json)
+- [Test log policy](spec/compatibility/test-log-policy.json)
 - [Test secret placeholders](spec/compatibility/test-secret-placeholders.json)
 - [Version policy](spec/compatibility/version-policy.json)

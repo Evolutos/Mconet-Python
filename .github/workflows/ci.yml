@@ -78,6 +78,7 @@ jobs:
         with:
           name: conformance-report
           path: conformance-report.xml
+          retention-days: 14
 
   package:
     name: Package

@@ -73,6 +73,7 @@ def test_conformance_stage_reports_differences_and_blocks_packaging() -> None:
     )
     assert "name: conformance-report" in conformance_job
     assert "path: conformance-report.xml" in conformance_job
+    assert "retention-days: 14" in conformance_job
     assert "if: always()" in conformance_job
     assert "needs: conformance" in package_job
 
