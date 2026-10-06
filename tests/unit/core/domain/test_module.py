@@ -8,6 +8,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
     # Each later work package extends this explicit tuple only after its own
     # implementation and tests are complete.
     assert mconet.core.domain.__all__ == (
+        "Bytes",
         "Extensions",
         "JsonPrimitive",
         "JsonValue",
