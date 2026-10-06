@@ -9,6 +9,7 @@
     "message-document.json",
     "model-descriptor.json",
     "model-target.json",
-    "service-access.json"
+    "service-access.json",
+    "task-document.json"
   ]
 }
