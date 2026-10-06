@@ -194,6 +194,10 @@
       "kind": "function",
       "signature": "(descriptor: 'ModelDescriptor') -> 'ModelDescriptor'"
     },
+    "mconet.core.domain.validate_model_target": {
+      "kind": "function",
+      "signature": "(target: 'ModelTarget') -> 'ModelTarget'"
+    },
     "mconet.core.domain.validate_open_identifier": {
       "kind": "function",
       "signature": "(identifier: 'OpenIdentifier') -> 'OpenIdentifier'"

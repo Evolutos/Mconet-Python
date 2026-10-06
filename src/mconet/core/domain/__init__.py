@@ -13,6 +13,7 @@ from mconet.core.domain.model_descriptor import ModelDescriptor
 from mconet.core.domain.model_descriptor_validation import validate_model_descriptor
 from mconet.core.domain.model_interaction_error import ModelInteractionError
 from mconet.core.domain.model_target import ModelTarget
+from mconet.core.domain.model_target_validation import validate_model_target
 from mconet.core.domain.named_model import NamedModel
 from mconet.core.domain.open_identifier import OpenIdentifier, validate_open_identifier
 from mconet.core.domain.optional_field import OptionalField, serialize_optional_fields
@@ -57,6 +58,7 @@ __all__ = (
     "validate_duration",
     "validate_json_value_numbers",
     "validate_model_descriptor",
+    "validate_model_target",
     "validate_open_identifier",
     "validate_uri",
 )
