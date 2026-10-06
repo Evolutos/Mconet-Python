@@ -73,6 +73,7 @@ from mconet.core.domain.unknown_fields import (
     restore_preserved_fields,
 )
 from mconet.core.domain.uri import UriValue, validate_uri
+from mconet.core.domain.uri_artifact_source import UriArtifactSource
 
 __all__ = (
     "Artifact",
@@ -127,6 +128,7 @@ __all__ = (
     "ServiceAccess",
     "TextMessageContent",
     "Timestamp",
+    "UriArtifactSource",
     "UriValue",
     "default_compatibility_policy",
     "parse_media_type",

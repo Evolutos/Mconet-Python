@@ -573,6 +573,16 @@
       "members": {},
       "signature": "(epoch_seconds: 'int', nanosecond: 'int' = 0) -> None"
     },
+    "mconet.core.domain.UriArtifactSource": {
+      "kind": "class",
+      "members": {
+        "kind": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(uri: 'UriValue', authorization: 'Authorization | None' = None) -> None"
+    },
     "mconet.core.domain.UriValue": {
       "kind": "class",
       "members": {},
