@@ -58,6 +58,11 @@
       "members": {},
       "signature": "(value: 'str') -> None"
     },
+    "mconet.core.domain.OptionalField": {
+      "kind": "class",
+      "members": {},
+      "signature": "(is_present: 'bool', value: 'JsonValue' = None) -> None"
+    },
     "mconet.core.domain.RecoveryHint": {
       "kind": "class",
       "members": {},
@@ -103,6 +108,10 @@
     "mconet.core.domain.restore_preserved_fields": {
       "kind": "function",
       "signature": "(known_fields: 'Mapping[str, JsonValue]', preserved_fields: 'Extensions') -> 'Extensions'"
+    },
+    "mconet.core.domain.serialize_optional_fields": {
+      "kind": "function",
+      "signature": "(fields: 'Mapping[str, OptionalField]') -> 'Extensions'"
     },
     "mconet.core.domain.validate_duration": {
       "kind": "function",

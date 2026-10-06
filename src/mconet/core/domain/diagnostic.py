@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import Literal, cast
 
 from mconet.core.domain.interaction_phase import InteractionPhase
-from mconet.core.domain.json_value import JsonValue
+from mconet.core.domain.json_value import JsonValue, is_json_value
 from mconet.core.domain.open_identifier import (
     OpenIdentifier,
     validate_open_identifier,
@@ -68,40 +68,5 @@ class Diagnostic:
                     "Diagnostic service_id must be an OpenIdentifier or None."
                 )
             validate_open_identifier(service_id)
-        if details is not None and not _is_json_value(details):
+        if details is not None and not is_json_value(details):
             raise TypeError("Diagnostic details must be a JsonValue or None.")
-
-
-def _is_json_value(value: object) -> bool:
-    """Check recursive JSON structure without applying later number policies."""
-    pending: list[tuple[object, bool]] = [(value, False)]
-    active_containers: set[int] = set()
-    while pending:
-        current, leaving = pending.pop()
-        if leaving:
-            active_containers.remove(id(current))
-            continue
-        if isinstance(current, list):
-            sequence = cast(list[object], current)
-            identity = id(sequence)
-            if identity in active_containers:
-                return False
-            active_containers.add(identity)
-            pending.append((sequence, True))
-            pending.extend((item, False) for item in reversed(sequence))
-            continue
-        if isinstance(current, dict):
-            mapping = cast(dict[object, object], current)
-            identity = id(mapping)
-            if identity in active_containers:
-                return False
-            active_containers.add(identity)
-            pending.append((mapping, True))
-            if any(not isinstance(key, str) for key in mapping):
-                return False
-            pending.extend((item, False) for item in reversed(tuple(mapping.values())))
-            continue
-        if current is None or isinstance(current, (bool, int, float, str)):
-            continue
-        return False
-    return True

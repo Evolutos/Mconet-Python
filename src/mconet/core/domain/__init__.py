@@ -11,6 +11,7 @@ from mconet.core.domain.json_value import JsonValue
 from mconet.core.domain.media_type import MediaType, parse_media_type
 from mconet.core.domain.model_interaction_error import ModelInteractionError
 from mconet.core.domain.open_identifier import OpenIdentifier, validate_open_identifier
+from mconet.core.domain.optional_field import OptionalField, serialize_optional_fields
 from mconet.core.domain.recovery_hint import RecoveryHint
 from mconet.core.domain.schema_version import SchemaVersion
 from mconet.core.domain.secret_value import AuthorizedSecretConsumer, SecretValue
@@ -34,6 +35,7 @@ __all__ = (
     "MediaType",
     "ModelInteractionError",
     "OpenIdentifier",
+    "OptionalField",
     "RecoveryHint",
     "SchemaVersion",
     "SecretValue",
@@ -43,6 +45,7 @@ __all__ = (
     "parse_timestamp",
     "preserve_unknown_fields",
     "restore_preserved_fields",
+    "serialize_optional_fields",
     "validate_duration",
     "validate_open_identifier",
     "validate_uri",
