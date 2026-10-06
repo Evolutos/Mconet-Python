@@ -153,6 +153,11 @@
       "members": {},
       "signature": "(is_present: 'bool', value: 'JsonValue' = None) -> None"
     },
+    "mconet.core.domain.QueryParameter": {
+      "kind": "class",
+      "members": {},
+      "signature": "(name: 'str', value: 'str') -> None"
+    },
     "mconet.core.domain.RecoveryHint": {
       "kind": "class",
       "members": {},
