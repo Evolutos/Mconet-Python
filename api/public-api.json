@@ -466,6 +466,10 @@
       "kind": "function",
       "signature": "(access: 'ServiceAccess') -> 'ServiceAccess'"
     },
+    "mconet.core.domain.validate_text_message_content": {
+      "kind": "function",
+      "signature": "(content: 'TextMessageContent', *, maximum_code_points: 'int | None' = None) -> 'TextMessageContent'"
+    },
     "mconet.core.domain.validate_uri": {
       "kind": "function",
       "signature": "(uri: 'UriValue') -> 'UriValue'"

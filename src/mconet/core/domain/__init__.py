@@ -48,6 +48,9 @@ from mconet.core.domain.secret_value import AuthorizedSecretConsumer, SecretValu
 from mconet.core.domain.service_access import ServiceAccess
 from mconet.core.domain.service_access_validation import validate_service_access
 from mconet.core.domain.text_message_content import TextMessageContent
+from mconet.core.domain.text_message_content_validation import (
+    validate_text_message_content,
+)
 from mconet.core.domain.timestamp import Timestamp, parse_timestamp, serialize_timestamp
 from mconet.core.domain.unknown_fields import (
     preserve_unknown_fields,
@@ -112,5 +115,6 @@ __all__ = (
     "validate_open_identifier",
     "validate_resource_limits",
     "validate_service_access",
+    "validate_text_message_content",
     "validate_uri",
 )
