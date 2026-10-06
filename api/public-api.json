@@ -6,6 +6,11 @@
       "kind": "value",
       "type": "NewType"
     },
+    "mconet.core.domain.Duration": {
+      "kind": "class",
+      "members": {},
+      "signature": "(total_nanoseconds: 'int') -> None"
+    },
     "mconet.core.domain.Extensions": {
       "kind": "value",
       "type": "GenericAlias"
