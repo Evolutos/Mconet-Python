@@ -1,0 +1,246 @@
+{
+  "format_version": 1,
+  "invalidCases": [
+    {
+      "expectedIssues": [
+        {
+          "keyword": "additionalProperties",
+          "message": "Additional property is not allowed.",
+          "path": "/authorization"
+        }
+      ],
+      "input": {
+        "authorization": {
+          "kind": "authorization.custom"
+        }
+      },
+      "name": "runtime-authorization-field"
+    },
+    {
+      "expectedIssues": [
+        {
+          "keyword": "pattern",
+          "message": "String does not match pattern.",
+          "path": "/endpoint"
+        }
+      ],
+      "input": {
+        "endpoint": "relative/path"
+      },
+      "name": "relative-endpoint"
+    },
+    {
+      "expectedIssues": [
+        {
+          "keyword": "pattern",
+          "message": "String does not match pattern.",
+          "path": "/endpoint"
+        }
+      ],
+      "input": {
+        "endpoint": "https://models.example.test/invalid path"
+      },
+      "name": "endpoint-with-space"
+    },
+    {
+      "expectedIssues": [
+        {
+          "keyword": "pattern",
+          "message": "String does not match pattern.",
+          "path": "/headers/values/0/name"
+        }
+      ],
+      "input": {
+        "headers": {
+          "values": [
+            {
+              "name": "Invalid Header",
+              "value": "value"
+            }
+          ]
+        }
+      },
+      "name": "invalid-header-name"
+    },
+    {
+      "expectedIssues": [
+        {
+          "keyword": "pattern",
+          "message": "String does not match pattern.",
+          "path": "/headers/values/0/value"
+        }
+      ],
+      "input": {
+        "headers": {
+          "values": [
+            {
+              "name": "X-Value",
+              "value": "line-one\nline-two"
+            }
+          ]
+        }
+      },
+      "name": "header-injection-value"
+    },
+    {
+      "expectedIssues": [
+        {
+          "keyword": "required",
+          "message": "Required property is missing.",
+          "path": "/query/values/0/value"
+        }
+      ],
+      "input": {
+        "query": {
+          "values": [
+            {
+              "name": "region"
+            }
+          ]
+        }
+      },
+      "name": "query-value-missing"
+    },
+    {
+      "expectedIssues": [
+        {
+          "keyword": "type",
+          "message": "Value has an unexpected JSON type.",
+          "path": "/apiVersion"
+        }
+      ],
+      "input": {
+        "apiVersion": 20261001
+      },
+      "name": "invalid-api-version-type"
+    }
+  ],
+  "schemaId": "schema.service_access",
+  "unknownExtensionCases": [
+    {
+      "expected": {
+        "apiVersion": "2026-10-01",
+        "endpoint": "vendor+rpc://models.example.test/v1",
+        "extensions": {
+          "vendor.futureAccess": {
+            "failover": {
+              "enabled": true,
+              "regions": [
+                "east",
+                "west"
+              ]
+            },
+            "priority": 3
+          }
+        },
+        "headers": {
+          "values": [
+            {
+              "name": "X-Feature",
+              "value": "enabled"
+            }
+          ]
+        },
+        "projectId": "project-a",
+        "query": {
+          "values": [
+            {
+              "name": "region",
+              "value": "east"
+            }
+          ]
+        },
+        "tenantId": "tenant-a"
+      },
+      "input": {
+        "apiVersion": "2026-10-01",
+        "endpoint": "vendor+rpc://models.example.test/v1",
+        "extensions": {
+          "vendor.futureAccess": {
+            "failover": {
+              "enabled": true,
+              "regions": [
+                "east",
+                "west"
+              ]
+            },
+            "priority": 3
+          }
+        },
+        "headers": {
+          "values": [
+            {
+              "name": "X-Feature",
+              "value": "enabled"
+            }
+          ]
+        },
+        "projectId": "project-a",
+        "query": {
+          "values": [
+            {
+              "name": "region",
+              "value": "east"
+            }
+          ]
+        },
+        "tenantId": "tenant-a"
+      },
+      "name": "nested-unknown-access-extension"
+    }
+  ],
+  "validCases": [
+    {
+      "input": {},
+      "name": "empty-access"
+    },
+    {
+      "input": {
+        "apiVersion": "2026-10-01",
+        "endpoint": "https://models.example.test/v1",
+        "headers": {
+          "values": [
+            {
+              "name": "X-Feature",
+              "value": "first"
+            },
+            {
+              "name": "x-feature",
+              "value": "second"
+            }
+          ]
+        },
+        "projectId": "project-a",
+        "query": {
+          "values": [
+            {
+              "name": "tag",
+              "value": "first"
+            },
+            {
+              "name": "tag",
+              "value": "second"
+            }
+          ]
+        },
+        "tenantId": "tenant-a"
+      },
+      "name": "ordered-access-context"
+    },
+    {
+      "input": {
+        "apiVersion": null,
+        "endpoint": null,
+        "headers": {
+          "values": []
+        },
+        "projectId": null,
+        "query": {
+          "values": []
+        },
+        "tenantId": null
+      },
+      "name": "explicit-null-optionals"
+    }
+  ]
+}

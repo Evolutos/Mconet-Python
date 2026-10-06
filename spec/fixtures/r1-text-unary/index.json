@@ -6,6 +6,7 @@
   "resources": [
     "configuration-precedence.json",
     "foundation-values.json",
-    "model-target.json"
+    "model-target.json",
+    "service-access.json"
   ]
 }
