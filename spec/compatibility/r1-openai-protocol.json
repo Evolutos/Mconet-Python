@@ -1,0 +1,63 @@
+{
+  "endpoint_profile": "r1-openai-endpoint.json",
+  "format_version": 1,
+  "profile": "r1.text-unary",
+  "protocol": "openai.chat-completions",
+  "protocol_version": "v1",
+  "shapes": {
+    "error": {
+      "fields": [
+        {"name": "message", "nullable": false, "required": true, "type": "string"},
+        {"name": "type", "nullable": true, "required": false, "type": "string"},
+        {"name": "code", "nullable": true, "required": false, "type": "string-or-integer"}
+      ]
+    },
+    "error_response": {
+      "fields": [
+        {"name": "error", "nullable": false, "required": true, "type": "shape:error"}
+      ]
+    },
+    "message": {
+      "fields": [
+        {"name": "role", "nullable": false, "required": true, "type": "string"},
+        {"name": "content", "nullable": false, "required": true, "type": "string"}
+      ]
+    },
+    "request": {
+      "fields": [
+        {"name": "model", "nullable": false, "required": true, "type": "string"},
+        {"name": "messages", "nullable": false, "required": true, "type": "array:message"},
+        {"name": "temperature", "nullable": false, "required": false, "type": "number"},
+        {"name": "top_p", "nullable": false, "required": false, "type": "number"},
+        {"name": "max_tokens", "nullable": false, "required": false, "type": "integer"},
+        {"name": "stop", "nullable": false, "required": false, "type": "string-or-array:string"},
+        {"name": "seed", "nullable": false, "required": false, "type": "integer"},
+        {"const": false, "name": "stream", "nullable": false, "required": false, "type": "boolean"}
+      ]
+    },
+    "response": {
+      "fields": [
+        {"name": "id", "nullable": false, "required": false, "type": "string"},
+        {"name": "model", "nullable": false, "required": false, "type": "string"},
+        {"name": "choices", "nullable": false, "required": true, "type": "array:response_choice"},
+        {"name": "usage", "nullable": false, "required": false, "type": "shape:usage"}
+      ]
+    },
+    "response_choice": {
+      "fields": [
+        {"name": "index", "nullable": false, "required": true, "type": "integer"},
+        {"name": "message", "nullable": false, "required": true, "type": "shape:message"},
+        {"name": "finish_reason", "nullable": false, "required": true, "type": "string"}
+      ]
+    },
+    "usage": {
+      "fields": [
+        {"name": "prompt_tokens", "nullable": false, "required": false, "type": "integer"},
+        {"name": "completion_tokens", "nullable": false, "required": false, "type": "integer"},
+        {"name": "total_tokens", "nullable": false, "required": false, "type": "integer"}
+      ]
+    }
+  },
+  "unknown_request_fields": "forbidden",
+  "unknown_response_fields": "ignored-after-metadata-capture"
+}

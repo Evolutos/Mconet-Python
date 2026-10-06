@@ -6,6 +6,7 @@
     "experimental-api-policy.json",
     "package-names.json",
     "r1-openai-endpoint.json",
+    "r1-openai-protocol.json",
     "runtime-matrix.json",
     "test-log-policy.json",
     "test-secret-placeholders.json",
