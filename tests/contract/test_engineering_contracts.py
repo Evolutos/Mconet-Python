@@ -28,3 +28,11 @@ def test_public_api_matches_baseline() -> None:
     # Require explicit review for every exported API change.
     result = _run_script("check_api_compatibility.py")
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_runtime_compatibility_matches_frozen_matrix() -> None:
+    """Verify package, analysis, and CI versions remain synchronized."""
+    # Run the same standalone governance check used by developers and CI so a
+    # minimum-version change cannot update only one consumer of the matrix.
+    result = _run_script("check_runtime_compatibility.py")
+    assert result.returncode == 0, result.stdout + result.stderr

@@ -1,0 +1,18 @@
+{
+  "format_version": 1,
+  "language": {
+    "minimum_version": "3.11",
+    "name": "Python"
+  },
+  "platform": "python",
+  "runtime": {
+    "implementation": "CPython",
+    "minimum_version": "3.11",
+    "tested_versions": [
+      "3.11",
+      "3.12",
+      "3.13",
+      "3.14"
+    ]
+  }
+}

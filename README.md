@@ -14,6 +14,7 @@ ruff check .
 pyright
 python scripts/check_import_boundaries.py
 python scripts/check_api_compatibility.py
+python scripts/check_runtime_compatibility.py
 python scripts/check_spec_module.py
 pytest tests/unit
 pytest
@@ -22,3 +23,4 @@ python scripts/build_all.py
 ```
 
 - [R1 Scope](spec/r1-scope.json)
+- [Runtime compatibility](spec/compatibility/runtime-matrix.json)

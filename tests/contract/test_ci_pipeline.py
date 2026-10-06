@@ -23,6 +23,7 @@ def test_build_stage_blocks_unit_until_all_projects_build() -> None:
     build_job = _job_block("build", "unit")
     unit_job = _job_block("unit", "contract")
 
+    assert "- run: python scripts/check_runtime_compatibility.py" in build_job
     assert "- run: python scripts/build_all.py" in build_job
     assert "needs: build" in unit_job
 

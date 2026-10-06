@@ -84,6 +84,8 @@ def _validate_resource_list(value: JsonValue, path: Path) -> None:
             raise SpecValidationError(
                 f"Resource paths must remain inside their collection in {path}."
             )
+        if not (path.parent / resource_path).is_file():
+            raise SpecValidationError(f"Resource does not exist in {path}: {item}.")
 
 
 def _validate_collection(name: str, relative_path: Path) -> None:
