@@ -19,6 +19,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "Bytes",
         "CancellationSignal",
         "CompatibilityPolicy",
+        "ConversationInputNode",
         "Diagnostic",
         "Duration",
         "ErrorCategory",
