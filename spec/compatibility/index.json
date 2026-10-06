@@ -6,6 +6,7 @@
     "experimental-api-policy.json",
     "package-names.json",
     "runtime-matrix.json",
+    "test-secret-placeholders.json",
     "version-policy.json"
   ]
 }
