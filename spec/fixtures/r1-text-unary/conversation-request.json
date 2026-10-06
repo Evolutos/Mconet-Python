@@ -1,0 +1,330 @@
+{
+  "cases": [
+    {
+      "expected": {
+        "contentOrder": [
+          "content-system",
+          "content-user-1",
+          "content-assistant-1a",
+          "content-assistant-1b",
+          "content-user-2"
+        ],
+        "generationParameters": {
+          "maxOutputTokens": 512,
+          "seed": 42,
+          "stop": [
+            "<END>",
+            "停止",
+            "🛑"
+          ],
+          "temperature": 0.25,
+          "topP": 0.9
+        },
+        "messageElementOrder": [
+          "root",
+          "instructions",
+          "entry-system",
+          "history",
+          "entry-user-1",
+          "entry-assistant-1",
+          "current",
+          "entry-user-2"
+        ],
+        "messageEntryOrder": [
+          "entry-system",
+          "entry-user-1",
+          "entry-assistant-1",
+          "entry-user-2"
+        ],
+        "messageGroupOrder": [
+          "instructions",
+          "history",
+          "current"
+        ],
+        "roleOrder": [
+          "message.system",
+          "message.user",
+          "message.assistant",
+          "message.user"
+        ],
+        "stopOrder": [
+          "<END>",
+          "停止",
+          "🛑"
+        ],
+        "taskNodeOrder": [
+          "conversation-input",
+          "generation-parameters"
+        ],
+        "textOrder": [
+          "你是一个严谨的助手。",
+          "你好，世界 👋\n第二行",
+          "Café",
+          "é — preserved combining form",
+          "東京の天気は？ ☀️"
+        ]
+      },
+      "name": "ordered-multi-turn-unicode-and-parameters",
+      "request": {
+        "extensions": {
+          "vendor.request": {
+            "enabled": true
+          }
+        },
+        "metadata": {
+          "traceLabel": "conversation-order"
+        },
+        "target": {
+          "deploymentId": "production-east",
+          "extensions": {
+            "vendor.routing": "primary"
+          },
+          "model": {
+            "description": "Conversation fixture model",
+            "displayName": "Fixture Model",
+            "extensions": {
+              "vendor.model": true
+            },
+            "family": "family.text",
+            "metadata": {
+              "contextWindow": 128000
+            },
+            "name": "fixture-model",
+            "version": "2026-10"
+          },
+          "protocolId": "protocol.compatible",
+          "serviceId": "service.vendor"
+        },
+        "task": {
+          "artifacts": {
+            "artifacts": []
+          },
+          "descriptor": {
+            "type": "conversation.generate"
+          },
+          "document": {
+            "extensions": {
+              "vendor.document": true
+            },
+            "metadata": {
+              "locale": "zh-CN"
+            },
+            "root": {
+              "children": [
+                {
+                  "children": [],
+                  "extensions": {
+                    "vendor.input": true
+                  },
+                  "id": "conversation-input",
+                  "kind": {
+                    "composition": "leaf",
+                    "id": "task.input"
+                  },
+                  "messages": {
+                    "metadata": {
+                      "locale": "zh-CN"
+                    },
+                    "purpose": "input",
+                    "root": {
+                      "id": "root",
+                      "kind": {
+                        "category": "group",
+                        "composition": "container",
+                        "id": "message.root"
+                      },
+                      "subElements": [
+                        {
+                          "id": "instructions",
+                          "kind": {
+                            "category": "group",
+                            "composition": "container",
+                            "id": "message.instructions"
+                          },
+                          "subElements": [
+                            {
+                              "content": [
+                                {
+                                  "id": "content-system",
+                                  "kind": {
+                                    "id": "content.text"
+                                  },
+                                  "text": "你是一个严谨的助手。"
+                                }
+                              ],
+                              "id": "entry-system",
+                              "kind": {
+                                "category": "entry",
+                                "composition": "leaf",
+                                "id": "message.entry"
+                              },
+                              "role": {
+                                "id": "message.system"
+                              },
+                              "subElements": []
+                            }
+                          ]
+                        },
+                        {
+                          "id": "history",
+                          "kind": {
+                            "category": "group",
+                            "composition": "container",
+                            "id": "message.history"
+                          },
+                          "subElements": [
+                            {
+                              "content": [
+                                {
+                                  "id": "content-user-1",
+                                  "kind": {
+                                    "id": "content.text"
+                                  },
+                                  "text": "你好，世界 👋\n第二行"
+                                }
+                              ],
+                              "id": "entry-user-1",
+                              "kind": {
+                                "category": "entry",
+                                "composition": "leaf",
+                                "id": "message.entry"
+                              },
+                              "role": {
+                                "id": "message.user"
+                              },
+                              "subElements": []
+                            },
+                            {
+                              "content": [
+                                {
+                                  "id": "content-assistant-1a",
+                                  "kind": {
+                                    "id": "content.text"
+                                  },
+                                  "text": "Café"
+                                },
+                                {
+                                  "id": "content-assistant-1b",
+                                  "kind": {
+                                    "id": "content.text"
+                                  },
+                                  "text": "é — preserved combining form"
+                                }
+                              ],
+                              "id": "entry-assistant-1",
+                              "kind": {
+                                "category": "entry",
+                                "composition": "leaf",
+                                "id": "message.entry"
+                              },
+                              "relations": [
+                                {
+                                  "metadata": {
+                                    "order": 1
+                                  },
+                                  "source": "entry-assistant-1",
+                                  "target": "entry-user-2",
+                                  "type": "message.precedes"
+                                }
+                              ],
+                              "role": {
+                                "id": "message.assistant"
+                              },
+                              "subElements": []
+                            }
+                          ]
+                        },
+                        {
+                          "id": "current",
+                          "kind": {
+                            "category": "group",
+                            "composition": "container",
+                            "id": "message.current"
+                          },
+                          "subElements": [
+                            {
+                              "content": [
+                                {
+                                  "id": "content-user-2",
+                                  "kind": {
+                                    "id": "content.text"
+                                  },
+                                  "text": "東京の天気は？ ☀️"
+                                }
+                              ],
+                              "id": "entry-user-2",
+                              "kind": {
+                                "category": "entry",
+                                "composition": "leaf",
+                                "id": "message.entry"
+                              },
+                              "role": {
+                                "id": "message.user"
+                              },
+                              "subElements": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "version": "1.0"
+                  },
+                  "metadata": {
+                    "sequence": 1
+                  }
+                },
+                {
+                  "children": [],
+                  "extensions": {
+                    "vendor.configuration": true
+                  },
+                  "id": "generation-parameters",
+                  "kind": {
+                    "composition": "leaf",
+                    "id": "task.configuration"
+                  },
+                  "metadata": {
+                    "sequence": 2
+                  },
+                  "parameters": {
+                    "maxOutputTokens": 512,
+                    "seed": 42,
+                    "stop": [
+                      "<END>",
+                      "停止",
+                      "🛑"
+                    ],
+                    "temperature": 0.25,
+                    "topP": 0.9
+                  }
+                }
+              ],
+              "extensions": {
+                "vendor.root": true
+              },
+              "id": "task-root",
+              "kind": {
+                "composition": "container",
+                "id": "task.root"
+              },
+              "metadata": {
+                "case": "ordered-conversation"
+              }
+            },
+            "version": "1.0"
+          },
+          "extensions": {
+            "vendor.task": true
+          },
+          "metadata": {
+            "taskLabel": "conversation"
+          }
+        }
+      },
+      "sourceMessageCase": "ordered-multi-turn-unicode"
+    }
+  ],
+  "format_version": 1,
+  "messageFixtureResource": "message-document.json",
+  "schemaId": "schema.model_request"
+}

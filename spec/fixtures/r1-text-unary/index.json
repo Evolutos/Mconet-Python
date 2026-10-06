@@ -7,6 +7,7 @@
     "artifact.json",
     "configuration-overrides.json",
     "configuration-precedence.json",
+    "conversation-request.json",
     "foundation-values.json",
     "message-document.json",
     "model-target.json",
