@@ -3,5 +3,7 @@
   "format_version": 1,
   "profile": "r1.text-unary",
   "purpose": "Golden fixtures for the initial text unary conformance profile.",
-  "resources": []
+  "resources": [
+    "foundation-values.json"
+  ]
 }

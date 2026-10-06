@@ -1,0 +1,155 @@
+{
+  "$id": "schema.foundation_values",
+  "additionalProperties": false,
+  "properties": {
+    "schemaId": {
+      "const": "schema.foundation_values"
+    },
+    "types": {
+      "additionalProperties": false,
+      "properties": {
+        "bytes": {
+          "additionalProperties": false,
+          "properties": {
+            "invalid": {
+              "items": {},
+              "type": "array"
+            },
+            "valid": {
+              "items": {},
+              "type": "array"
+            }
+          },
+          "required": [
+            "invalid",
+            "valid"
+          ],
+          "type": "object"
+        },
+        "duration": {
+          "additionalProperties": false,
+          "properties": {
+            "invalid": {
+              "items": {},
+              "type": "array"
+            },
+            "valid": {
+              "items": {},
+              "type": "array"
+            }
+          },
+          "required": [
+            "invalid",
+            "valid"
+          ],
+          "type": "object"
+        },
+        "json_value": {
+          "additionalProperties": false,
+          "properties": {
+            "invalid": {
+              "items": {},
+              "type": "array"
+            },
+            "valid": {
+              "items": {},
+              "type": "array"
+            }
+          },
+          "required": [
+            "invalid",
+            "valid"
+          ],
+          "type": "object"
+        },
+        "media_type": {
+          "additionalProperties": false,
+          "properties": {
+            "invalid": {
+              "items": {},
+              "type": "array"
+            },
+            "valid": {
+              "items": {},
+              "type": "array"
+            }
+          },
+          "required": [
+            "invalid",
+            "valid"
+          ],
+          "type": "object"
+        },
+        "open_identifier": {
+          "additionalProperties": false,
+          "properties": {
+            "invalid": {
+              "items": {},
+              "type": "array"
+            },
+            "valid": {
+              "items": {},
+              "type": "array"
+            }
+          },
+          "required": [
+            "invalid",
+            "valid"
+          ],
+          "type": "object"
+        },
+        "timestamp": {
+          "additionalProperties": false,
+          "properties": {
+            "invalid": {
+              "items": {},
+              "type": "array"
+            },
+            "valid": {
+              "items": {},
+              "type": "array"
+            }
+          },
+          "required": [
+            "invalid",
+            "valid"
+          ],
+          "type": "object"
+        },
+        "uri": {
+          "additionalProperties": false,
+          "properties": {
+            "invalid": {
+              "items": {},
+              "type": "array"
+            },
+            "valid": {
+              "items": {},
+              "type": "array"
+            }
+          },
+          "required": [
+            "invalid",
+            "valid"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "bytes",
+        "duration",
+        "json_value",
+        "media_type",
+        "open_identifier",
+        "timestamp",
+        "uri"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "schemaId",
+    "types"
+  ],
+  "type": "object"
+}
