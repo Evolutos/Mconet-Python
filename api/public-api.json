@@ -275,6 +275,10 @@
       "kind": "function",
       "signature": "(identifier: 'OpenIdentifier') -> 'OpenIdentifier'"
     },
+    "mconet.core.domain.validate_service_access": {
+      "kind": "function",
+      "signature": "(access: 'ServiceAccess') -> 'ServiceAccess'"
+    },
     "mconet.core.domain.validate_uri": {
       "kind": "function",
       "signature": "(uri: 'UriValue') -> 'UriValue'"
