@@ -11,6 +11,7 @@ from mconet.core.domain.json_value import JsonValue, validate_json_value_numbers
 from mconet.core.domain.media_type import MediaType, parse_media_type
 from mconet.core.domain.model_descriptor import ModelDescriptor
 from mconet.core.domain.model_interaction_error import ModelInteractionError
+from mconet.core.domain.named_model import NamedModel
 from mconet.core.domain.open_identifier import OpenIdentifier, validate_open_identifier
 from mconet.core.domain.optional_field import OptionalField, serialize_optional_fields
 from mconet.core.domain.recovery_hint import RecoveryHint
@@ -36,6 +37,7 @@ __all__ = (
     "MediaType",
     "ModelDescriptor",
     "ModelInteractionError",
+    "NamedModel",
     "OpenIdentifier",
     "OptionalField",
     "RecoveryHint",
