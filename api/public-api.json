@@ -614,6 +614,28 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.domain.ModelRequestBuilder": {
+      "kind": "class",
+      "members": {
+        "build": {
+          "kind": "method",
+          "signature": "(self) -> 'ModelRequest'"
+        },
+        "with_extensions": {
+          "kind": "method",
+          "signature": "(self, extensions: 'Extensions') -> 'Self'"
+        },
+        "with_metadata": {
+          "kind": "method",
+          "signature": "(self, metadata: 'Extensions') -> 'Self'"
+        },
+        "with_service_access": {
+          "kind": "method",
+          "signature": "(self, service_access: 'ServiceAccess | None') -> 'Self'"
+        }
+      },
+      "signature": "(target: 'ModelTarget', task: 'ModelTaskRequest') -> 'None'"
+    },
     "mconet.core.domain.ModelTarget": {
       "kind": "class",
       "members": {

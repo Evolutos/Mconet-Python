@@ -78,6 +78,7 @@ from mconet.core.domain.model_descriptor_validation import validate_model_descri
 from mconet.core.domain.model_interaction_error import ModelInteractionError
 from mconet.core.domain.model_output import ModelOutput
 from mconet.core.domain.model_request import ModelRequest
+from mconet.core.domain.model_request_builder import ModelRequestBuilder
 from mconet.core.domain.model_request_validation import validate_model_request
 from mconet.core.domain.model_target import ModelTarget
 from mconet.core.domain.model_target_validation import validate_model_target
@@ -176,6 +177,7 @@ __all__ = (
     "ModelInteractionError",
     "ModelOutput",
     "ModelRequest",
+    "ModelRequestBuilder",
     "ModelTarget",
     "ModelTaskRequest",
     "ModelTaskResult",
