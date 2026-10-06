@@ -33,6 +33,11 @@
       "members": {},
       "signature": "(value: 'str') -> None"
     },
+    "mconet.core.domain.SchemaVersion": {
+      "kind": "class",
+      "members": {},
+      "signature": "(value: 'str') -> None"
+    },
     "mconet.core.domain.Timestamp": {
       "kind": "class",
       "members": {},
