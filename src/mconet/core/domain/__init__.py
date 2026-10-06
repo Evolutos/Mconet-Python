@@ -2,6 +2,7 @@
 
 from mconet.core.domain.authorization import Authorization
 from mconet.core.domain.bytes_value import Bytes
+from mconet.core.domain.compatibility_policy import CompatibilityPolicy
 from mconet.core.domain.diagnostic import Diagnostic
 from mconet.core.domain.duration import Duration, validate_duration
 from mconet.core.domain.error_category import ErrorCategory
@@ -38,6 +39,7 @@ __all__ = (
     "Authorization",
     "AuthorizedSecretConsumer",
     "Bytes",
+    "CompatibilityPolicy",
     "Diagnostic",
     "Duration",
     "ErrorCategory",

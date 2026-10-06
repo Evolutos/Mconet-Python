@@ -21,6 +21,11 @@
       "kind": "value",
       "type": "NewType"
     },
+    "mconet.core.domain.CompatibilityPolicy": {
+      "kind": "class",
+      "members": {},
+      "signature": "(mode: 'OpenIdentifier') -> None"
+    },
     "mconet.core.domain.Diagnostic": {
       "kind": "class",
       "members": {},
