@@ -32,6 +32,9 @@ from mconet.core.domain.conversation_task_request_validation import (
     validate_conversation_task_request,
 )
 from mconet.core.domain.conversation_task_result import ConversationTaskResult
+from mconet.core.domain.conversation_task_type import (
+    validate_conversation_task_type,
+)
 from mconet.core.domain.diagnostic import Diagnostic
 from mconet.core.domain.duration import Duration, validate_duration
 from mconet.core.domain.error_category import ErrorCategory
@@ -219,6 +222,7 @@ __all__ = (
     "validate_artifact_catalog",
     "validate_conversation_input_node",
     "validate_conversation_task_request",
+    "validate_conversation_task_type",
     "validate_duration",
     "validate_empty_artifact_catalog_scope",
     "validate_generation_parameters",
