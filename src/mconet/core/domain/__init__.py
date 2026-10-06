@@ -31,6 +31,9 @@ from mconet.core.domain.duration import Duration, validate_duration
 from mconet.core.domain.error_category import ErrorCategory
 from mconet.core.domain.extensions import Extensions
 from mconet.core.domain.generation_parameters import GenerationParameters
+from mconet.core.domain.generation_parameters_validation import (
+    validate_generation_parameters,
+)
 from mconet.core.domain.header_field import HeaderField
 from mconet.core.domain.headers import Headers
 from mconet.core.domain.inline_artifact_source import InlineArtifactSource
@@ -181,6 +184,7 @@ __all__ = (
     "validate_conversation_input_node",
     "validate_duration",
     "validate_empty_artifact_catalog_scope",
+    "validate_generation_parameters",
     "validate_json_value_numbers",
     "validate_message_document",
     "validate_message_entry",

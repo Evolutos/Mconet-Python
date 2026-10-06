@@ -85,6 +85,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "validate_conversation_input_node",
         "validate_duration",
         "validate_empty_artifact_catalog_scope",
+        "validate_generation_parameters",
         "validate_json_value_numbers",
         "validate_message_document",
         "validate_message_entry",
