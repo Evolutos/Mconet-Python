@@ -83,6 +83,7 @@ from mconet.core.domain.monitoring_merge_mode import MonitoringMergeMode
 from mconet.core.domain.named_model import NamedModel
 from mconet.core.domain.open_identifier import OpenIdentifier, validate_open_identifier
 from mconet.core.domain.optional_field import OptionalField, serialize_optional_fields
+from mconet.core.domain.output_status import OutputStatus
 from mconet.core.domain.query_parameter import QueryParameter
 from mconet.core.domain.query_parameters import QueryParameters
 from mconet.core.domain.recovery_hint import RecoveryHint
@@ -168,6 +169,7 @@ __all__ = (
     "NamedModel",
     "OpenIdentifier",
     "OptionalField",
+    "OutputStatus",
     "QueryParameter",
     "QueryParameters",
     "RecoveryHint",
