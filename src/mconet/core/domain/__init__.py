@@ -21,6 +21,7 @@ from mconet.core.domain.named_model import NamedModel
 from mconet.core.domain.open_identifier import OpenIdentifier, validate_open_identifier
 from mconet.core.domain.optional_field import OptionalField, serialize_optional_fields
 from mconet.core.domain.query_parameter import QueryParameter
+from mconet.core.domain.query_parameters import QueryParameters
 from mconet.core.domain.recovery_hint import RecoveryHint
 from mconet.core.domain.schema_version import SchemaVersion
 from mconet.core.domain.secret_value import AuthorizedSecretConsumer, SecretValue
@@ -52,6 +53,7 @@ __all__ = (
     "OpenIdentifier",
     "OptionalField",
     "QueryParameter",
+    "QueryParameters",
     "RecoveryHint",
     "SchemaVersion",
     "SecretValue",

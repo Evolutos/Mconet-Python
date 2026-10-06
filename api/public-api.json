@@ -158,6 +158,11 @@
       "members": {},
       "signature": "(name: 'str', value: 'str') -> None"
     },
+    "mconet.core.domain.QueryParameters": {
+      "kind": "class",
+      "members": {},
+      "signature": "(values: 'tuple[QueryParameter, ...]' = ()) -> None"
+    },
     "mconet.core.domain.RecoveryHint": {
       "kind": "class",
       "members": {},
