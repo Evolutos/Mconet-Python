@@ -10,6 +10,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "ArtifactDescriptor",
         "ArtifactKind",
         "ArtifactMetadata",
+        "ArtifactReference",
         "ArtifactSource",
         "Authorization",
         "AuthorizedSecretConsumer",

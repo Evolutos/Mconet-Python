@@ -3,6 +3,7 @@
 from mconet.core.domain.artifact_descriptor import ArtifactDescriptor
 from mconet.core.domain.artifact_kind import ArtifactKind
 from mconet.core.domain.artifact_metadata import ArtifactMetadata
+from mconet.core.domain.artifact_reference import ArtifactReference
 from mconet.core.domain.artifact_source import ArtifactSource
 from mconet.core.domain.authorization import Authorization
 from mconet.core.domain.bytes_value import Bytes
@@ -74,6 +75,7 @@ __all__ = (
     "ArtifactDescriptor",
     "ArtifactKind",
     "ArtifactMetadata",
+    "ArtifactReference",
     "ArtifactSource",
     "Authorization",
     "AuthorizedSecretConsumer",

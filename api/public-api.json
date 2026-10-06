@@ -34,6 +34,11 @@
       "kind": "value",
       "type": "GenericAlias"
     },
+    "mconet.core.domain.ArtifactReference": {
+      "kind": "class",
+      "members": {},
+      "signature": "(artifact_id: 'str', relation: 'OpenIdentifier | None' = None, metadata: 'Extensions' = <factory>) -> None"
+    },
     "mconet.core.domain.ArtifactSource": {
       "kind": "class",
       "members": {
