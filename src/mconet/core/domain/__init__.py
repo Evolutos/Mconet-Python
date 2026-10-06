@@ -30,6 +30,7 @@ from mconet.core.domain.conversation_task_request import ConversationTaskRequest
 from mconet.core.domain.conversation_task_request_validation import (
     validate_conversation_task_request,
 )
+from mconet.core.domain.conversation_task_result import ConversationTaskResult
 from mconet.core.domain.diagnostic import Diagnostic
 from mconet.core.domain.duration import Duration, validate_duration
 from mconet.core.domain.error_category import ErrorCategory
@@ -135,6 +136,7 @@ __all__ = (
     "CompatibilityPolicy",
     "ConversationInputNode",
     "ConversationTaskRequest",
+    "ConversationTaskResult",
     "Diagnostic",
     "Duration",
     "ErrorCategory",

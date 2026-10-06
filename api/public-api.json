@@ -154,6 +154,20 @@
       },
       "signature": "(document: 'TaskDocument', artifacts: 'ArtifactCatalog' = <factory>, metadata: 'Extensions' = <factory>, extensions: 'Extensions' = <factory>) -> None"
     },
+    "mconet.core.domain.ConversationTaskResult": {
+      "kind": "class",
+      "members": {
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "document": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(messages: 'MessageDocument', artifacts: 'ArtifactCatalog' = <factory>, metadata: 'Extensions' = <factory>, extensions: 'Extensions' = <factory>) -> None"
+    },
     "mconet.core.domain.Diagnostic": {
       "kind": "class",
       "members": {},
