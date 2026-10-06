@@ -5,6 +5,7 @@
   "resources": [
     "foundation-values.json",
     "model-descriptor.json",
-    "model-target.json"
+    "model-target.json",
+    "service-access.json"
   ]
 }

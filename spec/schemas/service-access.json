@@ -1,0 +1,93 @@
+{
+  "$id": "schema.service_access",
+  "additionalProperties": false,
+  "properties": {
+    "apiVersion": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "endpoint": {
+      "pattern": "^(?![\\s\\S]*[^A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%])[A-Za-z][A-Za-z0-9+.-]*:",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "extensions": {
+      "type": "object"
+    },
+    "headers": {
+      "additionalProperties": false,
+      "properties": {
+        "values": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "pattern": "^(?![\\s\\S]*[^!#$%&'*+\\-.^_`|~0-9A-Za-z])[!#$%&'*+\\-.^_`|~0-9A-Za-z]+$",
+                "type": "string"
+              },
+              "value": {
+                "pattern": "^(?![\\s\\S]*[\\u0000-\\u001F\\u007F])[\\s\\S]*$",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "value"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "values"
+      ],
+      "type": "object"
+    },
+    "projectId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "query": {
+      "additionalProperties": false,
+      "properties": {
+        "values": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "value"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "values"
+      ],
+      "type": "object"
+    },
+    "tenantId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}
