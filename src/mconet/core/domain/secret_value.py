@@ -6,6 +6,9 @@ from typing import Never, Self, SupportsIndex, cast
 
 from mconet.core.domain.bytes_value import Bytes
 
+_REDACTED_TEXT = "[REDACTED]"
+_SECRET_ATTRIBUTE = "_SecretValue__value"
+
 
 class AuthorizedSecretConsumer:
     """Nominal marker for components permitted to consume secret plaintext.
@@ -45,7 +48,15 @@ class SecretValue:
         # runtime class. Static typing enforces the nominal public boundary.
         if not isinstance(candidate, (str, bytes)):
             raise TypeError("SecretValue must contain a string or Bytes value.")
-        object.__setattr__(self, "_SecretValue__value", candidate)
+        object.__setattr__(self, _SECRET_ATTRIBUTE, candidate)
+
+    def __getattribute__(self, name: str) -> object:
+        """Prevent ordinary attribute and inspection access to plaintext."""
+        if name == _SECRET_ATTRIBUTE:
+            raise AttributeError(
+                "SecretValue plaintext is only accessible through reveal()."
+            )
+        return object.__getattribute__(self, name)
 
     def __setattr__(self, name: str, value: object) -> None:
         """Reject mutation after construction."""
@@ -67,7 +78,26 @@ class SecretValue:
         candidate = cast(object, consumer)
         if not isinstance(candidate, AuthorizedSecretConsumer):
             raise TypeError("SecretValue consumer is not authorized.")
-        return self.__value
+        return cast(
+            str | Bytes,
+            object.__getattribute__(self, _SECRET_ATTRIBUTE),
+        )
+
+    def __str__(self) -> str:
+        """Return a fixed redaction marker instead of plaintext."""
+        return _REDACTED_TEXT
+
+    def __repr__(self) -> str:
+        """Return the same safe representation used by logs and containers."""
+        return _REDACTED_TEXT
+
+    def __format__(self, format_spec: str) -> str:
+        """Apply formatting only to the redaction marker."""
+        return format(_REDACTED_TEXT, format_spec)
+
+    def __dir__(self) -> list[str]:
+        """Exclude the plaintext slot from ordinary inspection results."""
+        return [name for name in object.__dir__(self) if name != _SECRET_ATTRIBUTE]
 
     def __getstate__(self) -> Never:
         """Reject state-based serializers before plaintext can be extracted."""
