@@ -129,6 +129,11 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.domain.MessageRelation": {
+      "kind": "class",
+      "members": {},
+      "signature": "(source: 'str', target: 'str', type: 'OpenIdentifier', metadata: 'Extensions' = <factory>) -> None"
+    },
     "mconet.core.domain.MessageRole": {
       "kind": "class",
       "members": {

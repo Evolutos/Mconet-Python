@@ -20,6 +20,7 @@ from mconet.core.domain.json_value import JsonValue, validate_json_value_numbers
 from mconet.core.domain.media_type import MediaType, parse_media_type
 from mconet.core.domain.message_content_kind import MessageContentKind
 from mconet.core.domain.message_element_kind import MessageElementKind
+from mconet.core.domain.message_relation import MessageRelation
 from mconet.core.domain.message_role import MessageRole
 from mconet.core.domain.message_role_validation import validate_message_role
 from mconet.core.domain.model_descriptor import ModelDescriptor
@@ -69,6 +70,7 @@ __all__ = (
     "MediaType",
     "MessageContentKind",
     "MessageElementKind",
+    "MessageRelation",
     "MessageRole",
     "ModelDescriptor",
     "ModelInteractionError",
