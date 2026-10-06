@@ -67,7 +67,12 @@ jobs:
           python-version: "3.13"
           cache: pip
       - run: python -m pip install -e ".[dev]"
-      - run: pytest tests/conformance
+      - run: pytest tests/conformance --junitxml=conformance-report.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: conformance-report
+          path: conformance-report.xml
 
   package:
     name: Package

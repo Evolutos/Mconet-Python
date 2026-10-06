@@ -50,3 +50,23 @@ def test_contract_stage_is_independent_and_blocks_conformance() -> None:
     assert "needs: unit" in contract_job
     assert "- run: pytest tests/contract" in contract_job
     assert "needs: contract" in conformance_job
+
+
+def test_conformance_stage_reports_differences_and_blocks_packaging() -> None:
+    """Verify conformance always publishes a report before packaging."""
+    # JUnit retains stable pytest node identifiers for fixture differences, and
+    # `always()` preserves the report even when the test command fails.
+    conformance_job = _job_block("conformance", "package")
+    workflow = _WORKFLOW_PATH.read_text(encoding="utf-8")
+    package_start = workflow.index("  package:\n")
+    package_job = workflow[package_start:]
+
+    assert "needs: contract" in conformance_job
+    assert (
+        "- run: pytest tests/conformance --junitxml=conformance-report.xml"
+        in conformance_job
+    )
+    assert "name: conformance-report" in conformance_job
+    assert "path: conformance-report.xml" in conformance_job
+    assert "if: always()" in conformance_job
+    assert "needs: conformance" in package_job
