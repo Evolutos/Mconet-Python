@@ -45,6 +45,16 @@
       "members": {},
       "signature": "(name: 'str', value: 'str') -> None"
     },
+    "mconet.core.domain.Headers": {
+      "kind": "class",
+      "members": {
+        "get_all": {
+          "kind": "method",
+          "signature": "(self, name: 'str') -> 'tuple[str, ...]'"
+        }
+      },
+      "signature": "(values: 'tuple[HeaderField, ...]' = ()) -> None"
+    },
     "mconet.core.domain.InteractionPhase": {
       "kind": "class",
       "members": {},
