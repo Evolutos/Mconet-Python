@@ -3,6 +3,7 @@
   "format_version": 1,
   "purpose": "Language-neutral schemas shared by every SDK implementation.",
   "resources": [
-    "foundation-values.json"
+    "foundation-values.json",
+    "model-descriptor.json"
   ]
 }
