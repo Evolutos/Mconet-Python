@@ -178,6 +178,11 @@
       "members": {},
       "signature": "(transient: 'bool', retry_after: 'Duration | None' = None, request_may_have_been_processed: 'bool | None' = None) -> None"
     },
+    "mconet.core.domain.ResolvedInteractionResourceLimits": {
+      "kind": "class",
+      "members": {},
+      "signature": "(max_response_body_bytes: 'int', max_streaming_error_body_bytes: 'int', max_frame_bytes: 'int') -> None"
+    },
     "mconet.core.domain.SchemaVersion": {
       "kind": "class",
       "members": {},

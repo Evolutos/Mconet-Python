@@ -28,6 +28,9 @@ from mconet.core.domain.optional_field import OptionalField, serialize_optional_
 from mconet.core.domain.query_parameter import QueryParameter
 from mconet.core.domain.query_parameters import QueryParameters
 from mconet.core.domain.recovery_hint import RecoveryHint
+from mconet.core.domain.resolved_interaction_resource_limits import (
+    ResolvedInteractionResourceLimits,
+)
 from mconet.core.domain.schema_version import SchemaVersion
 from mconet.core.domain.secret_value import AuthorizedSecretConsumer, SecretValue
 from mconet.core.domain.service_access import ServiceAccess
@@ -64,6 +67,7 @@ __all__ = (
     "QueryParameter",
     "QueryParameters",
     "RecoveryHint",
+    "ResolvedInteractionResourceLimits",
     "SchemaVersion",
     "SecretValue",
     "ServiceAccess",

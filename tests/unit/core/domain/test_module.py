@@ -31,6 +31,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "QueryParameter",
         "QueryParameters",
         "RecoveryHint",
+        "ResolvedInteractionResourceLimits",
         "SchemaVersion",
         "SecretValue",
         "ServiceAccess",
