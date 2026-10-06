@@ -13,5 +13,6 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "JsonValue",
         "OpenIdentifier",
         "Timestamp",
+        "parse_timestamp",
         "validate_open_identifier",
     )
