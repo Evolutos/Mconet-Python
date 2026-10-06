@@ -137,7 +137,7 @@ class MessageEntry:
     @property
     def kind(self) -> MessageElementKind:
         """Return the fixed ``message.entry`` leaf classification."""
-        # The singleton is itself frozen, so all entries can share one canonical
+        # The singleton has no instance storage, so all entries can share one
         # classification without allowing callers to alter later observations.
         return _MESSAGE_ENTRY_KIND
 
