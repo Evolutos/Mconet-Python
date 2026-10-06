@@ -2,11 +2,65 @@
   "profile": "r1.text-unary",
   "reference_protocol": {
     "endpoint_path": "/v1/chat/completions",
+    "endpoint_profile": "compatibility/r1-openai-endpoint.json",
+    "field_profile": "compatibility/r1-openai-protocol.json",
     "id": "openai.chat-completions",
     "task": "conversation.generate"
   },
+  "release_gates": [
+    {
+      "condition": "Every supported behavior is implemented and every rejected behavior returns a stable pre-I/O error.",
+      "id": "scope"
+    },
+    {
+      "condition": "Every release target builds successfully.",
+      "id": "build"
+    },
+    {
+      "condition": "All domain, configuration, component, and runtime unit tests pass.",
+      "id": "unit"
+    },
+    {
+      "condition": "All replaceable component contract suites pass.",
+      "id": "contract"
+    },
+    {
+      "condition": "All r1.text-unary fixtures produce equivalent results across release platforms.",
+      "id": "conformance"
+    },
+    {
+      "condition": "All required mock-server scenarios pass.",
+      "id": "integration"
+    },
+    {
+      "condition": "At least one real OpenAI-compatible service passes controlled success and failure scenarios.",
+      "id": "live"
+    },
+    {
+      "condition": "Secret, redirect, header-injection, TLS, and response-limit checks pass.",
+      "id": "security"
+    },
+    {
+      "condition": "Client reuse, cancellation, timeout, and concurrent interaction isolation pass.",
+      "id": "concurrency"
+    },
+    {
+      "condition": "Frozen performance baselines pass without unbounded memory growth.",
+      "id": "performance"
+    },
+    {
+      "condition": "Minimal usage, custom transport, custom adapter, and error-handling documentation is executable.",
+      "id": "documentation"
+    },
+    {
+      "condition": "An isolated sample consumes only candidate release artifacts and completes a call.",
+      "id": "packaging"
+    }
+  ],
+  "scope_version": "r1",
   "supported": {
     "authorization": ["none", "api-key-header", "bearer"],
+    "message_elements": ["message.entry"],
     "message_content": ["content.text"],
     "message_roles": ["message.system", "message.user", "message.assistant"],
     "modes": ["unary"],
