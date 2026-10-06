@@ -43,6 +43,10 @@
       "members": {},
       "signature": "(value: 'str', is_absolute: 'bool') -> None"
     },
+    "mconet.core.domain.parse_media_type": {
+      "kind": "function",
+      "signature": "(value: 'str') -> 'MediaType'"
+    },
     "mconet.core.domain.parse_timestamp": {
       "kind": "function",
       "signature": "(value: 'str') -> 'Timestamp'"

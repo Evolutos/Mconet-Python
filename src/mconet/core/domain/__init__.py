@@ -5,7 +5,7 @@ from mconet.core.domain.duration import Duration, validate_duration
 from mconet.core.domain.extensions import Extensions
 from mconet.core.domain.json_primitive import JsonPrimitive
 from mconet.core.domain.json_value import JsonValue
-from mconet.core.domain.media_type import MediaType
+from mconet.core.domain.media_type import MediaType, parse_media_type
 from mconet.core.domain.open_identifier import OpenIdentifier, validate_open_identifier
 from mconet.core.domain.timestamp import Timestamp, parse_timestamp
 from mconet.core.domain.uri import UriValue, validate_uri
@@ -20,6 +20,7 @@ __all__ = (
     "OpenIdentifier",
     "Timestamp",
     "UriValue",
+    "parse_media_type",
     "parse_timestamp",
     "validate_duration",
     "validate_open_identifier",
