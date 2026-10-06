@@ -605,6 +605,11 @@
       "members": {},
       "signature": "(id: 'OpenIdentifier') -> None"
     },
+    "mconet.core.domain.ProtocolState": {
+      "kind": "class",
+      "members": {},
+      "signature": "(service_id: 'OpenIdentifier', protocol_id: 'OpenIdentifier', state_type: 'OpenIdentifier', state_value: 'JsonValue') -> None"
+    },
     "mconet.core.domain.QueryParameter": {
       "kind": "class",
       "members": {},

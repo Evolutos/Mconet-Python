@@ -59,6 +59,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "OpenIdentifier",
         "OptionalField",
         "OutputStatus",
+        "ProtocolState",
         "QueryParameter",
         "QueryParameters",
         "RecoveryHint",
