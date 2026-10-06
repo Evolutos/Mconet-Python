@@ -2,6 +2,24 @@
   "package": "mconet",
   "schema_version": 1,
   "symbols": {
+    "mconet.core.domain.ArtifactKind": {
+      "kind": "class",
+      "members": {
+        "extensions": {
+          "kind": "property",
+          "signature": null
+        },
+        "id": {
+          "kind": "property",
+          "signature": null
+        },
+        "semantic": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.domain.Authorization": {
       "kind": "class",
       "members": {
