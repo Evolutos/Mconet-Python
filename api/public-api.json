@@ -2,6 +2,10 @@
   "package": "mconet",
   "schema_version": 1,
   "symbols": {
+    "mconet.core.domain.Extensions": {
+      "kind": "value",
+      "type": "GenericAlias"
+    },
     "mconet.core.domain.JsonPrimitive": {
       "kind": "value",
       "type": "UnionType"
