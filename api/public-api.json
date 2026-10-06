@@ -382,6 +382,16 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.domain.TextMessageContent": {
+      "kind": "class",
+      "members": {
+        "kind": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(id: 'str', text: 'str', metadata: 'Extensions' = <factory>, extensions: 'Extensions' = <factory>) -> None"
+    },
     "mconet.core.domain.Timestamp": {
       "kind": "class",
       "members": {},

@@ -47,6 +47,7 @@ from mconet.core.domain.schema_version import SchemaVersion
 from mconet.core.domain.secret_value import AuthorizedSecretConsumer, SecretValue
 from mconet.core.domain.service_access import ServiceAccess
 from mconet.core.domain.service_access_validation import validate_service_access
+from mconet.core.domain.text_message_content import TextMessageContent
 from mconet.core.domain.timestamp import Timestamp, parse_timestamp, serialize_timestamp
 from mconet.core.domain.unknown_fields import (
     preserve_unknown_fields,
@@ -92,6 +93,7 @@ __all__ = (
     "SchemaVersion",
     "SecretValue",
     "ServiceAccess",
+    "TextMessageContent",
     "Timestamp",
     "UriValue",
     "default_compatibility_policy",
