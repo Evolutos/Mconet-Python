@@ -477,6 +477,10 @@
       "kind": "function",
       "signature": "(entry: 'MessageEntry') -> 'MessageEntry'"
     },
+    "mconet.core.domain.validate_message_group": {
+      "kind": "function",
+      "signature": "(group: 'MessageGroup') -> 'MessageGroup'"
+    },
     "mconet.core.domain.validate_message_role": {
       "kind": "function",
       "signature": "(role: 'MessageRole') -> 'MessageRole'"

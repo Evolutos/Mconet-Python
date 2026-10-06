@@ -60,6 +60,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "validate_duration",
         "validate_json_value_numbers",
         "validate_message_entry",
+        "validate_message_group",
         "validate_message_role",
         "validate_model_descriptor",
         "validate_model_target",

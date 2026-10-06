@@ -26,6 +26,7 @@ from mconet.core.domain.message_element_value import MessageElementValue
 from mconet.core.domain.message_entry import MessageEntry
 from mconet.core.domain.message_entry_validation import validate_message_entry
 from mconet.core.domain.message_group import MessageGroup
+from mconet.core.domain.message_group_validation import validate_message_group
 from mconet.core.domain.message_relation import MessageRelation
 from mconet.core.domain.message_role import MessageRole
 from mconet.core.domain.message_role_validation import validate_message_role
@@ -115,6 +116,7 @@ __all__ = (
     "validate_duration",
     "validate_json_value_numbers",
     "validate_message_entry",
+    "validate_message_group",
     "validate_message_role",
     "validate_model_descriptor",
     "validate_model_target",
