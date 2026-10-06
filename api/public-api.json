@@ -49,6 +49,10 @@
     "mconet.core.domain.validate_open_identifier": {
       "kind": "function",
       "signature": "(identifier: 'OpenIdentifier') -> 'OpenIdentifier'"
+    },
+    "mconet.core.domain.validate_uri": {
+      "kind": "function",
+      "signature": "(uri: 'UriValue') -> 'UriValue'"
     }
   }
 }

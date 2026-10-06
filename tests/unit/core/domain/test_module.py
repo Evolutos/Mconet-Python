@@ -18,4 +18,5 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "parse_timestamp",
         "validate_duration",
         "validate_open_identifier",
+        "validate_uri",
     )
