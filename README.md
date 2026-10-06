@@ -17,6 +17,7 @@ python scripts/check_api_compatibility.py
 python scripts/check_spec_module.py
 pytest tests/unit
 pytest
+python -m build
 python scripts/build_all.py
 ```
 

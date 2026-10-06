@@ -8,6 +8,7 @@ version = "0.1.0.dev0"
 description = "Protocol-driven, composable model interaction SDK"
 readme = "README.md"
 requires-python = ">=3.11"
+authors = [{ name = "Mcont", email = "Mcont@gmail.com" }]
 dependencies = []
 classifiers = [
   "Development Status :: 2 - Pre-Alpha",
