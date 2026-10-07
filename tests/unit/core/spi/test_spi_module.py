@@ -16,6 +16,7 @@ def test_core_spi_exports_only_implemented_contracts() -> None:
         "CapabilityContext",
         "CapabilityRequirement",
         "CapabilityResolution",
+        "CloseableRuntimeComponent",
         "ComponentDescriptor",
         "ComponentOwnership",
         "ComponentRole",

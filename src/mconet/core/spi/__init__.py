@@ -12,6 +12,7 @@ from mconet.core.spi.body_signing_requirement import (
 from mconet.core.spi.capability_context import CapabilityContext
 from mconet.core.spi.capability_requirement import CapabilityRequirement
 from mconet.core.spi.capability_resolution import CapabilityResolution
+from mconet.core.spi.closeable_runtime_component import CloseableRuntimeComponent
 from mconet.core.spi.component_descriptor import ComponentDescriptor
 from mconet.core.spi.component_ownership import ComponentOwnership
 from mconet.core.spi.component_role import ComponentRole
@@ -73,6 +74,7 @@ __all__ = (
     "CapabilityContext",
     "CapabilityRequirement",
     "CapabilityResolution",
+    "CloseableRuntimeComponent",
     "ComponentDescriptor",
     "ComponentOwnership",
     "ComponentRole",

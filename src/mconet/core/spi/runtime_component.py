@@ -14,7 +14,9 @@ class RuntimeComponent(Protocol):
     Concrete adapters, codecs, transports, resolvers, handlers, monitors, and
     factories combine this minimal protocol with their own behavior contracts.
     The boundary deliberately defines no registry identity, execution method,
-    mutable state, ownership, or lifecycle operation.
+    mutable state, ownership, or lifecycle operation. Resource-owning components
+    opt into the separate ``CloseableRuntimeComponent`` refinement; stateless
+    components remain valid without a no-op close method.
     """
 
     @property

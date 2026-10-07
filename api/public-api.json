@@ -1210,6 +1210,20 @@
       "members": {},
       "signature": "(satisfied: 'tuple[SatisfiedCapability, ...]' = (), optional_unsupported: 'tuple[CapabilityRequirement, ...]' = (), diagnostics: 'tuple[Diagnostic, ...]' = ()) -> None"
     },
+    "mconet.core.spi.CloseableRuntimeComponent": {
+      "kind": "class",
+      "members": {
+        "close": {
+          "kind": "method",
+          "signature": "(self) -> 'None'"
+        },
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.spi.ComponentDescriptor": {
       "kind": "class",
       "members": {},
