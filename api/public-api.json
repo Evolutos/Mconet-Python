@@ -1138,6 +1138,11 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.spi.CapabilityResolution": {
+      "kind": "class",
+      "members": {},
+      "signature": "(satisfied: 'tuple[SatisfiedCapability, ...]' = (), optional_unsupported: 'tuple[CapabilityRequirement, ...]' = (), diagnostics: 'tuple[Diagnostic, ...]' = ()) -> None"
+    },
     "mconet.core.spi.ComponentDescriptor": {
       "kind": "class",
       "members": {},
