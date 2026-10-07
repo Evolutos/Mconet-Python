@@ -1108,6 +1108,20 @@
       "members": {},
       "signature": "(interaction_id: 'str', target: 'ModelTarget', endpoint: 'UriValue', transport_kind: 'OpenIdentifier', timestamp: 'Timestamp', body_signing_mode: 'BodySigningMode', cancellation: 'CancellationSignal | None' = None, extensions: 'Extensions' = <factory>) -> None"
     },
+    "mconet.core.spi.AuthorizationHandlerResolver": {
+      "kind": "class",
+      "members": {
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "resolve": {
+          "kind": "method",
+          "signature": "(self, authorization: 'Authorization', body_signing_requirement: 'BodySigningRequirement', handlers: 'tuple[RuntimeComponent, ...]') -> 'ResolvedAuthorizationHandler'"
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.spi.BodySigningMode": {
       "kind": "value",
       "type": "_LiteralGenericAlias"
