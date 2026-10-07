@@ -1875,6 +1875,28 @@
       },
       "signature": "(loader: 'SchemaLoader') -> 'None'"
     },
+    "mconet.testing.SecretContractSuite": {
+      "kind": "class",
+      "members": {
+        "assert_exception_safe": {
+          "kind": "method",
+          "signature": "(self, secret: 'str', error: 'BaseException') -> 'None'"
+        },
+        "assert_log_safe": {
+          "kind": "method",
+          "signature": "(self, secret: 'str', *entries: 'object') -> 'None'"
+        },
+        "assert_serialization_safe": {
+          "kind": "method",
+          "signature": "(self, secret: 'str', serialized: 'object') -> 'None'"
+        },
+        "assert_snapshot_safe": {
+          "kind": "method",
+          "signature": "(self, secret: 'str', snapshot: 'object') -> 'None'"
+        }
+      },
+      "signature": "()"
+    },
     "mconet.testing.SecretScanner": {
       "kind": "class",
       "members": {
