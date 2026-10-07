@@ -1138,6 +1138,11 @@
       },
       "signature": "(type_id: 'OpenIdentifier', value: 'object', schema_id: 'str | None' = None) -> None"
     },
+    "mconet.core.spi.PlannedComponentSelection": {
+      "kind": "class",
+      "members": {},
+      "signature": "(role: 'ComponentRole', required: 'bool', required_capabilities: 'frozenset[OpenIdentifier]' = frozenset()) -> None"
+    },
     "mconet.core.spi.RuntimeComponent": {
       "kind": "class",
       "members": {

@@ -7,6 +7,7 @@ from mconet.core.spi.component_type_port import ComponentTypePort
 from mconet.core.spi.decoder_selection import DecoderSelection
 from mconet.core.spi.encoder_selection import EncoderSelection
 from mconet.core.spi.erased_runtime_value import ErasedRuntimeValue
+from mconet.core.spi.planned_component_selection import PlannedComponentSelection
 from mconet.core.spi.runtime_component import RuntimeComponent
 from mconet.core.spi.transport_body import TransportBody
 from mconet.core.spi.transport_context import TransportContext
@@ -24,6 +25,7 @@ __all__ = (
     "DecoderSelection",
     "EncoderSelection",
     "ErasedRuntimeValue",
+    "PlannedComponentSelection",
     "RuntimeComponent",
     "TransportBody",
     "TransportContext",
