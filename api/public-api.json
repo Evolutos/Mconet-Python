@@ -1654,6 +1654,20 @@
       },
       "signature": "(root: 'Path') -> 'None'"
     },
+    "mconet.testing.MockTransport": {
+      "kind": "class",
+      "members": {
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "send": {
+          "kind": "method",
+          "signature": "(self, request: 'TransportRequest', context: 'TransportContext') -> 'TransportResponse'"
+        }
+      },
+      "signature": "(descriptor: 'ComponentDescriptor', response: 'TransportResponse', *, error: 'BaseException | None' = None, delay: 'Duration' = Duration(total_nanoseconds=0)) -> 'None'"
+    },
     "mconet.testing.SchemaLoader": {
       "kind": "class",
       "members": {
