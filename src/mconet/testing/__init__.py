@@ -11,6 +11,7 @@ from mconet.testing.stub_authorization_handler import StubAuthorizationHandler
 from mconet.testing.stub_authorization_handler_resolver import (
     StubAuthorizationHandlerResolver,
 )
+from mconet.testing.stub_interaction_monitor import StubInteractionMonitor
 from mconet.testing.stub_model_integration_resolver import (
     StubModelIntegrationResolver,
 )
@@ -26,6 +27,7 @@ __all__ = (
     "SchemaValidatorAdapter",
     "StubAuthorizationHandler",
     "StubAuthorizationHandlerResolver",
+    "StubInteractionMonitor",
     "StubModelIntegrationResolver",
     "StubPayloadDecoder",
     "StubPayloadEncoder",

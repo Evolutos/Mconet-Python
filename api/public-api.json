@@ -1719,6 +1719,28 @@
       },
       "signature": "(descriptor: 'ComponentDescriptor', result: 'ResolvedAuthorizationHandler', *, error: 'BaseException | None' = None) -> 'None'"
     },
+    "mconet.testing.StubInteractionMonitor": {
+      "kind": "class",
+      "members": {
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "events": {
+          "kind": "property",
+          "signature": null
+        },
+        "observed_events": {
+          "kind": "property",
+          "signature": null
+        },
+        "on_event": {
+          "kind": "method",
+          "signature": "(self, event: 'MonitoringEvent') -> 'None'"
+        }
+      },
+      "signature": "(descriptor: 'ComponentDescriptor', observed_events: 'frozenset[OpenIdentifier] | None', *, error: 'BaseException | None' = None) -> 'None'"
+    },
     "mconet.testing.StubModelIntegrationResolver": {
       "kind": "class",
       "members": {
