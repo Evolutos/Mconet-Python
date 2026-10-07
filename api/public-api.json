@@ -1494,6 +1494,11 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.spi.RuntimeComponents": {
+      "kind": "class",
+      "members": {},
+      "signature": "(model_integration_resolver: 'ModelIntegrationResolver | None' = None, task_protocol_adapter: 'TaskProtocolAdapter | None' = None, service_access_resolver: 'ServiceAccessResolver | None' = None, payload_encoder: 'PayloadEncoder | None' = None, success_payload_decoder: 'PayloadDecoder | None' = None, error_payload_decoder: 'PayloadDecoder | None' = None, transport: 'Transport | None' = None, authorization_handler_resolver: 'AuthorizationHandlerResolver | None' = None, authorization_handlers: 'tuple[AuthorizationHandler, ...]' = ()) -> None"
+    },
     "mconet.core.spi.SatisfiedCapability": {
       "kind": "class",
       "members": {},

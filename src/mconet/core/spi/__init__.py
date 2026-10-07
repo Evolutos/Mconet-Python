@@ -44,6 +44,7 @@ from mconet.core.spi.resolved_authorization_handler import (
     ResolvedAuthorizationHandler,
 )
 from mconet.core.spi.runtime_component import RuntimeComponent
+from mconet.core.spi.runtime_components import RuntimeComponents
 from mconet.core.spi.satisfied_capability import SatisfiedCapability
 from mconet.core.spi.selected_component import SelectedComponent
 from mconet.core.spi.service_access_resolver import ServiceAccessResolver
@@ -96,6 +97,7 @@ __all__ = (
     "ProtocolRequestPlan",
     "ResolvedAuthorizationHandler",
     "RuntimeComponent",
+    "RuntimeComponents",
     "SatisfiedCapability",
     "SelectedComponent",
     "ServiceAccessResolver",
