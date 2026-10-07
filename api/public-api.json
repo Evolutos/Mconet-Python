@@ -1301,6 +1301,24 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.spi.InteractionMonitor": {
+      "kind": "class",
+      "members": {
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "observed_events": {
+          "kind": "property",
+          "signature": null
+        },
+        "on_event": {
+          "kind": "method",
+          "signature": "(self, event: 'MonitoringEvent') -> 'None'"
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.spi.MessageMappingResult": {
       "kind": "class",
       "members": {},
