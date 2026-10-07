@@ -1157,6 +1157,28 @@
       },
       "signature": "(type_id: 'OpenIdentifier', value: 'object', schema_id: 'str | None' = None) -> None"
     },
+    "mconet.core.spi.InteractionCapability": {
+      "kind": "class",
+      "members": {
+        "attributes": {
+          "kind": "property",
+          "signature": null
+        },
+        "extensions": {
+          "kind": "property",
+          "signature": null
+        },
+        "id": {
+          "kind": "property",
+          "signature": null
+        },
+        "version": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.spi.ModelIntegrationMatch": {
       "kind": "class",
       "members": {},
