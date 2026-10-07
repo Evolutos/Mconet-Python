@@ -9,6 +9,7 @@ def test_core_spi_exports_only_implemented_contracts() -> None:
     # contracts before their behavior and compatibility rules are implemented.
     assert mconet.core.spi.__all__ == (
         "ComponentDescriptor",
+        "ComponentRole",
         "ComponentTypeContract",
         "ComponentTypePort",
         "DecoderSelection",

@@ -1,6 +1,7 @@
 """Behavioral contracts connecting domain values to runtime components."""
 
 from mconet.core.spi.component_descriptor import ComponentDescriptor
+from mconet.core.spi.component_role import ComponentRole
 from mconet.core.spi.component_type_contract import ComponentTypeContract
 from mconet.core.spi.component_type_port import ComponentTypePort
 from mconet.core.spi.decoder_selection import DecoderSelection
@@ -17,6 +18,7 @@ from mconet.core.spi.transport_selection import TransportSelection
 
 __all__ = (
     "ComponentDescriptor",
+    "ComponentRole",
     "ComponentTypeContract",
     "ComponentTypePort",
     "DecoderSelection",
