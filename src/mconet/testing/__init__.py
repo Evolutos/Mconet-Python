@@ -6,6 +6,7 @@ from mconet.testing.controllable_cancellation_signal import (
 )
 from mconet.testing.deterministic_id_generator import DeterministicIdGenerator
 from mconet.testing.fake_clock import FakeClock
+from mconet.testing.fault_injection_harness import FaultInjectionHarness
 from mconet.testing.fixture_loader import FixtureLoader
 from mconet.testing.json_fixture import json_fixtures_equal
 from mconet.testing.mock_transport import MockTransport
@@ -35,6 +36,7 @@ __all__ = (
     "ControllableCancellationSignal",
     "DeterministicIdGenerator",
     "FakeClock",
+    "FaultInjectionHarness",
     "FixtureLoader",
     "MockTransport",
     "RecordingTransport",

@@ -1696,6 +1696,20 @@
       },
       "signature": "(initial: 'Timestamp') -> 'None'"
     },
+    "mconet.testing.FaultInjectionHarness": {
+      "kind": "class",
+      "members": {
+        "calls": {
+          "kind": "property",
+          "signature": null
+        },
+        "trigger": {
+          "kind": "method",
+          "signature": "(self, point: 'str') -> 'object'"
+        }
+      },
+      "signature": "(actions: 'Mapping[str, Sequence[Callable[[], object]]]') -> 'None'"
+    },
     "mconet.testing.FixtureLoader": {
       "kind": "class",
       "members": {
