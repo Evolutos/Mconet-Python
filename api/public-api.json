@@ -1112,6 +1112,32 @@
       "members": {},
       "signature": "(required: 'bool' = False, acceptable_modes: 'tuple[BodySigningMode, ...]' = ('none',), digest_algorithms: 'frozenset[OpenIdentifier]' = frozenset(), max_buffer_bytes: 'int | None' = None) -> None"
     },
+    "mconet.core.spi.CapabilityRequirement": {
+      "kind": "class",
+      "members": {
+        "capability_id": {
+          "kind": "property",
+          "signature": null
+        },
+        "constraints": {
+          "kind": "property",
+          "signature": null
+        },
+        "extensions": {
+          "kind": "property",
+          "signature": null
+        },
+        "required": {
+          "kind": "property",
+          "signature": null
+        },
+        "source_path": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.spi.ComponentDescriptor": {
       "kind": "class",
       "members": {},
