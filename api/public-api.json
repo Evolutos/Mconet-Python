@@ -1203,6 +1203,16 @@
       "members": {},
       "signature": "(name: 'str', type_id: 'OpenIdentifier', schema_id: 'str | None' = None, media_type: 'MediaType | None' = None) -> None"
     },
+    "mconet.core.spi.CredentialSource": {
+      "kind": "class",
+      "members": {
+        "resolve": {
+          "kind": "method",
+          "signature": "(self, context: 'AuthorizationContext') -> 'CredentialValue'"
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.spi.CredentialValue": {
       "kind": "class",
       "members": {

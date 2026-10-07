@@ -15,6 +15,7 @@ from mconet.core.spi.component_selection_resolution import (
 )
 from mconet.core.spi.component_type_contract import ComponentTypeContract
 from mconet.core.spi.component_type_port import ComponentTypePort
+from mconet.core.spi.credential_source import CredentialSource
 from mconet.core.spi.credential_value import CredentialValue
 from mconet.core.spi.decoder_selection import DecoderSelection
 from mconet.core.spi.encoder_selection import EncoderSelection
@@ -63,6 +64,7 @@ __all__ = (
     "ComponentSelectionResolution",
     "ComponentTypeContract",
     "ComponentTypePort",
+    "CredentialSource",
     "CredentialValue",
     "DecoderSelection",
     "EncoderSelection",
