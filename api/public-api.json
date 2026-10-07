@@ -994,6 +994,10 @@
       "kind": "function",
       "signature": "(node: 'ConversationInputNode') -> 'ConversationInputNode'"
     },
+    "mconet.core.domain.validate_conversation_task_node_scope": {
+      "kind": "function",
+      "signature": "(request: 'ConversationTaskRequest') -> 'ConversationTaskRequest'"
+    },
     "mconet.core.domain.validate_conversation_task_request": {
       "kind": "function",
       "signature": "(request: 'ConversationTaskRequest') -> 'ConversationTaskRequest'"

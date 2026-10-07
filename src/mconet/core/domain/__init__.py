@@ -27,6 +27,9 @@ from mconet.core.domain.conversation_input_node_validation import (
     validate_conversation_input_node,
 )
 from mconet.core.domain.conversation_task_builder import ConversationTaskBuilder
+from mconet.core.domain.conversation_task_node_scope import (
+    validate_conversation_task_node_scope,
+)
 from mconet.core.domain.conversation_task_request import ConversationTaskRequest
 from mconet.core.domain.conversation_task_request_validation import (
     validate_conversation_task_request,
@@ -224,6 +227,7 @@ __all__ = (
     "validate_artifact",
     "validate_artifact_catalog",
     "validate_conversation_input_node",
+    "validate_conversation_task_node_scope",
     "validate_conversation_task_request",
     "validate_conversation_task_type",
     "validate_duration",

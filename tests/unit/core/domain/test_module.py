@@ -96,6 +96,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "validate_artifact",
         "validate_artifact_catalog",
         "validate_conversation_input_node",
+        "validate_conversation_task_node_scope",
         "validate_conversation_task_request",
         "validate_conversation_task_type",
         "validate_duration",
