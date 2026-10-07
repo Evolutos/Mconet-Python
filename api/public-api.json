@@ -1679,6 +1679,24 @@
       },
       "signature": "(loader: 'SchemaLoader') -> 'None'"
     },
+    "mconet.testing.StubPayloadDecoder": {
+      "kind": "class",
+      "members": {
+        "decode": {
+          "kind": "method",
+          "signature": "(self, raw_data: 'Bytes') -> 'ErasedRuntimeValue'"
+        },
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "raw_data": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(descriptor: 'ComponentDescriptor', result: 'ErasedRuntimeValue', *, error: 'BaseException | None' = None) -> 'None'"
+    },
     "mconet.testing.StubPayloadEncoder": {
       "kind": "class",
       "members": {
