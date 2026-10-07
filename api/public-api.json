@@ -1240,6 +1240,11 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.spi.MessageMappingResult": {
+      "kind": "class",
+      "members": {},
+      "signature": "(document: 'MessageDocument', artifacts: 'ArtifactCatalog') -> None"
+    },
     "mconet.core.spi.ModelIntegrationMatch": {
       "kind": "class",
       "members": {},

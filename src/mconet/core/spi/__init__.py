@@ -18,6 +18,7 @@ from mconet.core.spi.decoder_selection import DecoderSelection
 from mconet.core.spi.encoder_selection import EncoderSelection
 from mconet.core.spi.erased_runtime_value import ErasedRuntimeValue
 from mconet.core.spi.interaction_capability import InteractionCapability
+from mconet.core.spi.message_mapping_result import MessageMappingResult
 from mconet.core.spi.model_integration_match import ModelIntegrationMatch
 from mconet.core.spi.model_integration_plan import ModelIntegrationPlan
 from mconet.core.spi.model_target_match import ModelTargetMatch
@@ -54,6 +55,7 @@ __all__ = (
     "EncoderSelection",
     "ErasedRuntimeValue",
     "InteractionCapability",
+    "MessageMappingResult",
     "ModelIntegrationMatch",
     "ModelIntegrationPlan",
     "ModelTargetMatch",
