@@ -1162,6 +1162,11 @@
       "members": {},
       "signature": "(target: 'ModelTargetMatch', task: 'TaskMatch') -> None"
     },
+    "mconet.core.spi.ModelIntegrationPlan": {
+      "kind": "class",
+      "members": {},
+      "signature": "(source: \"Literal['direct_adapter', 'resolved_binding']\", binding_id: 'str | None', binding_version: 'str | None', match: 'ModelIntegrationMatch | None', task_protocol_adapter: 'RuntimeComponent', authorization_handlers: 'tuple[RuntimeComponent, ...]' = (), default_service_access: 'ServiceAccess | None' = None, payload_encoders: 'tuple[RuntimeComponent, ...]' = (), payload_decoders: 'tuple[RuntimeComponent, ...]' = (), transports: 'tuple[RuntimeComponent, ...]' = (), extensions: 'Mapping[str, object]' = <factory>) -> None"
+    },
     "mconet.core.spi.ModelTargetMatch": {
       "kind": "class",
       "members": {},
