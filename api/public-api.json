@@ -1113,6 +1113,16 @@
       "members": {},
       "signature": "(name: 'str', type_id: 'OpenIdentifier', schema_id: 'str | None' = None, media_type: 'MediaType | None' = None) -> None"
     },
+    "mconet.core.spi.ErasedRuntimeValue": {
+      "kind": "class",
+      "members": {
+        "value_as": {
+          "kind": "method",
+          "signature": "(self, expected_type: 'type[_ValueT]') -> '_ValueT'"
+        }
+      },
+      "signature": "(type_id: 'OpenIdentifier', value: 'object', schema_id: 'str | None' = None) -> None"
+    },
     "mconet.core.spi.RuntimeComponent": {
       "kind": "class",
       "members": {

@@ -11,5 +11,6 @@ def test_core_spi_exports_only_implemented_contracts() -> None:
         "ComponentDescriptor",
         "ComponentTypeContract",
         "ComponentTypePort",
+        "ErasedRuntimeValue",
         "RuntimeComponent",
     )
