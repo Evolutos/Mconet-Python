@@ -1108,6 +1108,24 @@
       "members": {},
       "signature": "(interaction_id: 'str', target: 'ModelTarget', endpoint: 'UriValue', transport_kind: 'OpenIdentifier', timestamp: 'Timestamp', body_signing_mode: 'BodySigningMode', cancellation: 'CancellationSignal | None' = None, extensions: 'Extensions' = <factory>) -> None"
     },
+    "mconet.core.spi.AuthorizationHandler": {
+      "kind": "class",
+      "members": {
+        "apply": {
+          "kind": "method",
+          "signature": "(self, authorization: 'Authorization', context: 'AuthorizationContext', request: 'MutableTransportRequest') -> 'None'"
+        },
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "supports": {
+          "kind": "method",
+          "signature": "(self, authorization: 'Authorization', body_signing_requirement: 'BodySigningRequirement') -> 'frozenset[BodySigningMode]'"
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.spi.AuthorizationHandlerResolver": {
       "kind": "class",
       "members": {
@@ -1117,7 +1135,7 @@
         },
         "resolve": {
           "kind": "method",
-          "signature": "(self, authorization: 'Authorization', body_signing_requirement: 'BodySigningRequirement', handlers: 'tuple[RuntimeComponent, ...]') -> 'ResolvedAuthorizationHandler'"
+          "signature": "(self, authorization: 'Authorization', body_signing_requirement: 'BodySigningRequirement', handlers: 'tuple[AuthorizationHandler, ...]') -> 'ResolvedAuthorizationHandler'"
         }
       },
       "signature": "(*args, **kwargs)"
@@ -1432,7 +1450,7 @@
     "mconet.core.spi.ResolvedAuthorizationHandler": {
       "kind": "class",
       "members": {},
-      "signature": "(handler: 'RuntimeComponent', body_signing_mode: 'BodySigningMode') -> None"
+      "signature": "(handler: 'AuthorizationHandler', body_signing_mode: 'BodySigningMode') -> None"
     },
     "mconet.core.spi.RuntimeComponent": {
       "kind": "class",

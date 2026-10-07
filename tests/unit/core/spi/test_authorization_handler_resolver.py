@@ -14,11 +14,14 @@ from mconet.core.domain import (
     OpenIdentifier,
 )
 from mconet.core.spi import (
+    AuthorizationContext,
+    AuthorizationHandler,
     AuthorizationHandlerResolver,
+    BodySigningMode,
     BodySigningRequirement,
     ComponentDescriptor,
+    MutableTransportRequest,
     ResolvedAuthorizationHandler,
-    RuntimeComponent,
 )
 
 
@@ -31,13 +34,35 @@ class _Authorization:
 
 
 class _Handler:
-    """Ordinary runtime component standing in for a future handler contract."""
+    """Ordinary complete authorization handler candidate."""
 
     def __init__(self, name: str) -> None:
         """Create valid immutable component metadata for one candidate."""
-        # Distinct names make candidate identity and order observable without
-        # adding authorization behavior before its dedicated contract exists.
+        # Distinct names make candidate identity and order observable while the
+        # no-op behavior keeps resolver tests independent from authorization.
         self.descriptor = ComponentDescriptor(name, "1.0.0", "application")
+
+    def supports(
+        self,
+        authorization: Authorization,
+        body_signing_requirement: BodySigningRequirement,
+    ) -> frozenset[BodySigningMode]:
+        """Report canonical no-signing support for resolver fixtures."""
+        # Resolver contract tests configure outcomes directly, so candidate
+        # behavior only establishes the complete structural handler boundary.
+        del authorization, body_signing_requirement
+        return frozenset(("none",))
+
+    async def apply(
+        self,
+        authorization: Authorization,
+        context: AuthorizationContext,
+        request: MutableTransportRequest,
+    ) -> None:
+        """Provide complete no-op application behavior for structural checks."""
+        # Resolution never invokes apply; accepting the inputs prevents a
+        # descriptor-only component from entering the candidate tuple.
+        del authorization, context, request
 
 
 class _Resolver:
@@ -55,7 +80,7 @@ class _Resolver:
             tuple[
                 Authorization,
                 BodySigningRequirement,
-                tuple[RuntimeComponent, ...],
+                tuple[AuthorizationHandler, ...],
             ]
         ] = []
 
@@ -63,7 +88,7 @@ class _Resolver:
         self,
         authorization: Authorization,
         body_signing_requirement: BodySigningRequirement,
-        handlers: tuple[RuntimeComponent, ...],
+        handlers: tuple[AuthorizationHandler, ...],
     ) -> ResolvedAuthorizationHandler:
         """Record the closed candidate set and return the configured selection."""
         # Exact references expose hidden candidate replacement, order-based
@@ -87,7 +112,7 @@ class _FailingResolver:
         self,
         authorization: Authorization,
         body_signing_requirement: BodySigningRequirement,
-        handlers: tuple[RuntimeComponent, ...],
+        handlers: tuple[AuthorizationHandler, ...],
     ) -> ResolvedAuthorizationHandler:
         """Reject the complete candidate set without returning a fallback."""
         # Inputs are accepted as a single decision context but never used to
@@ -150,7 +175,7 @@ def test_authorization_handler_resolver_preserves_inputs_and_result() -> None:
     requirement = BodySigningRequirement()
     first = _Handler("First handler")
     selected = _Handler("Selected handler")
-    handlers: tuple[RuntimeComponent, ...] = (first, selected)
+    handlers: tuple[AuthorizationHandler, ...] = (first, selected)
     expected = ResolvedAuthorizationHandler(selected, "none")
     resolver = _Resolver(expected)
 
@@ -220,7 +245,7 @@ def test_authorization_handler_resolver_has_exact_method_surface() -> None:
     assert annotations == {
         "authorization": Authorization,
         "body_signing_requirement": BodySigningRequirement,
-        "handlers": tuple[RuntimeComponent, ...],
+        "handlers": tuple[AuthorizationHandler, ...],
         "return": ResolvedAuthorizationHandler,
     }
     assert not inspect.iscoroutinefunction(method)

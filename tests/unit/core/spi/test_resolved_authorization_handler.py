@@ -6,12 +6,15 @@ from collections.abc import Callable
 from dataclasses import FrozenInstanceError, dataclass, fields
 from typing import cast
 
-from mconet.core.domain import OpenIdentifier
+from mconet.core.domain import Authorization, OpenIdentifier
 from mconet.core.spi import (
+    AuthorizationContext,
+    AuthorizationHandler,
     BodySigningMode,
+    BodySigningRequirement,
     ComponentDescriptor,
+    MutableTransportRequest,
     ResolvedAuthorizationHandler,
-    RuntimeComponent,
 )
 
 
@@ -36,7 +39,29 @@ class _Handler:
     """Concrete selected component fixture with stable handler metadata."""
 
     descriptor: ComponentDescriptor
-    """Immutable component metadata exposed through RuntimeComponent."""
+    """Immutable component metadata exposed through AuthorizationHandler."""
+
+    def supports(
+        self,
+        authorization: Authorization,
+        body_signing_requirement: BodySigningRequirement,
+    ) -> frozenset[BodySigningMode]:
+        """Report canonical support for complete handler conformance."""
+        # Selection-result tests configure the chosen mode directly; this method
+        # proves the stored component has executable matching behavior.
+        del authorization, body_signing_requirement
+        return frozenset(("none",))
+
+    async def apply(
+        self,
+        authorization: Authorization,
+        context: AuthorizationContext,
+        request: MutableTransportRequest,
+    ) -> None:
+        """Provide no-op application behavior for selection-result fixtures."""
+        # Result validation must retain a complete Handler even though these
+        # immutable-value tests never execute request authorization.
+        del authorization, context, request
 
 
 @dataclass(frozen=True, slots=True)
@@ -45,6 +70,26 @@ class _MalformedHandler:
 
     descriptor: object
     """Invalid dynamic descriptor used to test the nominal metadata boundary."""
+
+    def supports(
+        self,
+        authorization: Authorization,
+        body_signing_requirement: BodySigningRequirement,
+    ) -> frozenset[BodySigningMode]:
+        """Expose valid matching behavior beside malformed metadata."""
+        # Complete behavior isolates the descriptor validation branch.
+        del authorization, body_signing_requirement
+        return frozenset(("none",))
+
+    async def apply(
+        self,
+        authorization: Authorization,
+        context: AuthorizationContext,
+        request: MutableTransportRequest,
+    ) -> None:
+        """Expose valid application behavior beside malformed metadata."""
+        # No request mutation is required to test metadata rejection.
+        del authorization, context, request
 
 
 def _handler(name: str = "Bearer authorization handler") -> _Handler:
@@ -133,10 +178,10 @@ def test_resolved_authorization_handler_requires_concrete_component() -> None:
         _assert_raises(
             TypeError,
             lambda invalid_handler=invalid_handler: ResolvedAuthorizationHandler(
-                cast(RuntimeComponent, invalid_handler),
+                cast(AuthorizationHandler, invalid_handler),
                 "none",
             ),
-            "handler must implement RuntimeComponent",
+            "handler must implement AuthorizationHandler",
         )
 
 
@@ -149,7 +194,7 @@ def test_resolved_authorization_handler_requires_nominal_descriptor() -> None:
     _assert_raises(
         TypeError,
         lambda: ResolvedAuthorizationHandler(
-            cast(RuntimeComponent, malformed),
+            cast(AuthorizationHandler, malformed),
             "none",
         ),
         "handler descriptor must be a ComponentDescriptor",

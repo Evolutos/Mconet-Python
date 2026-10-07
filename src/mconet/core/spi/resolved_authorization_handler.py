@@ -5,9 +5,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import cast
 
+from mconet.core.spi.authorization_handler import AuthorizationHandler
 from mconet.core.spi.body_signing_requirement import BodySigningMode
 from mconet.core.spi.component_descriptor import ComponentDescriptor
-from mconet.core.spi.runtime_component import RuntimeComponent
 
 _BODY_SIGNING_MODES = frozenset(
     (
@@ -29,13 +29,13 @@ class ResolvedAuthorizationHandler:
     protocol plan and that handler. The pair is immutable so later credential
     resolution and authorization application cannot swap either decision.
 
-    ``RuntimeComponent`` is Python's established type-erased storage boundary
-    for behavior contracts introduced later in the implementation sequence.
-    This value validates component metadata but does not choose candidates,
-    inspect authorization data, read credentials, or negotiate signing modes.
+    The selected component must implement the complete authorization handler
+    behavior contract. This value validates the executable component boundary
+    but does not choose candidates, inspect authorization data, read credentials,
+    apply authorization, or negotiate signing modes.
     """
 
-    handler: RuntimeComponent
+    handler: AuthorizationHandler
     """Exact concrete authorization handler component selected for execution."""
 
     body_signing_mode: BodySigningMode
@@ -48,9 +48,10 @@ class ResolvedAuthorizationHandler:
 
         # The result retains a concrete component instance rather than a name,
         # registry key, factory, candidate list, or descriptor-only placeholder.
-        if not isinstance(handler, RuntimeComponent):
+        if not isinstance(handler, AuthorizationHandler):
             raise TypeError(
-                "ResolvedAuthorizationHandler handler must implement RuntimeComponent."
+                "ResolvedAuthorizationHandler handler must implement "
+                "AuthorizationHandler."
             )
 
         # Runtime-checkable structural protocols prove descriptor presence but

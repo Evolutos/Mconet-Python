@@ -1,6 +1,7 @@
 """Behavioral contracts connecting domain values to runtime components."""
 
 from mconet.core.spi.authorization_context import AuthorizationContext
+from mconet.core.spi.authorization_handler import AuthorizationHandler
 from mconet.core.spi.authorization_handler_resolver import (
     AuthorizationHandlerResolver,
 )
@@ -58,6 +59,7 @@ from mconet.core.spi.transport_selection import TransportSelection
 
 __all__ = (
     "AuthorizationContext",
+    "AuthorizationHandler",
     "AuthorizationHandlerResolver",
     "BodySigningMode",
     "BodySigningRequirement",

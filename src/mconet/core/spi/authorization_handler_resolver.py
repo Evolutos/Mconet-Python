@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Protocol, runtime_checkable
 
 from mconet.core.domain import Authorization
+from mconet.core.spi.authorization_handler import AuthorizationHandler
 from mconet.core.spi.body_signing_requirement import BodySigningRequirement
 from mconet.core.spi.resolved_authorization_handler import (
     ResolvedAuthorizationHandler,
@@ -27,15 +28,15 @@ class AuthorizationHandlerResolver(RuntimeComponent, Protocol):
     compatible authorization component, no compatible signing mode, and more
     than one compatible component are deterministic pre-interaction failures.
 
-    ``RuntimeComponent`` is the current type-erased candidate boundary until
-    the dedicated authorization handler behavior contract is available.
+    Every candidate implements :class:`AuthorizationHandler`, so resolution may
+    query compatibility without accepting unrelated runtime components.
     """
 
     def resolve(
         self,
         authorization: Authorization,
         body_signing_requirement: BodySigningRequirement,
-        handlers: tuple[RuntimeComponent, ...],
+        handlers: tuple[AuthorizationHandler, ...],
     ) -> ResolvedAuthorizationHandler:
         """Return the unique compatible handler and signing-mode selection."""
         # Implementations inspect all supplied candidates as one closed set so
