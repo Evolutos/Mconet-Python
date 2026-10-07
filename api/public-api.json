@@ -1348,6 +1348,20 @@
       },
       "signature": "(method: 'str', url: 'UriValue', headers: 'Headers', query: 'QueryParameters', body: 'TransportBody') -> 'None'"
     },
+    "mconet.core.spi.PayloadDecoder": {
+      "kind": "class",
+      "members": {
+        "decode": {
+          "kind": "method",
+          "signature": "(self, raw_data: 'Bytes') -> 'ErasedRuntimeValue'"
+        },
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.spi.PayloadEncoder": {
       "kind": "class",
       "members": {
