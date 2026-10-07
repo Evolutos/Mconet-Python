@@ -4,6 +4,7 @@ from mconet.core.spi.body_signing_requirement import (
     BodySigningMode,
     BodySigningRequirement,
 )
+from mconet.core.spi.capability_context import CapabilityContext
 from mconet.core.spi.capability_requirement import CapabilityRequirement
 from mconet.core.spi.capability_resolution import CapabilityResolution
 from mconet.core.spi.component_descriptor import ComponentDescriptor
@@ -40,6 +41,7 @@ from mconet.core.spi.transport_selection import TransportSelection
 __all__ = (
     "BodySigningMode",
     "BodySigningRequirement",
+    "CapabilityContext",
     "CapabilityRequirement",
     "CapabilityResolution",
     "ComponentDescriptor",
