@@ -6,6 +6,9 @@ from mconet.testing.controllable_cancellation_signal import (
     ControllableCancellationSignal,
 )
 from mconet.testing.deterministic_id_generator import DeterministicIdGenerator
+from mconet.testing.error_payload_decoder_contract_suite import (
+    ErrorPayloadDecoderContractSuite,
+)
 from mconet.testing.fake_clock import FakeClock
 from mconet.testing.fault_injection_harness import FaultInjectionHarness
 from mconet.testing.fixture_loader import FixtureLoader
@@ -41,6 +44,7 @@ __all__ = (
     "ComponentCallRecorder",
     "ControllableCancellationSignal",
     "DeterministicIdGenerator",
+    "ErrorPayloadDecoderContractSuite",
     "FakeClock",
     "FaultInjectionHarness",
     "FixtureLoader",

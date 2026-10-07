@@ -10,6 +10,7 @@ def test_testing_module_imports_without_public_utilities() -> None:
         "ComponentCallRecorder",
         "ControllableCancellationSignal",
         "DeterministicIdGenerator",
+        "ErrorPayloadDecoderContractSuite",
         "FakeClock",
         "FaultInjectionHarness",
         "FixtureLoader",

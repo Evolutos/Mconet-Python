@@ -1708,6 +1708,20 @@
       },
       "signature": "() -> 'None'"
     },
+    "mconet.testing.ErrorPayloadDecoderContractSuite": {
+      "kind": "class",
+      "members": {
+        "assert_decode": {
+          "kind": "method",
+          "signature": "(self, raw_data: 'Bytes', *, assertion: 'Callable[[ErasedRuntimeValue], None]') -> 'None'"
+        },
+        "assert_decode_failure": {
+          "kind": "method",
+          "signature": "(self, raw_data: 'Bytes', *, assertion: 'Callable[[BaseException], None]') -> 'None'"
+        }
+      },
+      "signature": "(decoder: 'PayloadDecoder') -> 'None'"
+    },
     "mconet.testing.FakeClock": {
       "kind": "class",
       "members": {
