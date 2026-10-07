@@ -8,6 +8,7 @@ def test_testing_module_imports_without_public_utilities() -> None:
     assert mconet.testing.__all__ == (
         "FixtureLoader",
         "MockTransport",
+        "RecordingTransport",
         "SchemaLoader",
         "SchemaValidationIssue",
         "SchemaValidatorAdapter",

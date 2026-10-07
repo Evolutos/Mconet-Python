@@ -1668,6 +1668,24 @@
       },
       "signature": "(descriptor: 'ComponentDescriptor', response: 'TransportResponse', *, error: 'BaseException | None' = None, delay: 'Duration' = Duration(total_nanoseconds=0)) -> 'None'"
     },
+    "mconet.testing.RecordingTransport": {
+      "kind": "class",
+      "members": {
+        "calls": {
+          "kind": "property",
+          "signature": null
+        },
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "send": {
+          "kind": "method",
+          "signature": "(self, request: 'TransportRequest', context: 'TransportContext') -> 'TransportResponse'"
+        }
+      },
+      "signature": "(transport: 'Transport') -> 'None'"
+    },
     "mconet.testing.SchemaLoader": {
       "kind": "class",
       "members": {
