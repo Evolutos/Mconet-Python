@@ -70,6 +70,7 @@ def test_core_domain_exports_only_completed_public_types() -> None:
         "QueryParameters",
         "RecoveryHint",
         "ResolvedInteractionResourceLimits",
+        "ResolvedServiceAccess",
         "SchemaVersion",
         "SecretValue",
         "ServiceAccess",

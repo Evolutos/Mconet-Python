@@ -106,6 +106,7 @@ from mconet.core.domain.recovery_hint import RecoveryHint
 from mconet.core.domain.resolved_interaction_resource_limits import (
     ResolvedInteractionResourceLimits,
 )
+from mconet.core.domain.resolved_service_access import ResolvedServiceAccess
 from mconet.core.domain.resource_limits_resolution import resolve_resource_limits
 from mconet.core.domain.resource_limits_validation import validate_resource_limits
 from mconet.core.domain.schema_version import SchemaVersion
@@ -201,6 +202,7 @@ __all__ = (
     "QueryParameters",
     "RecoveryHint",
     "ResolvedInteractionResourceLimits",
+    "ResolvedServiceAccess",
     "SchemaVersion",
     "SecretValue",
     "ServiceAccess",

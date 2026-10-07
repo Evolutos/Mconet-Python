@@ -769,6 +769,11 @@
       "members": {},
       "signature": "(max_response_body_bytes: 'int', max_streaming_error_body_bytes: 'int', max_frame_bytes: 'int') -> None"
     },
+    "mconet.core.domain.ResolvedServiceAccess": {
+      "kind": "class",
+      "members": {},
+      "signature": "(endpoint: 'UriValue | None', authorization: 'Authorization', headers: 'Headers', query: 'QueryParameters', api_version: 'str | None', project_id: 'str | None', tenant_id: 'str | None', extensions: 'Extensions') -> None"
+    },
     "mconet.core.domain.SchemaVersion": {
       "kind": "class",
       "members": {},
