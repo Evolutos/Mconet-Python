@@ -1679,6 +1679,36 @@
       },
       "signature": "(loader: 'SchemaLoader') -> 'None'"
     },
+    "mconet.testing.StubTaskProtocolAdapter": {
+      "kind": "class",
+      "members": {
+        "build_request": {
+          "kind": "method",
+          "signature": "(self, request: 'ModelRequest', plan: 'ProtocolExecutionPlan') -> 'ProtocolRequestPlan'"
+        },
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "parse_error": {
+          "kind": "method",
+          "signature": "(self, error: 'ErasedRuntimeValue', metadata: 'TransportResponseMetadata') -> 'ModelInteractionError | None'"
+        },
+        "parse_response": {
+          "kind": "method",
+          "signature": "(self, response: 'ErasedRuntimeValue') -> 'ParsedTaskResponse'"
+        },
+        "prepare_plan": {
+          "kind": "method",
+          "signature": "(self, request: 'ModelRequest', access: 'ResolvedServiceAccess', mode: 'InteractionMode') -> 'ProtocolExecutionPlan'"
+        },
+        "supports": {
+          "kind": "method",
+          "signature": "(self, target: 'ModelTarget', task: 'TaskDescriptor', mode: 'InteractionMode') -> 'bool'"
+        }
+      },
+      "signature": "(descriptor: 'ComponentDescriptor', *, supports_result: 'bool', prepare_plan_result: 'ProtocolExecutionPlan', build_request_result: 'ProtocolRequestPlan', parse_response_result: 'ParsedTaskResponse', parse_error_result: 'ModelInteractionError | None', supports_error: 'BaseException | None' = None, prepare_plan_error: 'BaseException | None' = None, build_request_error: 'BaseException | None' = None, parse_response_error: 'BaseException | None' = None, parse_error_error: 'BaseException | None' = None) -> 'None'"
+    },
     "mconet.testing.json_fixtures_equal": {
       "kind": "function",
       "signature": "(actual: 'JsonValue', expected: 'JsonValue') -> 'bool'"
