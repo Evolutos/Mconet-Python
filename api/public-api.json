@@ -1929,6 +1929,20 @@
       },
       "signature": "()"
     },
+    "mconet.testing.ServiceAccessResolverContractSuite": {
+      "kind": "class",
+      "members": {
+        "assert_resolve": {
+          "kind": "method",
+          "signature": "(self, interaction_override: 'ServiceAccess | None', request_service_access: 'ServiceAccess | None', client_default_service_access: 'ServiceAccess | None', protocol_default_service_access: 'ServiceAccess | None', *, assertion: 'Callable[[ResolvedServiceAccess], None]') -> 'None'"
+        },
+        "assert_resolve_failure": {
+          "kind": "method",
+          "signature": "(self, interaction_override: 'ServiceAccess | None', request_service_access: 'ServiceAccess | None', client_default_service_access: 'ServiceAccess | None', protocol_default_service_access: 'ServiceAccess | None', *, assertion: 'Callable[[BaseException], None]') -> 'None'"
+        }
+      },
+      "signature": "(resolver: 'ServiceAccessResolver') -> 'None'"
+    },
     "mconet.testing.SnapshotComparator": {
       "kind": "class",
       "members": {

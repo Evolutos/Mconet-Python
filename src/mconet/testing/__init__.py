@@ -32,6 +32,9 @@ from mconet.testing.schema_validator import (
 )
 from mconet.testing.secret_contract_suite import SecretContractSuite
 from mconet.testing.secret_scanner import SecretScanner
+from mconet.testing.service_access_resolver_contract_suite import (
+    ServiceAccessResolverContractSuite,
+)
 from mconet.testing.snapshot_comparator import SnapshotComparator
 from mconet.testing.stub_authorization_handler import StubAuthorizationHandler
 from mconet.testing.stub_authorization_handler_resolver import (
@@ -70,6 +73,7 @@ __all__ = (
     "SchemaValidatorAdapter",
     "SecretContractSuite",
     "SecretScanner",
+    "ServiceAccessResolverContractSuite",
     "SnapshotComparator",
     "StubAuthorizationHandler",
     "StubAuthorizationHandlerResolver",

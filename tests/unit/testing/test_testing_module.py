@@ -25,6 +25,7 @@ def test_testing_module_imports_without_public_utilities() -> None:
         "SchemaValidatorAdapter",
         "SecretContractSuite",
         "SecretScanner",
+        "ServiceAccessResolverContractSuite",
         "SnapshotComparator",
         "StubAuthorizationHandler",
         "StubAuthorizationHandlerResolver",
