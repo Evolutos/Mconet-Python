@@ -1295,6 +1295,11 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.spi.SatisfiedCapability": {
+      "kind": "class",
+      "members": {},
+      "signature": "(requirement: 'CapabilityRequirement', capability: 'InteractionCapability', provider_id: 'str') -> None"
+    },
     "mconet.core.spi.SelectedComponent": {
       "kind": "class",
       "members": {},

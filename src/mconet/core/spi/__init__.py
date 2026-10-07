@@ -24,6 +24,7 @@ from mconet.core.spi.planned_component_selection import PlannedComponentSelectio
 from mconet.core.spi.protocol_execution_plan import ProtocolExecutionPlan
 from mconet.core.spi.protocol_request_plan import ProtocolRequestPlan
 from mconet.core.spi.runtime_component import RuntimeComponent
+from mconet.core.spi.satisfied_capability import SatisfiedCapability
 from mconet.core.spi.selected_component import SelectedComponent
 from mconet.core.spi.task_match import TaskMatch
 from mconet.core.spi.transport_body import TransportBody
@@ -56,6 +57,7 @@ __all__ = (
     "ProtocolExecutionPlan",
     "ProtocolRequestPlan",
     "RuntimeComponent",
+    "SatisfiedCapability",
     "SelectedComponent",
     "TaskMatch",
     "TransportBody",
