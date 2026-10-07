@@ -1,8 +1,10 @@
-"""Tests for the core-spi module boundary."""
+"""Tests for the core-spi public module boundary."""
 
 import mconet.core.spi
 
 
-def test_core_spi_imports_without_public_protocols() -> None:
-    """Verify the empty SPI module builds without premature protocols."""
-    assert mconet.core.spi.__all__ == ()
+def test_core_spi_exports_only_implemented_contracts() -> None:
+    """Verify the SPI namespace exposes its implemented public surface."""
+    # Keep the explicit export list synchronized without exposing future SPI
+    # contracts before their behavior and compatibility rules are implemented.
+    assert mconet.core.spi.__all__ == ("ComponentTypePort",)

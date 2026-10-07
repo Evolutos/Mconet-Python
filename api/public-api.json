@@ -1098,6 +1098,11 @@
       "kind": "function",
       "signature": "(uri: 'UriValue') -> 'UriValue'"
     },
+    "mconet.core.spi.ComponentTypePort": {
+      "kind": "class",
+      "members": {},
+      "signature": "(name: 'str', type_id: 'OpenIdentifier', schema_id: 'str | None' = None, media_type: 'MediaType | None' = None) -> None"
+    },
     "mconet.testing.SchemaLoader": {
       "kind": "class",
       "members": {
