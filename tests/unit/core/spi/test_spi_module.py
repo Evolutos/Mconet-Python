@@ -17,6 +17,7 @@ def test_core_spi_exports_only_implemented_contracts() -> None:
         "CapabilityRequirement",
         "CapabilityResolution",
         "ComponentDescriptor",
+        "ComponentOwnership",
         "ComponentRole",
         "ComponentSelectionResolution",
         "ComponentTypeContract",

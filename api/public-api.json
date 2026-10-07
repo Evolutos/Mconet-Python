@@ -1215,6 +1215,11 @@
       "members": {},
       "signature": "(name: 'str', version: 'str', source: \"Literal['builtin', 'plugin', 'application']\", type_contract: 'ComponentTypeContract | None' = None, capabilities: 'frozenset[OpenIdentifier]' = frozenset()) -> None"
     },
+    "mconet.core.spi.ComponentOwnership": {
+      "kind": "class",
+      "members": {},
+      "signature": "(id: 'OpenIdentifier') -> None"
+    },
     "mconet.core.spi.ComponentRole": {
       "kind": "class",
       "members": {},

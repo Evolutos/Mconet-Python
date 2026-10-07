@@ -13,6 +13,7 @@ from mconet.core.spi.capability_context import CapabilityContext
 from mconet.core.spi.capability_requirement import CapabilityRequirement
 from mconet.core.spi.capability_resolution import CapabilityResolution
 from mconet.core.spi.component_descriptor import ComponentDescriptor
+from mconet.core.spi.component_ownership import ComponentOwnership
 from mconet.core.spi.component_role import ComponentRole
 from mconet.core.spi.component_selection_resolution import (
     ComponentSelectionResolution,
@@ -73,6 +74,7 @@ __all__ = (
     "CapabilityRequirement",
     "CapabilityResolution",
     "ComponentDescriptor",
+    "ComponentOwnership",
     "ComponentRole",
     "ComponentSelectionResolution",
     "ComponentTypeContract",
