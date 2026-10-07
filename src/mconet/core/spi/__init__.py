@@ -3,5 +3,11 @@
 from mconet.core.spi.component_descriptor import ComponentDescriptor
 from mconet.core.spi.component_type_contract import ComponentTypeContract
 from mconet.core.spi.component_type_port import ComponentTypePort
+from mconet.core.spi.runtime_component import RuntimeComponent
 
-__all__ = ("ComponentDescriptor", "ComponentTypeContract", "ComponentTypePort")
+__all__ = (
+    "ComponentDescriptor",
+    "ComponentTypeContract",
+    "ComponentTypePort",
+    "RuntimeComponent",
+)
