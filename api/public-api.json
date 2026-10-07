@@ -1098,6 +1098,11 @@
       "kind": "function",
       "signature": "(uri: 'UriValue') -> 'UriValue'"
     },
+    "mconet.core.spi.ComponentTypeContract": {
+      "kind": "class",
+      "members": {},
+      "signature": "(inputs: 'tuple[ComponentTypePort, ...]' = (), outputs: 'tuple[ComponentTypePort, ...]' = ()) -> None"
+    },
     "mconet.core.spi.ComponentTypePort": {
       "kind": "class",
       "members": {},
