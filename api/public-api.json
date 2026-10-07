@@ -1679,6 +1679,24 @@
       },
       "signature": "(loader: 'SchemaLoader') -> 'None'"
     },
+    "mconet.testing.StubPayloadEncoder": {
+      "kind": "class",
+      "members": {
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "encode": {
+          "kind": "method",
+          "signature": "(self, payload: 'ErasedRuntimeValue') -> 'TransportBody'"
+        },
+        "payloads": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(descriptor: 'ComponentDescriptor', result: 'TransportBody', *, error: 'BaseException | None' = None) -> 'None'"
+    },
     "mconet.testing.StubTaskProtocolAdapter": {
       "kind": "class",
       "members": {

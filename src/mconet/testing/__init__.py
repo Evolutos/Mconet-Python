@@ -7,6 +7,7 @@ from mconet.testing.schema_validator import (
     SchemaValidationIssue,
     SchemaValidatorAdapter,
 )
+from mconet.testing.stub_payload_encoder import StubPayloadEncoder
 from mconet.testing.stub_task_protocol_adapter import StubTaskProtocolAdapter
 
 __all__ = (
@@ -14,6 +15,7 @@ __all__ = (
     "SchemaLoader",
     "SchemaValidationIssue",
     "SchemaValidatorAdapter",
+    "StubPayloadEncoder",
     "StubTaskProtocolAdapter",
     "json_fixtures_equal",
 )
