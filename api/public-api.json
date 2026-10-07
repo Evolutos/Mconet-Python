@@ -1636,6 +1636,20 @@
       "members": {},
       "signature": "(transport_kind: 'OpenIdentifier | None' = None, required_capabilities: 'frozenset[OpenIdentifier]' = frozenset()) -> None"
     },
+    "mconet.testing.ComponentCallRecorder": {
+      "kind": "class",
+      "members": {
+        "calls": {
+          "kind": "property",
+          "signature": null
+        },
+        "record": {
+          "kind": "method",
+          "signature": "(self, call: 'str') -> 'None'"
+        }
+      },
+      "signature": "() -> 'None'"
+    },
     "mconet.testing.ControllableCancellationSignal": {
       "kind": "class",
       "members": {
