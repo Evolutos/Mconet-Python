@@ -1818,6 +1818,28 @@
       },
       "signature": "(descriptor: 'ComponentDescriptor', response: 'TransportResponse', *, error: 'BaseException | None' = None, delay: 'Duration' = Duration(total_nanoseconds=0)) -> 'None'"
     },
+    "mconet.testing.ModelIntegrationResolverContractSuite": {
+      "kind": "class",
+      "members": {
+        "assert_ambiguous": {
+          "kind": "method",
+          "signature": "(self, target: 'ModelTarget', task: 'TaskDescriptor', mode: 'InteractionMode', policy: 'CompatibilityPolicy', *, assertion: 'Callable[[BaseException], None]') -> 'None'"
+        },
+        "assert_direct": {
+          "kind": "method",
+          "signature": "(self, target: 'ModelTarget', task: 'TaskDescriptor', mode: 'InteractionMode', policy: 'CompatibilityPolicy', *, assertion: 'Callable[[ModelIntegrationPlan], None]') -> 'None'"
+        },
+        "assert_not_found": {
+          "kind": "method",
+          "signature": "(self, target: 'ModelTarget', task: 'TaskDescriptor', mode: 'InteractionMode', policy: 'CompatibilityPolicy', *, assertion: 'Callable[[BaseException], None]') -> 'None'"
+        },
+        "assert_resolved": {
+          "kind": "method",
+          "signature": "(self, target: 'ModelTarget', task: 'TaskDescriptor', mode: 'InteractionMode', policy: 'CompatibilityPolicy', *, assertion: 'Callable[[ModelIntegrationPlan], None]') -> 'None'"
+        }
+      },
+      "signature": "(resolver: 'ModelIntegrationResolver') -> 'None'"
+    },
     "mconet.testing.PayloadEncoderContractSuite": {
       "kind": "class",
       "members": {

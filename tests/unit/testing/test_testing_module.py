@@ -17,6 +17,7 @@ def test_testing_module_imports_without_public_utilities() -> None:
         "FaultInjectionHarness",
         "FixtureLoader",
         "MockTransport",
+        "ModelIntegrationResolverContractSuite",
         "PayloadEncoderContractSuite",
         "RecordingTransport",
         "SchemaLoader",

@@ -20,6 +20,9 @@ from mconet.testing.fault_injection_harness import FaultInjectionHarness
 from mconet.testing.fixture_loader import FixtureLoader
 from mconet.testing.json_fixture import json_fixtures_equal
 from mconet.testing.mock_transport import MockTransport
+from mconet.testing.model_integration_resolver_contract_suite import (
+    ModelIntegrationResolverContractSuite,
+)
 from mconet.testing.payload_encoder_contract_suite import PayloadEncoderContractSuite
 from mconet.testing.recording_transport import RecordingTransport
 from mconet.testing.schema_loader import SchemaLoader
@@ -59,6 +62,7 @@ __all__ = (
     "FaultInjectionHarness",
     "FixtureLoader",
     "MockTransport",
+    "ModelIntegrationResolverContractSuite",
     "PayloadEncoderContractSuite",
     "RecordingTransport",
     "SchemaLoader",
