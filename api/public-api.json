@@ -1768,6 +1768,20 @@
       },
       "signature": "(descriptor: 'ComponentDescriptor', response: 'TransportResponse', *, error: 'BaseException | None' = None, delay: 'Duration' = Duration(total_nanoseconds=0)) -> 'None'"
     },
+    "mconet.testing.PayloadEncoderContractSuite": {
+      "kind": "class",
+      "members": {
+        "assert_encode": {
+          "kind": "method",
+          "signature": "(self, payload: 'ErasedRuntimeValue', *, assertion: 'Callable[[TransportBody], None]') -> 'None'"
+        },
+        "assert_encode_failure": {
+          "kind": "method",
+          "signature": "(self, payload: 'ErasedRuntimeValue', *, assertion: 'Callable[[BaseException], None]') -> 'None'"
+        }
+      },
+      "signature": "(encoder: 'PayloadEncoder') -> 'None'"
+    },
     "mconet.testing.RecordingTransport": {
       "kind": "class",
       "members": {
