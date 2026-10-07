@@ -5,8 +5,21 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import cast
 
+from mconet.core.domain import (
+    ErrorCategory,
+    InteractionPhase,
+    ModelInteractionError,
+    OpenIdentifier,
+)
 from mconet.core.runtime._component_source_merge import ComponentSourceLayers
 from mconet.core.spi import ComponentRole, RuntimeComponent, SelectedComponent
+
+_INVALID_COMPONENT_CONFIGURATION = ErrorCategory(
+    OpenIdentifier("invalid_component_configuration")
+)
+_COMPONENT_RESOLUTION_PHASE = InteractionPhase(OpenIdentifier("component_resolution"))
+_COMPONENT_NOT_FOUND_CODE = "component_not_found"
+_COMPONENT_NOT_FOUND_MESSAGE = "No matching component was found for a required role."
 
 
 def select_single_component(
@@ -29,6 +42,48 @@ def select_single_component(
     stable missing/ambiguity errors, examine lower layers after precedence is
     fixed, invoke component behavior, or consult component names as identifiers.
     """
+    # Keep outcome cardinality private: this primitive exposes at most one
+    # selected instance, while later stable error branches interpret zero or many.
+    selected, _ = _single_component_outcome(role, layers, matches)
+    return selected
+
+
+def select_required_component(
+    role: ComponentRole,
+    layers: ComponentSourceLayers,
+    matches: Callable[[RuntimeComponent], bool],
+) -> SelectedComponent | None:
+    """Select one required role or raise its stable missing-component error.
+
+    A unique match is returned unchanged. Zero matches across an all-empty source
+    set, or within the highest present layer, raises ``component_not_found``.
+    Multiple matches remain ``None`` so the following dedicated ambiguity branch
+    can produce its own stable code without being mislabeled as absence.
+
+    Error construction is deterministic and excludes the open role identifier,
+    component metadata, candidate values, configuration contents, and matcher
+    details from ordinary exception text.
+    """
+    selected, match_count = _single_component_outcome(role, layers, matches)
+
+    # Preserve the exact successful snapshot produced by the common selection
+    # primitive; no wrapper, descriptor copy, or second matcher invocation occurs.
+    if selected is not None:
+        return selected
+
+    # Only a true zero-match outcome belongs to this work package. Multiple
+    # matches remain unresolved for the separate stable ambiguity error branch.
+    if match_count == 0:
+        raise _component_not_found_error()
+    return None
+
+
+def _single_component_outcome(
+    role: ComponentRole,
+    layers: ComponentSourceLayers,
+    matches: Callable[[RuntimeComponent], bool],
+) -> tuple[SelectedComponent | None, int]:
+    """Return an optional unique snapshot and highest-layer match cardinality."""
     role_value = cast(object, role)
     layer_value = cast(object, layers)
 
@@ -81,14 +136,27 @@ def select_single_component(
         # Zero or multiple matches in the highest present layer remain
         # unresolved. Lower layers are never fallbacks once source precedence is
         # fixed, and tuple order or component names cannot break a matching tie.
-        if len(matching_components) != 1:
-            return None
+        match_count = len(matching_components)
+        if match_count != 1:
+            return None, match_count
 
         component = matching_components[0]
         # Snapshot the exact selected instance and its immutable descriptor. No
         # component method is called, and lower-priority candidates are ignored.
-        return SelectedComponent(role, component, component.descriptor)
+        return SelectedComponent(role, component, component.descriptor), 1
 
     # Absence is a valid intermediate selection outcome. The next missing-role
     # branch decides whether the role is required and creates its stable error.
-    return None
+    return None, 0
+
+
+def _component_not_found_error() -> ModelInteractionError:
+    """Create the normalized failure for one required role with no match."""
+    # Fixed fields deliberately omit open role IDs and component/configuration
+    # facts so application or plugin-controlled text cannot enter logs via errors.
+    return ModelInteractionError(
+        category=_INVALID_COMPONENT_CONFIGURATION,
+        phase=_COMPONENT_RESOLUTION_PHASE,
+        code=_COMPONENT_NOT_FOUND_CODE,
+        message=_COMPONENT_NOT_FOUND_MESSAGE,
+    )
