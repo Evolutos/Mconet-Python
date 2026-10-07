@@ -152,20 +152,28 @@ def test_required_selection_returns_the_exact_unique_snapshot() -> None:
     assert selected.descriptor is component.descriptor
 
 
-def test_required_selection_leaves_multiple_matches_for_ambiguity_branch() -> None:
-    """Avoid mislabeling same-layer multiplicity as component_not_found."""
+def test_required_selection_does_not_mislabel_ambiguity_as_missing() -> None:
+    """Keep same-layer multiplicity distinct from component_not_found."""
     first = _component("first")
     second = _component("second")
 
-    selected = select_required_component(
-        _role(),
-        _layers(client=(first, second)),
-        _matches_all,
+    error = cast(
+        ModelInteractionError,
+        _assert_raises(
+            ModelInteractionError,
+            lambda: select_required_component(
+                _role(),
+                _layers(client=(first, second)),
+                _matches_all,
+            ),
+            "Multiple matching components were found",
+        ),
     )
 
-    # None preserves unresolved multiplicity for the next stable ambiguity
-    # branch; this work package neither chooses one nor raises the missing code.
-    assert selected is None
+    # The separate stable code proves the missing branch remains exclusive to
+    # zero matches after the required selector becomes total.
+    assert error.code == "ambiguous_component_selection"
+    assert error.code != "component_not_found"
 
 
 def test_missing_error_omits_open_role_and_component_metadata() -> None:

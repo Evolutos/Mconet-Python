@@ -20,6 +20,10 @@ _INVALID_COMPONENT_CONFIGURATION = ErrorCategory(
 _COMPONENT_RESOLUTION_PHASE = InteractionPhase(OpenIdentifier("component_resolution"))
 _COMPONENT_NOT_FOUND_CODE = "component_not_found"
 _COMPONENT_NOT_FOUND_MESSAGE = "No matching component was found for a required role."
+_AMBIGUOUS_COMPONENT_SELECTION_CODE = "ambiguous_component_selection"
+_AMBIGUOUS_COMPONENT_SELECTION_MESSAGE = (
+    "Multiple matching components were found at the same source priority."
+)
 
 
 def select_single_component(
@@ -52,13 +56,13 @@ def select_required_component(
     role: ComponentRole,
     layers: ComponentSourceLayers,
     matches: Callable[[RuntimeComponent], bool],
-) -> SelectedComponent | None:
-    """Select one required role or raise its stable missing-component error.
+) -> SelectedComponent:
+    """Select one required role or raise its stable cardinality error.
 
     A unique match is returned unchanged. Zero matches across an all-empty source
     set, or within the highest present layer, raises ``component_not_found``.
-    Multiple matches remain ``None`` so the following dedicated ambiguity branch
-    can produce its own stable code without being mislabeled as absence.
+    Multiple matches within that same highest layer raise
+    ``ambiguous_component_selection`` without using order as a tie-breaker.
 
     Error construction is deterministic and excludes the open role identifier,
     component metadata, candidate values, configuration contents, and matcher
@@ -71,11 +75,11 @@ def select_required_component(
     if selected is not None:
         return selected
 
-    # Only a true zero-match outcome belongs to this work package. Multiple
-    # matches remain unresolved for the separate stable ambiguity error branch.
+    # Preserve the dedicated missing result for true absence, then report every
+    # remaining multi-match result through its separate stable ambiguity code.
     if match_count == 0:
         raise _component_not_found_error()
-    return None
+    raise _ambiguous_component_selection_error()
 
 
 def _single_component_outcome(
@@ -159,4 +163,16 @@ def _component_not_found_error() -> ModelInteractionError:
         phase=_COMPONENT_RESOLUTION_PHASE,
         code=_COMPONENT_NOT_FOUND_CODE,
         message=_COMPONENT_NOT_FOUND_MESSAGE,
+    )
+
+
+def _ambiguous_component_selection_error() -> ModelInteractionError:
+    """Create the normalized failure for same-priority component ambiguity."""
+    # The fixed message reports only the resolver invariant. It excludes open
+    # role IDs, candidate counts, ordering, and application/plugin descriptors.
+    return ModelInteractionError(
+        category=_INVALID_COMPONENT_CONFIGURATION,
+        phase=_COMPONENT_RESOLUTION_PHASE,
+        code=_AMBIGUOUS_COMPONENT_SELECTION_CODE,
+        message=_AMBIGUOUS_COMPONENT_SELECTION_MESSAGE,
     )
