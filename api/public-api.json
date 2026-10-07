@@ -1133,6 +1133,11 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.spi.TransportOutcome": {
+      "kind": "class",
+      "members": {},
+      "signature": "(id: 'OpenIdentifier') -> None"
+    },
     "mconet.testing.SchemaLoader": {
       "kind": "class",
       "members": {
