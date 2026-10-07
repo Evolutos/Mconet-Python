@@ -1636,6 +1636,28 @@
       "members": {},
       "signature": "(transport_kind: 'OpenIdentifier | None' = None, required_capabilities: 'frozenset[OpenIdentifier]' = frozenset()) -> None"
     },
+    "mconet.testing.ControllableCancellationSignal": {
+      "kind": "class",
+      "members": {
+        "cancel": {
+          "kind": "method",
+          "signature": "(self, reason: 'str | None' = None) -> 'None'"
+        },
+        "is_cancelled": {
+          "kind": "property",
+          "signature": null
+        },
+        "reason": {
+          "kind": "property",
+          "signature": null
+        },
+        "subscribe": {
+          "kind": "method",
+          "signature": "(self, callback: 'Callable[[str | None], None]') -> 'Callable[[], None]'"
+        }
+      },
+      "signature": "() -> 'None'"
+    },
     "mconet.testing.FakeClock": {
       "kind": "class",
       "members": {
