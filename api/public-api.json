@@ -1098,6 +1098,11 @@
       "kind": "function",
       "signature": "(uri: 'UriValue') -> 'UriValue'"
     },
+    "mconet.core.spi.ComponentDescriptor": {
+      "kind": "class",
+      "members": {},
+      "signature": "(name: 'str', version: 'str', source: \"Literal['builtin', 'plugin', 'application']\", type_contract: 'ComponentTypeContract | None' = None, capabilities: 'frozenset[OpenIdentifier]' = frozenset()) -> None"
+    },
     "mconet.core.spi.ComponentTypeContract": {
       "kind": "class",
       "members": {},
