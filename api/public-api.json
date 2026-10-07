@@ -1440,6 +1440,20 @@
       "members": {},
       "signature": "(role: 'ComponentRole', component: 'RuntimeComponent', descriptor: 'ComponentDescriptor') -> None"
     },
+    "mconet.core.spi.ServiceAccessResolver": {
+      "kind": "class",
+      "members": {
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "resolve": {
+          "kind": "method",
+          "signature": "(self, interaction_override: 'ServiceAccess | None', request_service_access: 'ServiceAccess | None', client_default_service_access: 'ServiceAccess | None', protocol_default_service_access: 'ServiceAccess | None') -> 'ResolvedServiceAccess'"
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.spi.TaskMatch": {
       "kind": "class",
       "members": {},

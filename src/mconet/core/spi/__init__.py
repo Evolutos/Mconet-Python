@@ -40,6 +40,7 @@ from mconet.core.spi.resolved_authorization_handler import (
 from mconet.core.spi.runtime_component import RuntimeComponent
 from mconet.core.spi.satisfied_capability import SatisfiedCapability
 from mconet.core.spi.selected_component import SelectedComponent
+from mconet.core.spi.service_access_resolver import ServiceAccessResolver
 from mconet.core.spi.task_match import TaskMatch
 from mconet.core.spi.task_protocol_adapter import TaskProtocolAdapter
 from mconet.core.spi.transport import Transport
@@ -87,6 +88,7 @@ __all__ = (
     "RuntimeComponent",
     "SatisfiedCapability",
     "SelectedComponent",
+    "ServiceAccessResolver",
     "TaskMatch",
     "TaskProtocolAdapter",
     "Transport",
