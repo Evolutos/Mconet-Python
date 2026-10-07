@@ -1636,6 +1636,20 @@
       "members": {},
       "signature": "(transport_kind: 'OpenIdentifier | None' = None, required_capabilities: 'frozenset[OpenIdentifier]' = frozenset()) -> None"
     },
+    "mconet.testing.FakeClock": {
+      "kind": "class",
+      "members": {
+        "advance": {
+          "kind": "method",
+          "signature": "(self, duration: 'Duration') -> 'None'"
+        },
+        "now": {
+          "kind": "method",
+          "signature": "(self) -> 'Timestamp'"
+        }
+      },
+      "signature": "(initial: 'Timestamp') -> 'None'"
+    },
     "mconet.testing.FixtureLoader": {
       "kind": "class",
       "members": {
