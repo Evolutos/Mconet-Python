@@ -1143,6 +1143,11 @@
       "members": {},
       "signature": "(id: 'OpenIdentifier') -> None"
     },
+    "mconet.core.spi.TransportRequest": {
+      "kind": "class",
+      "members": {},
+      "signature": "(method: 'str', url: 'UriValue', headers: 'Headers', query: 'QueryParameters', body: 'TransportBody') -> None"
+    },
     "mconet.testing.SchemaLoader": {
       "kind": "class",
       "members": {
