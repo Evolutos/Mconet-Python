@@ -1203,6 +1203,20 @@
       "members": {},
       "signature": "(name: 'str', type_id: 'OpenIdentifier', schema_id: 'str | None' = None, media_type: 'MediaType | None' = None) -> None"
     },
+    "mconet.core.spi.CredentialValue": {
+      "kind": "class",
+      "members": {
+        "kind": {
+          "kind": "property",
+          "signature": null
+        },
+        "reveal": {
+          "kind": "method",
+          "signature": "(self, consumer: 'AuthorizedSecretConsumer') -> 'object'"
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.spi.DecoderSelection": {
       "kind": "class",
       "members": {},
