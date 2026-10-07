@@ -6,6 +6,7 @@ from mconet.core.spi.component_type_port import ComponentTypePort
 from mconet.core.spi.erased_runtime_value import ErasedRuntimeValue
 from mconet.core.spi.runtime_component import RuntimeComponent
 from mconet.core.spi.transport_body import TransportBody
+from mconet.core.spi.transport_context import TransportContext
 from mconet.core.spi.transport_outcome import TransportOutcome
 from mconet.core.spi.transport_request import TransportRequest
 from mconet.core.spi.transport_response import TransportResponse
@@ -18,6 +19,7 @@ __all__ = (
     "ErasedRuntimeValue",
     "RuntimeComponent",
     "TransportBody",
+    "TransportContext",
     "TransportOutcome",
     "TransportRequest",
     "TransportResponse",

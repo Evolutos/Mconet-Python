@@ -1138,6 +1138,11 @@
       "members": {},
       "signature": "(bytes: 'Bytes', media_type: 'MediaType') -> None"
     },
+    "mconet.core.spi.TransportContext": {
+      "kind": "class",
+      "members": {},
+      "signature": "(interaction_id: 'str', resource_limits: 'ResolvedInteractionResourceLimits', deadline: 'Timestamp | None' = None, cancellation: 'CancellationSignal | None' = None, extensions: 'Extensions' = <factory>) -> None"
+    },
     "mconet.core.spi.TransportOutcome": {
       "kind": "class",
       "members": {},

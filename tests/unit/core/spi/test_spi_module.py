@@ -14,6 +14,7 @@ def test_core_spi_exports_only_implemented_contracts() -> None:
         "ErasedRuntimeValue",
         "RuntimeComponent",
         "TransportBody",
+        "TransportContext",
         "TransportOutcome",
         "TransportRequest",
         "TransportResponse",
