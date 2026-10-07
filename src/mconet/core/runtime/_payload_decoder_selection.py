@@ -17,6 +17,9 @@ from mconet.core.spi import (
 _SUCCESS_PAYLOAD_DECODER_ROLE = ComponentRole(
     OpenIdentifier("codec.response.success-decoder")
 )
+_ERROR_PAYLOAD_DECODER_ROLE = ComponentRole(
+    OpenIdentifier("codec.response.error-decoder")
+)
 
 
 def select_success_payload_decoder(
@@ -39,6 +42,30 @@ def select_success_payload_decoder(
     # redirecting a successful response plan to another execution-chain slot.
     return _select_payload_decoder(
         _SUCCESS_PAYLOAD_DECODER_ROLE,
+        selection,
+        layers,
+    )
+
+
+def select_error_payload_decoder(
+    selection: DecoderSelection,
+    layers: ComponentSourceLayers,
+) -> PayloadDecoder:
+    """Fix the unique error decoder from planned facts before network I/O.
+
+    The error response path owns a separate plan and candidate source field, so
+    it can use a different representation or payload schema from successful
+    responses. Compatibility, source precedence, and stable cardinality errors
+    remain identical to success preselection through the shared private rule.
+
+    This function does not inspect a transport outcome, actual response media
+    type, status code, or body, and it never invokes the selected decoder.
+    """
+    # Keep the error chain position Core-owned. Callers provide only the error
+    # plan and its already separated source layers, never an arbitrary role that
+    # could mix successful, error, or event decoder snapshots.
+    return _select_payload_decoder(
+        _ERROR_PAYLOAD_DECODER_ROLE,
         selection,
         layers,
     )
