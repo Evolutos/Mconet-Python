@@ -1250,6 +1250,20 @@
       "members": {},
       "signature": "(document: 'MessageDocument', artifacts: 'ArtifactCatalog') -> None"
     },
+    "mconet.core.spi.MessageRequestMapper": {
+      "kind": "class",
+      "members": {
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "map_request": {
+          "kind": "method",
+          "signature": "(self, document: 'MessageDocument') -> 'ErasedRuntimeValue'"
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.spi.ModelIntegrationMatch": {
       "kind": "class",
       "members": {},
