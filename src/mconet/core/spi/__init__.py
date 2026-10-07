@@ -21,6 +21,7 @@ from mconet.core.spi.protocol_execution_plan import ProtocolExecutionPlan
 from mconet.core.spi.protocol_request_plan import ProtocolRequestPlan
 from mconet.core.spi.runtime_component import RuntimeComponent
 from mconet.core.spi.selected_component import SelectedComponent
+from mconet.core.spi.task_match import TaskMatch
 from mconet.core.spi.transport_body import TransportBody
 from mconet.core.spi.transport_context import TransportContext
 from mconet.core.spi.transport_outcome import TransportOutcome
@@ -48,6 +49,7 @@ __all__ = (
     "ProtocolRequestPlan",
     "RuntimeComponent",
     "SelectedComponent",
+    "TaskMatch",
     "TransportBody",
     "TransportContext",
     "TransportOutcome",
