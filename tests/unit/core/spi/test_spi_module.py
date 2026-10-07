@@ -19,6 +19,7 @@ def test_core_spi_exports_only_implemented_contracts() -> None:
         "EncoderSelection",
         "ErasedRuntimeValue",
         "PlannedComponentSelection",
+        "ProtocolExecutionPlan",
         "RuntimeComponent",
         "SelectedComponent",
         "TransportBody",
