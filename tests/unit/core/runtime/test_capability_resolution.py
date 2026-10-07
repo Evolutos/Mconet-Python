@@ -1,13 +1,11 @@
-"""Tests for required capability resolution from selected components."""
+"""Tests for capability resolution from selected components."""
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Literal, cast
 
 from mconet.core.domain import Extensions, ModelInteractionError, OpenIdentifier
-from mconet.core.runtime._required_capability_resolution import (
-    resolve_required_capabilities,
-)
+from mconet.core.runtime._capability_resolution import resolve_capabilities
 from mconet.core.spi import (
     CapabilityRequirement,
     ComponentDescriptor,
@@ -140,8 +138,8 @@ def _assert_raises(
 
 
 def test_empty_requirements_produce_complete_empty_resolution() -> None:
-    """Resolve an empty required set without inventing capability facts."""
-    result = resolve_required_capabilities((), _resolution())
+    """Resolve an empty capability set without inventing capability facts."""
+    result = resolve_capabilities((), _resolution())
 
     assert result.satisfied == ()
     assert result.optional_unsupported == ()
@@ -157,7 +155,7 @@ def test_resolves_required_id_from_exact_selected_component() -> None:
         "model.text.output",
     )
 
-    result = resolve_required_capabilities((requirement,), _resolution(provider))
+    result = resolve_capabilities((requirement,), _resolution(provider))
 
     assert len(result.satisfied) == 1
     satisfied = result.satisfied[0]
@@ -183,7 +181,7 @@ def test_preserves_required_requirement_order_and_distinct_identity() -> None:
         "model.tool.calling",
     )
 
-    result = resolve_required_capabilities(
+    result = resolve_capabilities(
         (text, tools, duplicate_text),
         _resolution(provider),
     )
@@ -198,16 +196,103 @@ def test_preserves_required_requirement_order_and_distinct_identity() -> None:
     assert all(item.provider_id == "protocol.adapter" for item in result.satisfied)
 
 
-def test_ignores_optional_requirements_until_policy_step() -> None:
-    """Validate but defer optional requirements without diagnostics or failure."""
+def test_missing_optional_capability_produces_stable_diagnostic() -> None:
+    """Retain an unsupported optional requirement and emit one stable warning."""
     optional = _requirement("vendor.response.citations", required=False)
 
-    result = resolve_required_capabilities((optional,), _resolution())
+    result = resolve_capabilities((optional,), _resolution())
 
-    # The next atomic step owns optional unsupported membership and diagnostics;
-    # this required-only step leaves both outputs explicitly empty.
-    assert result == result.__class__()
+    # Unsupported membership retains exact requirement identity while the paired
+    # diagnostic exposes only stable text and the declared diagnostic path.
     assert result.satisfied == ()
+    assert result.optional_unsupported == (optional,)
+    assert len(result.diagnostics) == 1
+    diagnostic = result.diagnostics[0]
+    assert diagnostic.code == "optional_capability_unsupported"
+    assert diagnostic.severity == "warning"
+    assert str(diagnostic.phase) == "capability_resolution"
+    assert diagnostic.message == "An optional interaction capability is unsupported."
+    assert diagnostic.path == optional.source_path
+    assert diagnostic.service_id is None
+    assert diagnostic.details is None
+
+
+def test_supported_optional_capability_is_satisfied_without_diagnostic() -> None:
+    """Resolve an optional match as a normal satisfaction without warning."""
+    optional = _requirement("vendor.response.citations", required=False)
+    provider = _selected(
+        "protocol.adapter",
+        "plugin",
+        "vendor.response.citations",
+    )
+
+    result = resolve_capabilities((optional,), _resolution(provider))
+
+    # Requiredness changes only missing-match behavior; a proven optional match
+    # retains the same capability and provider facts as a required match.
+    assert len(result.satisfied) == 1
+    assert result.satisfied[0].requirement is optional
+    assert result.satisfied[0].capability.id is optional.capability_id
+    assert result.satisfied[0].provider_id == "protocol.adapter"
+    assert result.optional_unsupported == ()
+    assert result.diagnostics == ()
+
+
+def test_optional_outputs_preserve_collection_order_and_duplicate_identity() -> None:
+    """Keep every unsupported optional input and warning in collection order."""
+    first = _requirement("vendor.response.citations", required=False)
+    second = _requirement("vendor.response.safety", required=False)
+    duplicate = _requirement("vendor.response.citations", required=False)
+
+    result = resolve_capabilities((first, second, duplicate), _resolution())
+
+    # Equal open IDs do not merge separate collector facts. Diagnostics remain
+    # one-to-one and carry the corresponding requirement source path.
+    assert result.optional_unsupported == (first, second, duplicate)
+    assert tuple(item.path for item in result.diagnostics) == (
+        first.source_path,
+        second.source_path,
+        duplicate.source_path,
+    )
+
+
+def test_optional_constraints_without_provider_facts_produce_diagnostic() -> None:
+    """Diagnose optional constraints that ID-only declarations cannot prove."""
+    optional = _requirement(
+        "model.context.window",
+        required=False,
+        constraints={"minimumTokens": 128_000},
+    )
+    provider = _selected(
+        "protocol.adapter",
+        "plugin",
+        "model.context.window",
+    )
+
+    result = resolve_capabilities((optional,), _resolution(provider))
+
+    # An equal ID cannot make unknown attribute constraints true. Optional
+    # requiredness converts that unsupported match into a result fact, not error.
+    assert result.satisfied == ()
+    assert result.optional_unsupported == (optional,)
+    assert len(result.diagnostics) == 1
+    assert "minimumTokens" not in result.diagnostics[0].message
+    assert result.diagnostics[0].details is None
+
+
+def test_missing_optional_without_source_path_has_no_diagnostic_path() -> None:
+    """Preserve an absent optional source path without inventing provenance."""
+    optional = _Requirement(
+        capability_id=OpenIdentifier("vendor.response.citations"),
+        required=False,
+    )
+
+    result = resolve_capabilities((optional,), _resolution())
+
+    # None remains the stable absent value; the resolver does not substitute a
+    # capability ID, tuple index, or component role into Diagnostic.path.
+    assert result.optional_unsupported == (optional,)
+    assert result.diagnostics[0].path is None
 
 
 def test_source_priority_prefers_application_then_plugin_then_builtin() -> None:
@@ -221,11 +306,11 @@ def test_source_priority_prefers_application_then_plugin_then_builtin() -> None:
         "transport.unary",
     )
 
-    plugin_result = resolve_required_capabilities(
+    plugin_result = resolve_capabilities(
         (requirement,),
         _resolution(builtin, plugin),
     )
-    application_result = resolve_required_capabilities(
+    application_result = resolve_capabilities(
         (requirement,),
         _resolution(builtin, plugin, application),
     )
@@ -245,11 +330,11 @@ def test_same_priority_distinct_providers_are_ambiguous() -> None:
         ModelInteractionError,
         _assert_raises(
             ModelInteractionError,
-            lambda: resolve_required_capabilities(
+            lambda: resolve_capabilities(
                 (requirement,),
                 _resolution(first, second),
             ),
-            "Multiple selected components provide a required capability",
+            "Multiple selected components provide a capability",
         ),
     )
 
@@ -263,6 +348,31 @@ def test_same_priority_distinct_providers_are_ambiguous() -> None:
     assert raised.cause is None
     assert "codec.json" not in str(raised)
     assert "encoder" not in str(raised)
+
+
+def test_optional_same_priority_distinct_providers_are_ambiguous() -> None:
+    """Reject optional matches when no unique highest-priority provider exists."""
+    optional = _requirement("vendor.response.citations", required=False)
+    first = _selected("protocol.adapter", "plugin", "vendor.response.citations")
+    second = _selected("codec.decoder", "plugin", "vendor.response.citations")
+
+    raised = cast(
+        ModelInteractionError,
+        _assert_raises(
+            ModelInteractionError,
+            lambda: resolve_capabilities(
+                (optional,),
+                _resolution(first, second),
+            ),
+            "Multiple selected components provide a capability",
+        ),
+    )
+
+    # Optional requiredness changes only the no-provider outcome. A real match
+    # ambiguity remains a configuration error and cannot be mislabeled missing.
+    assert raised.code == "ambiguous_capability_provider"
+    assert str(raised.category) == "invalid_component_configuration"
+    assert "vendor.response.citations" not in str(raised)
 
 
 def test_shared_component_across_roles_is_one_provider() -> None:
@@ -285,7 +395,7 @@ def test_shared_component_across_roles_is_one_provider() -> None:
         component=shared,
     )
 
-    result = resolve_required_capabilities(
+    result = resolve_capabilities(
         (_requirement("codec.json"),),
         _resolution(success, error),
     )
@@ -304,7 +414,7 @@ def test_missing_required_capability_returns_stable_error() -> None:
         ModelInteractionError,
         _assert_raises(
             ModelInteractionError,
-            lambda: resolve_required_capabilities(
+            lambda: resolve_capabilities(
                 (requirement,),
                 _resolution(unrelated),
             ),
@@ -340,7 +450,7 @@ def test_nonempty_constraints_are_not_silently_ignored() -> None:
         ModelInteractionError,
         _assert_raises(
             ModelInteractionError,
-            lambda: resolve_required_capabilities(
+            lambda: resolve_capabilities(
                 (requirement,),
                 _resolution(provider),
             ),
@@ -358,7 +468,7 @@ def test_rejects_mutable_requirement_collection_and_wrong_snapshot() -> None:
 
     _assert_raises(
         TypeError,
-        lambda: resolve_required_capabilities(
+        lambda: resolve_capabilities(
             cast(tuple[CapabilityRequirement, ...], [requirement]),
             _resolution(),
         ),
@@ -366,7 +476,7 @@ def test_rejects_mutable_requirement_collection_and_wrong_snapshot() -> None:
     )
     _assert_raises(
         TypeError,
-        lambda: resolve_required_capabilities(
+        lambda: resolve_capabilities(
             (requirement,),
             cast(ComponentSelectionResolution, object()),
         ),
@@ -408,17 +518,17 @@ def test_validates_complete_requirement_surface_before_filtering() -> None:
 
     _assert_raises(
         TypeError,
-        lambda: resolve_required_capabilities(
+        lambda: resolve_capabilities(
             (cast(CapabilityRequirement, incomplete),),
             _resolution(),
         ),
         "must contain CapabilityRequirement values",
     )
     for malformed, message in malformed_cases:
-        # required=False cases prove validation occurs before optional deferral.
+        # required=False cases prove validation occurs before optional matching.
         _assert_raises(
             TypeError,
-            lambda malformed=malformed: resolve_required_capabilities(
+            lambda malformed=malformed: resolve_capabilities(
                 (cast(CapabilityRequirement, malformed),),
                 _resolution(),
             ),
@@ -454,7 +564,7 @@ def test_rejects_nonportable_constraint_and_extension_values() -> None:
     for requirement, exception_type, message in invalid_values:
         _assert_raises(
             exception_type,
-            lambda requirement=requirement: resolve_required_capabilities(
+            lambda requirement=requirement: resolve_capabilities(
                 (requirement,),
                 _resolution(),
             ),

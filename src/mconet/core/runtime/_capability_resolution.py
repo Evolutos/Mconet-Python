@@ -1,4 +1,4 @@
-"""Deterministic resolution of required capabilities from selected components."""
+"""Deterministic capability resolution from selected component metadata."""
 
 from __future__ import annotations
 
@@ -8,6 +8,7 @@ from types import MappingProxyType
 from typing import cast
 
 from mconet.core.domain import (
+    Diagnostic,
     ErrorCategory,
     Extensions,
     InteractionPhase,
@@ -34,8 +35,10 @@ _UNSUPPORTED_CAPABILITY_CODE = "unsupported_capability"
 _UNSUPPORTED_CAPABILITY_MESSAGE = "A required interaction capability is unsupported."
 _AMBIGUOUS_PROVIDER_CODE = "ambiguous_capability_provider"
 _AMBIGUOUS_PROVIDER_MESSAGE = (
-    "Multiple selected components provide a required capability at the same priority."
+    "Multiple selected components provide a capability at the same priority."
 )
+_OPTIONAL_UNSUPPORTED_CODE = "optional_capability_unsupported"
+_OPTIONAL_UNSUPPORTED_MESSAGE = "An optional interaction capability is unsupported."
 _SOURCE_PRIORITY = {"application": 0, "plugin": 1, "builtin": 2}
 _EMPTY_FACTS: Extensions = MappingProxyType({})
 
@@ -57,11 +60,11 @@ class _DescriptorCapability:
     """No unknown capability fields are invented during internal adaptation."""
 
 
-def resolve_required_capabilities(
+def resolve_capabilities(
     requirements: tuple[CapabilityRequirement, ...],
     selected_components: ComponentSelectionResolution,
 ) -> CapabilityResolution:
-    """Resolve every required capability from already selected component metadata.
+    """Resolve required and optional capabilities from selected component metadata.
 
     The initial runtime profile consumes only capability IDs declared by the
     immutable descriptors in ``selected_components``. Application components
@@ -69,10 +72,11 @@ def resolve_required_capabilities(
     the same highest source priority are ambiguous; absence is unsupported.
 
     Descriptor declarations have no attributes, so a non-empty constraints map
-    cannot be proven satisfied. Optional requirements are validated but deferred
-    unchanged to the following optional-capability policy step. No component is
-    invoked, no candidate outside the selected snapshot is observed, and no
-    request, task, plan, or component selection is modified.
+    cannot be proven satisfied. An unmatched required requirement fails with the
+    stable unsupported-capability error. An unmatched optional requirement is
+    retained in ``optional_unsupported`` and produces one stable warning at its
+    declared source path. No component is invoked, no candidate outside the
+    selected snapshot is observed, and no request or selection is modified.
     """
     requirements_value = cast(object, requirements)
     selected_value = cast(object, selected_components)
@@ -85,25 +89,38 @@ def resolve_required_capabilities(
         raise TypeError("selected_components must be a ComponentSelectionResolution.")
 
     validated_requirements: list[
-        tuple[CapabilityRequirement, OpenIdentifier, bool, Extensions]
+        tuple[CapabilityRequirement, OpenIdentifier, bool, Extensions, str | None]
     ] = []
     for requirement in cast(tuple[object, ...], requirements_value):
-        # Validate optional and required values alike before filtering. A malformed
-        # optional requirement must not remain latent until another policy branch.
+        # Validate optional and required values alike before matching. A malformed
+        # optional requirement must not become an apparently valid diagnostic.
         validated_requirements.append(_validate_requirement(requirement))
 
     satisfied: list[SatisfiedCapability] = []
-    for requirement, capability_id, required, constraints in validated_requirements:
-        # Optional requirements belong to the next policy-specific work package.
-        # This step neither marks them unsupported nor produces diagnostics.
-        if not required:
-            continue
-
-        provider = _resolve_required_provider(
+    optional_unsupported: list[CapabilityRequirement] = []
+    diagnostics: list[Diagnostic] = []
+    for (
+        requirement,
+        capability_id,
+        required,
+        constraints,
+        source_path,
+    ) in validated_requirements:
+        provider = _resolve_provider(
             capability_id,
             constraints,
             selected_components.components,
         )
+
+        # Required absence is terminal, while optional absence remains an exact
+        # resolution fact paired one-to-one with a non-sensitive warning.
+        if provider is None:
+            if required:
+                raise _unsupported_capability_error()
+            optional_unsupported.append(requirement)
+            diagnostics.append(_optional_unsupported_diagnostic(source_path))
+            continue
+
         capability = _DescriptorCapability(capability_id)
 
         # Use the fixed execution role as provenance rather than component name,
@@ -116,14 +133,18 @@ def resolve_required_capabilities(
             )
         )
 
-    # Optional fields remain empty for this atomic step. The aggregate constructor
-    # revalidates result coherence before any execution snapshot can retain it.
-    return CapabilityResolution(satisfied=tuple(satisfied))
+    # Preserve collection order independently in all three immutable outputs.
+    # The aggregate constructor revalidates result coherence before retention.
+    return CapabilityResolution(
+        satisfied=tuple(satisfied),
+        optional_unsupported=tuple(optional_unsupported),
+        diagnostics=tuple(diagnostics),
+    )
 
 
 def _validate_requirement(
     value: object,
-) -> tuple[CapabilityRequirement, OpenIdentifier, bool, Extensions]:
+) -> tuple[CapabilityRequirement, OpenIdentifier, bool, Extensions, str | None]:
     """Validate one open requirement and return its matching inputs."""
     if not isinstance(value, CapabilityRequirement):
         raise TypeError("requirements must contain CapabilityRequirement values.")
@@ -145,7 +166,7 @@ def _validate_requirement(
         raise TypeError("requirement source_path must be a string or None.")
     _validate_portable_mapping(extensions, "extensions")
 
-    return value, capability_id, required, typed_constraints
+    return value, capability_id, required, typed_constraints, source_path
 
 
 def _validate_portable_mapping(value: object, field_name: str) -> Extensions:
@@ -165,17 +186,17 @@ def _validate_portable_mapping(value: object, field_name: str) -> Extensions:
     return typed_source
 
 
-def _resolve_required_provider(
+def _resolve_provider(
     capability_id: OpenIdentifier,
     constraints: Extensions,
     selected_components: tuple[SelectedComponent, ...],
-) -> SelectedComponent:
-    """Return the unique highest-priority selected component proving support."""
+) -> SelectedComponent | None:
+    """Return the unique highest-priority provider, or None when unsupported."""
     # Descriptor declarations expose IDs only. Non-empty constraints cannot be
     # evaluated or proven by this release profile, so they behave as no match
     # instead of becoming an implicit expression language or being ignored.
     if constraints:
-        raise _unsupported_capability_error()
+        return None
 
     matching = tuple(
         selected
@@ -183,7 +204,7 @@ def _resolve_required_provider(
         if capability_id in selected.descriptor.capabilities
     )
     if not matching:
-        raise _unsupported_capability_error()
+        return None
 
     # Apply the documented direct/plugin/builtin source precedence before
     # ambiguity. Lower-priority declarations cannot create or resolve a tie.
@@ -225,7 +246,7 @@ def _unsupported_capability_error() -> ModelInteractionError:
 
 
 def _ambiguous_capability_provider_error() -> ModelInteractionError:
-    """Create the stable failure for same-priority required providers."""
+    """Create the stable failure for same-priority capability providers."""
     # The message reports only the invariant and never candidate count, order,
     # component names, versions, roles, or the requested open capability ID.
     return ModelInteractionError(
@@ -233,4 +254,18 @@ def _ambiguous_capability_provider_error() -> ModelInteractionError:
         phase=_CAPABILITY_RESOLUTION_PHASE,
         code=_AMBIGUOUS_PROVIDER_CODE,
         message=_AMBIGUOUS_PROVIDER_MESSAGE,
+    )
+
+
+def _optional_unsupported_diagnostic(source_path: str | None) -> Diagnostic:
+    """Create one stable warning for an unmatched optional capability."""
+    # Capability IDs, constraints, component metadata, and candidate counts stay
+    # out of text/details. The explicit requirement source path is retained only
+    # in Diagnostic.path, whose contract exists for this provenance purpose.
+    return Diagnostic(
+        code=_OPTIONAL_UNSUPPORTED_CODE,
+        severity="warning",
+        phase=_CAPABILITY_RESOLUTION_PHASE,
+        message=_OPTIONAL_UNSUPPORTED_MESSAGE,
+        path=source_path,
     )
