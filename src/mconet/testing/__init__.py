@@ -3,6 +3,7 @@
 from mconet.testing.controllable_cancellation_signal import (
     ControllableCancellationSignal,
 )
+from mconet.testing.deterministic_id_generator import DeterministicIdGenerator
 from mconet.testing.fake_clock import FakeClock
 from mconet.testing.fixture_loader import FixtureLoader
 from mconet.testing.json_fixture import json_fixtures_equal
@@ -28,6 +29,7 @@ from mconet.testing.stub_task_protocol_adapter import StubTaskProtocolAdapter
 
 __all__ = (
     "ControllableCancellationSignal",
+    "DeterministicIdGenerator",
     "FakeClock",
     "FixtureLoader",
     "MockTransport",

@@ -1658,6 +1658,16 @@
       },
       "signature": "() -> 'None'"
     },
+    "mconet.testing.DeterministicIdGenerator": {
+      "kind": "class",
+      "members": {
+        "next_id": {
+          "kind": "method",
+          "signature": "(self) -> 'str'"
+        }
+      },
+      "signature": "() -> 'None'"
+    },
     "mconet.testing.FakeClock": {
       "kind": "class",
       "members": {
