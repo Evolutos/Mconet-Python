@@ -1157,6 +1157,56 @@
       },
       "signature": "(type_id: 'OpenIdentifier', value: 'object', schema_id: 'str | None' = None) -> None"
     },
+    "mconet.core.spi.MutableTransportRequest": {
+      "kind": "class",
+      "members": {
+        "body": {
+          "kind": "property",
+          "signature": null
+        },
+        "freeze": {
+          "kind": "method",
+          "signature": "(self) -> 'TransportRequest'"
+        },
+        "headers": {
+          "kind": "property",
+          "signature": null
+        },
+        "is_frozen": {
+          "kind": "property",
+          "signature": null
+        },
+        "method": {
+          "kind": "property",
+          "signature": null
+        },
+        "query": {
+          "kind": "property",
+          "signature": null
+        },
+        "replace_body": {
+          "kind": "method",
+          "signature": "(self, value: 'TransportBody') -> 'None'"
+        },
+        "replace_headers": {
+          "kind": "method",
+          "signature": "(self, value: 'Headers') -> 'None'"
+        },
+        "replace_query": {
+          "kind": "method",
+          "signature": "(self, value: 'QueryParameters') -> 'None'"
+        },
+        "replace_url": {
+          "kind": "method",
+          "signature": "(self, value: 'UriValue') -> 'None'"
+        },
+        "url": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(method: 'str', url: 'UriValue', headers: 'Headers', query: 'QueryParameters', body: 'TransportBody') -> 'None'"
+    },
     "mconet.core.spi.PlannedComponentSelection": {
       "kind": "class",
       "members": {},
