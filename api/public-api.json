@@ -1162,6 +1162,11 @@
       "members": {},
       "signature": "(transport_plan: 'TransportRequestPlan', payload_encoder: 'EncoderSelection', success_decoder: 'DecoderSelection', error_decoder: 'DecoderSelection', transport: 'TransportSelection', mode_components: 'tuple[PlannedComponentSelection, ...]' = (), type_contract: 'ComponentTypeContract' = <factory>, extensions: 'Mapping[str, object]' = <factory>) -> None"
     },
+    "mconet.core.spi.ProtocolRequestPlan": {
+      "kind": "class",
+      "members": {},
+      "signature": "(payload: 'ErasedRuntimeValue', execution_plan: 'ProtocolExecutionPlan') -> None"
+    },
     "mconet.core.spi.RuntimeComponent": {
       "kind": "class",
       "members": {

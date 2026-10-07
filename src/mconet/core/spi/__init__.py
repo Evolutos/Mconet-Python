@@ -16,6 +16,7 @@ from mconet.core.spi.encoder_selection import EncoderSelection
 from mconet.core.spi.erased_runtime_value import ErasedRuntimeValue
 from mconet.core.spi.planned_component_selection import PlannedComponentSelection
 from mconet.core.spi.protocol_execution_plan import ProtocolExecutionPlan
+from mconet.core.spi.protocol_request_plan import ProtocolRequestPlan
 from mconet.core.spi.runtime_component import RuntimeComponent
 from mconet.core.spi.selected_component import SelectedComponent
 from mconet.core.spi.transport_body import TransportBody
@@ -40,6 +41,7 @@ __all__ = (
     "ErasedRuntimeValue",
     "PlannedComponentSelection",
     "ProtocolExecutionPlan",
+    "ProtocolRequestPlan",
     "RuntimeComponent",
     "SelectedComponent",
     "TransportBody",
