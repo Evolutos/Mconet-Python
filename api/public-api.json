@@ -1133,6 +1133,11 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.spi.TransportBody": {
+      "kind": "class",
+      "members": {},
+      "signature": "(bytes: 'Bytes', media_type: 'MediaType') -> None"
+    },
     "mconet.core.spi.TransportOutcome": {
       "kind": "class",
       "members": {},
