@@ -1157,6 +1157,11 @@
       },
       "signature": "(type_id: 'OpenIdentifier', value: 'object', schema_id: 'str | None' = None) -> None"
     },
+    "mconet.core.spi.ModelTargetMatch": {
+      "kind": "class",
+      "members": {},
+      "signature": "(matched: 'bool', score: 'int', diagnostics: 'tuple[Diagnostic, ...]' = ()) -> None"
+    },
     "mconet.core.spi.MutableTransportRequest": {
       "kind": "class",
       "members": {
