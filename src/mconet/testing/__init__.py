@@ -1,6 +1,9 @@
 """Reusable fixtures, test doubles, and contract suites."""
 
 from mconet.testing.adapter_contract_suite import AdapterContractSuite
+from mconet.testing.authorization_handler_resolver_contract_suite import (
+    AuthorizationHandlerResolverContractSuite,
+)
 from mconet.testing.component_call_recorder import ComponentCallRecorder
 from mconet.testing.controllable_cancellation_signal import (
     ControllableCancellationSignal,
@@ -42,6 +45,7 @@ from mconet.testing.transport_contract_suite import TransportContractSuite
 
 __all__ = (
     "AdapterContractSuite",
+    "AuthorizationHandlerResolverContractSuite",
     "ComponentCallRecorder",
     "ControllableCancellationSignal",
     "DeterministicIdGenerator",
