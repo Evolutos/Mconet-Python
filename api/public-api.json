@@ -1679,6 +1679,32 @@
       },
       "signature": "(loader: 'SchemaLoader') -> 'None'"
     },
+    "mconet.testing.StubAuthorizationHandler": {
+      "kind": "class",
+      "members": {
+        "apply": {
+          "kind": "method",
+          "signature": "(self, authorization: 'Authorization', context: 'AuthorizationContext', request: 'MutableTransportRequest') -> 'None'"
+        },
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "requests_after": {
+          "kind": "property",
+          "signature": null
+        },
+        "requests_before": {
+          "kind": "property",
+          "signature": null
+        },
+        "supports": {
+          "kind": "method",
+          "signature": "(self, authorization: 'Authorization', body_signing_requirement: 'BodySigningRequirement') -> 'frozenset[BodySigningMode]'"
+        }
+      },
+      "signature": "(descriptor: 'ComponentDescriptor', supported_modes: 'frozenset[BodySigningMode]', *, apply_error: 'BaseException | None' = None) -> 'None'"
+    },
     "mconet.testing.StubAuthorizationHandlerResolver": {
       "kind": "class",
       "members": {
