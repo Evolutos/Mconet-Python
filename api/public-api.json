@@ -1679,6 +1679,20 @@
       },
       "signature": "(loader: 'SchemaLoader') -> 'None'"
     },
+    "mconet.testing.StubAuthorizationHandlerResolver": {
+      "kind": "class",
+      "members": {
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "resolve": {
+          "kind": "method",
+          "signature": "(self, authorization: 'Authorization', body_signing_requirement: 'BodySigningRequirement', handlers: 'tuple[AuthorizationHandler, ...]') -> 'ResolvedAuthorizationHandler'"
+        }
+      },
+      "signature": "(descriptor: 'ComponentDescriptor', result: 'ResolvedAuthorizationHandler', *, error: 'BaseException | None' = None) -> 'None'"
+    },
     "mconet.testing.StubModelIntegrationResolver": {
       "kind": "class",
       "members": {

@@ -7,6 +7,9 @@ from mconet.testing.schema_validator import (
     SchemaValidationIssue,
     SchemaValidatorAdapter,
 )
+from mconet.testing.stub_authorization_handler_resolver import (
+    StubAuthorizationHandlerResolver,
+)
 from mconet.testing.stub_model_integration_resolver import (
     StubModelIntegrationResolver,
 )
@@ -20,6 +23,7 @@ __all__ = (
     "SchemaLoader",
     "SchemaValidationIssue",
     "SchemaValidatorAdapter",
+    "StubAuthorizationHandlerResolver",
     "StubModelIntegrationResolver",
     "StubPayloadDecoder",
     "StubPayloadEncoder",
