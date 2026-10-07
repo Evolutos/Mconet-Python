@@ -1636,6 +1636,32 @@
       "members": {},
       "signature": "(transport_kind: 'OpenIdentifier | None' = None, required_capabilities: 'frozenset[OpenIdentifier]' = frozenset()) -> None"
     },
+    "mconet.testing.AdapterContractSuite": {
+      "kind": "class",
+      "members": {
+        "assert_build_request": {
+          "kind": "method",
+          "signature": "(self, request: 'ModelRequest', plan: 'ProtocolExecutionPlan', *, assertion: 'Callable[[ProtocolRequestPlan], None]') -> 'None'"
+        },
+        "assert_parse_error": {
+          "kind": "method",
+          "signature": "(self, error: 'ErasedRuntimeValue', metadata: 'TransportResponseMetadata', *, assertion: 'Callable[[ModelInteractionError | None], None]') -> 'None'"
+        },
+        "assert_parse_response": {
+          "kind": "method",
+          "signature": "(self, response: 'ErasedRuntimeValue', *, assertion: 'Callable[[ParsedTaskResponse], None]') -> 'None'"
+        },
+        "assert_prepare_plan": {
+          "kind": "method",
+          "signature": "(self, request: 'ModelRequest', access: 'ResolvedServiceAccess', mode: 'InteractionMode', *, assertion: 'Callable[[ProtocolExecutionPlan], None]') -> 'None'"
+        },
+        "assert_supports": {
+          "kind": "method",
+          "signature": "(self, target: 'ModelTarget', task: 'TaskDescriptor', mode: 'InteractionMode', *, expected: 'bool') -> 'None'"
+        }
+      },
+      "signature": "(adapter: 'TaskProtocolAdapter') -> 'None'"
+    },
     "mconet.testing.ComponentCallRecorder": {
       "kind": "class",
       "members": {
