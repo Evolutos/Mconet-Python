@@ -1,5 +1,9 @@
 """Behavioral contracts connecting domain values to runtime components."""
 
+from mconet.core.spi.body_signing_requirement import (
+    BodySigningMode,
+    BodySigningRequirement,
+)
 from mconet.core.spi.component_descriptor import ComponentDescriptor
 from mconet.core.spi.component_role import ComponentRole
 from mconet.core.spi.component_selection_resolution import (
@@ -22,6 +26,8 @@ from mconet.core.spi.transport_response_metadata import TransportResponseMetadat
 from mconet.core.spi.transport_selection import TransportSelection
 
 __all__ = (
+    "BodySigningMode",
+    "BodySigningRequirement",
     "ComponentDescriptor",
     "ComponentRole",
     "ComponentSelectionResolution",

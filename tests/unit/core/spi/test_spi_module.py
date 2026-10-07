@@ -8,6 +8,8 @@ def test_core_spi_exports_only_implemented_contracts() -> None:
     # Keep the explicit export list synchronized without exposing future SPI
     # contracts before their behavior and compatibility rules are implemented.
     assert mconet.core.spi.__all__ == (
+        "BodySigningMode",
+        "BodySigningRequirement",
         "ComponentDescriptor",
         "ComponentRole",
         "ComponentSelectionResolution",

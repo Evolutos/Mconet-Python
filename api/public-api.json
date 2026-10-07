@@ -1098,6 +1098,15 @@
       "kind": "function",
       "signature": "(uri: 'UriValue') -> 'UriValue'"
     },
+    "mconet.core.spi.BodySigningMode": {
+      "kind": "value",
+      "type": "_LiteralGenericAlias"
+    },
+    "mconet.core.spi.BodySigningRequirement": {
+      "kind": "class",
+      "members": {},
+      "signature": "(required: 'bool' = False, acceptable_modes: 'tuple[BodySigningMode, ...]' = ('none',), digest_algorithms: 'frozenset[OpenIdentifier]' = frozenset(), max_buffer_bytes: 'int | None' = None) -> None"
+    },
     "mconet.core.spi.ComponentDescriptor": {
       "kind": "class",
       "members": {},
