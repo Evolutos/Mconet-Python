@@ -1192,6 +1192,11 @@
       "members": {},
       "signature": "(method: 'str', url: 'UriValue', headers: 'Headers', query: 'QueryParameters', body: 'TransportBody') -> None"
     },
+    "mconet.core.spi.TransportRequestPlan": {
+      "kind": "class",
+      "members": {},
+      "signature": "(endpoint: 'UriValue', path: 'str', method: 'str', headers: 'Headers', query: 'QueryParameters', authorization: 'Authorization', body_signing_requirement: 'BodySigningRequirement', transport_extensions: 'Mapping[str, object]' = <factory>) -> None"
+    },
     "mconet.core.spi.TransportResponse": {
       "kind": "class",
       "members": {},

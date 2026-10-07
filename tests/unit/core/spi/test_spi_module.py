@@ -25,6 +25,7 @@ def test_core_spi_exports_only_implemented_contracts() -> None:
         "TransportContext",
         "TransportOutcome",
         "TransportRequest",
+        "TransportRequestPlan",
         "TransportResponse",
         "TransportResponseMetadata",
         "TransportSelection",

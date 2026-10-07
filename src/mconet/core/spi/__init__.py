@@ -21,6 +21,7 @@ from mconet.core.spi.transport_body import TransportBody
 from mconet.core.spi.transport_context import TransportContext
 from mconet.core.spi.transport_outcome import TransportOutcome
 from mconet.core.spi.transport_request import TransportRequest
+from mconet.core.spi.transport_request_plan import TransportRequestPlan
 from mconet.core.spi.transport_response import TransportResponse
 from mconet.core.spi.transport_response_metadata import TransportResponseMetadata
 from mconet.core.spi.transport_selection import TransportSelection
@@ -43,6 +44,7 @@ __all__ = (
     "TransportContext",
     "TransportOutcome",
     "TransportRequest",
+    "TransportRequestPlan",
     "TransportResponse",
     "TransportResponseMetadata",
     "TransportSelection",
