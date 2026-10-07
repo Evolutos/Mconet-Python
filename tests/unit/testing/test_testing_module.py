@@ -31,5 +31,6 @@ def test_testing_module_imports_without_public_utilities() -> None:
         "StubServiceAccessResolver",
         "StubTaskProtocolAdapter",
         "SuccessPayloadDecoderContractSuite",
+        "TransportContractSuite",
         "json_fixtures_equal",
     )

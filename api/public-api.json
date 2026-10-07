@@ -2029,6 +2029,24 @@
       },
       "signature": "(decoder: 'PayloadDecoder') -> 'None'"
     },
+    "mconet.testing.TransportContractSuite": {
+      "kind": "class",
+      "members": {
+        "assert_send": {
+          "kind": "method",
+          "signature": "(self, request: 'TransportRequest', context: 'TransportContext', *, assertion: 'Callable[[TransportResponse], None]') -> 'None'"
+        },
+        "assert_send_cancellation": {
+          "kind": "method",
+          "signature": "(self, request: 'TransportRequest', context: 'TransportContext', *, cancel: 'Callable[[], None]', assertion: 'Callable[[asyncio.CancelledError], None]') -> 'None'"
+        },
+        "assert_send_failure": {
+          "kind": "method",
+          "signature": "(self, request: 'TransportRequest', context: 'TransportContext', *, assertion: 'Callable[[BaseException], None]') -> 'None'"
+        }
+      },
+      "signature": "(transport: 'Transport') -> 'None'"
+    },
     "mconet.testing.json_fixtures_equal": {
       "kind": "function",
       "signature": "(actual: 'JsonValue', expected: 'JsonValue') -> 'bool'"

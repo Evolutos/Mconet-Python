@@ -38,6 +38,7 @@ from mconet.testing.stub_task_protocol_adapter import StubTaskProtocolAdapter
 from mconet.testing.success_payload_decoder_contract_suite import (
     SuccessPayloadDecoderContractSuite,
 )
+from mconet.testing.transport_contract_suite import TransportContractSuite
 
 __all__ = (
     "AdapterContractSuite",
@@ -65,5 +66,6 @@ __all__ = (
     "StubServiceAccessResolver",
     "StubTaskProtocolAdapter",
     "SuccessPayloadDecoderContractSuite",
+    "TransportContractSuite",
     "json_fixtures_equal",
 )
