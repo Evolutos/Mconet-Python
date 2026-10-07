@@ -1173,6 +1173,11 @@
       "members": {},
       "signature": "(outcome: 'TransportOutcome', headers: 'Headers', status_code: 'int | None' = None, protocol_status_code: 'str | None' = None, trailers: 'Headers | None' = None, media_type: 'MediaType | None' = None, request_id: 'str | None' = None, extensions: 'Extensions' = <factory>) -> None"
     },
+    "mconet.core.spi.TransportSelection": {
+      "kind": "class",
+      "members": {},
+      "signature": "(transport_kind: 'OpenIdentifier | None' = None, required_capabilities: 'frozenset[OpenIdentifier]' = frozenset()) -> None"
+    },
     "mconet.testing.SchemaLoader": {
       "kind": "class",
       "members": {

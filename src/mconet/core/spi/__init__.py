@@ -13,6 +13,7 @@ from mconet.core.spi.transport_outcome import TransportOutcome
 from mconet.core.spi.transport_request import TransportRequest
 from mconet.core.spi.transport_response import TransportResponse
 from mconet.core.spi.transport_response_metadata import TransportResponseMetadata
+from mconet.core.spi.transport_selection import TransportSelection
 
 __all__ = (
     "ComponentDescriptor",
@@ -28,4 +29,5 @@ __all__ = (
     "TransportRequest",
     "TransportResponse",
     "TransportResponseMetadata",
+    "TransportSelection",
 )
