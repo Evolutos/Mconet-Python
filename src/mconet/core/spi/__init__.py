@@ -1,5 +1,6 @@
 """Behavioral contracts connecting domain values to runtime components."""
 
+from mconet.core.spi.authorization_context import AuthorizationContext
 from mconet.core.spi.body_signing_requirement import (
     BodySigningMode,
     BodySigningRequirement,
@@ -41,6 +42,7 @@ from mconet.core.spi.transport_response_metadata import TransportResponseMetadat
 from mconet.core.spi.transport_selection import TransportSelection
 
 __all__ = (
+    "AuthorizationContext",
     "BodySigningMode",
     "BodySigningRequirement",
     "CapabilityContext",
