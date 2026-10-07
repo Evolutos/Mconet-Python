@@ -1365,6 +1365,36 @@
       "members": {},
       "signature": "(matched: 'bool', score: 'int', diagnostics: 'tuple[Diagnostic, ...]' = ()) -> None"
     },
+    "mconet.core.spi.TaskProtocolAdapter": {
+      "kind": "class",
+      "members": {
+        "build_request": {
+          "kind": "method",
+          "signature": "(self, request: 'ModelRequest', plan: 'ProtocolExecutionPlan') -> 'ProtocolRequestPlan'"
+        },
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "parse_error": {
+          "kind": "method",
+          "signature": "(self, error: 'ErasedRuntimeValue', metadata: 'TransportResponseMetadata') -> 'ModelInteractionError | None'"
+        },
+        "parse_response": {
+          "kind": "method",
+          "signature": "(self, response: 'ErasedRuntimeValue') -> 'ParsedTaskResponse'"
+        },
+        "prepare_plan": {
+          "kind": "method",
+          "signature": "(self, request: 'ModelRequest', access: 'ResolvedServiceAccess', mode: 'InteractionMode') -> 'ProtocolExecutionPlan'"
+        },
+        "supports": {
+          "kind": "method",
+          "signature": "(self, target: 'ModelTarget', task: 'TaskDescriptor', mode: 'InteractionMode') -> 'bool'"
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.spi.TransportBody": {
       "kind": "class",
       "members": {},
