@@ -1451,6 +1451,20 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.spi.Transport": {
+      "kind": "class",
+      "members": {
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "send": {
+          "kind": "method",
+          "signature": "(self, request: 'TransportRequest', context: 'TransportContext') -> 'TransportResponse'"
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.spi.TransportBody": {
       "kind": "class",
       "members": {},

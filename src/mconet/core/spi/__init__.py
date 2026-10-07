@@ -40,6 +40,7 @@ from mconet.core.spi.satisfied_capability import SatisfiedCapability
 from mconet.core.spi.selected_component import SelectedComponent
 from mconet.core.spi.task_match import TaskMatch
 from mconet.core.spi.task_protocol_adapter import TaskProtocolAdapter
+from mconet.core.spi.transport import Transport
 from mconet.core.spi.transport_body import TransportBody
 from mconet.core.spi.transport_context import TransportContext
 from mconet.core.spi.transport_outcome import TransportOutcome
@@ -84,6 +85,7 @@ __all__ = (
     "SelectedComponent",
     "TaskMatch",
     "TaskProtocolAdapter",
+    "Transport",
     "TransportBody",
     "TransportContext",
     "TransportOutcome",
