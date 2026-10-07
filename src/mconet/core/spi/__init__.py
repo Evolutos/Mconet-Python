@@ -28,6 +28,9 @@ from mconet.core.spi.mutable_transport_request import MutableTransportRequest
 from mconet.core.spi.planned_component_selection import PlannedComponentSelection
 from mconet.core.spi.protocol_execution_plan import ProtocolExecutionPlan
 from mconet.core.spi.protocol_request_plan import ProtocolRequestPlan
+from mconet.core.spi.resolved_authorization_handler import (
+    ResolvedAuthorizationHandler,
+)
 from mconet.core.spi.runtime_component import RuntimeComponent
 from mconet.core.spi.satisfied_capability import SatisfiedCapability
 from mconet.core.spi.selected_component import SelectedComponent
@@ -66,6 +69,7 @@ __all__ = (
     "PlannedComponentSelection",
     "ProtocolExecutionPlan",
     "ProtocolRequestPlan",
+    "ResolvedAuthorizationHandler",
     "RuntimeComponent",
     "SatisfiedCapability",
     "SelectedComponent",

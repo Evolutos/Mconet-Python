@@ -1335,6 +1335,11 @@
       "members": {},
       "signature": "(payload: 'ErasedRuntimeValue', execution_plan: 'ProtocolExecutionPlan') -> None"
     },
+    "mconet.core.spi.ResolvedAuthorizationHandler": {
+      "kind": "class",
+      "members": {},
+      "signature": "(handler: 'RuntimeComponent', body_signing_mode: 'BodySigningMode') -> None"
+    },
     "mconet.core.spi.RuntimeComponent": {
       "kind": "class",
       "members": {
