@@ -25,6 +25,9 @@ from mconet.core.spi.decoder_selection import DecoderSelection
 from mconet.core.spi.encoder_selection import EncoderSelection
 from mconet.core.spi.erased_runtime_value import ErasedRuntimeValue
 from mconet.core.spi.interaction_capability import InteractionCapability
+from mconet.core.spi.interaction_execution_components import (
+    InteractionExecutionComponents,
+)
 from mconet.core.spi.interaction_monitor import InteractionMonitor
 from mconet.core.spi.message_mapping_result import MessageMappingResult
 from mconet.core.spi.message_request_mapper import MessageRequestMapper
@@ -80,6 +83,7 @@ __all__ = (
     "EncoderSelection",
     "ErasedRuntimeValue",
     "InteractionCapability",
+    "InteractionExecutionComponents",
     "InteractionMonitor",
     "MessageMappingResult",
     "MessageRequestMapper",

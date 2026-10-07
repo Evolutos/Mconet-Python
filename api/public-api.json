@@ -1301,6 +1301,11 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.spi.InteractionExecutionComponents": {
+      "kind": "class",
+      "members": {},
+      "signature": "(integration_plan: 'ModelIntegrationPlan', component_selection: 'ComponentSelectionResolution', resource_limits: 'ResolvedInteractionResourceLimits', task_protocol_adapter: 'TaskProtocolAdapter', service_access_resolver: 'ServiceAccessResolver', payload_encoder: 'PayloadEncoder', success_payload_decoder: 'PayloadDecoder', error_payload_decoder: 'PayloadDecoder', transport: 'Transport', authorization_handler_resolver: 'AuthorizationHandlerResolver', authorization_handlers: 'tuple[AuthorizationHandler, ...]', capability_resolution: 'CapabilityResolution') -> None"
+    },
     "mconet.core.spi.InteractionMonitor": {
       "kind": "class",
       "members": {
