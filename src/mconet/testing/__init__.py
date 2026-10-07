@@ -1,5 +1,6 @@
 """Reusable fixtures, test doubles, and contract suites."""
 
+from mconet.testing.fixture_loader import FixtureLoader
 from mconet.testing.json_fixture import json_fixtures_equal
 from mconet.testing.schema_loader import SchemaLoader
 from mconet.testing.schema_validator import (
@@ -8,6 +9,7 @@ from mconet.testing.schema_validator import (
 )
 
 __all__ = (
+    "FixtureLoader",
     "SchemaLoader",
     "SchemaValidationIssue",
     "SchemaValidatorAdapter",

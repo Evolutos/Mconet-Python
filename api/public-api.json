@@ -1636,6 +1636,24 @@
       "members": {},
       "signature": "(transport_kind: 'OpenIdentifier | None' = None, required_capabilities: 'frozenset[OpenIdentifier]' = frozenset()) -> None"
     },
+    "mconet.testing.FixtureLoader": {
+      "kind": "class",
+      "members": {
+        "load": {
+          "kind": "method",
+          "signature": "(self, resource: 'str') -> 'JsonValue'"
+        },
+        "profile": {
+          "kind": "property",
+          "signature": null
+        },
+        "resources": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(root: 'Path') -> 'None'"
+    },
     "mconet.testing.SchemaLoader": {
       "kind": "class",
       "members": {
