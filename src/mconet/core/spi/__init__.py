@@ -8,6 +8,7 @@ from mconet.core.spi.runtime_component import RuntimeComponent
 from mconet.core.spi.transport_body import TransportBody
 from mconet.core.spi.transport_outcome import TransportOutcome
 from mconet.core.spi.transport_request import TransportRequest
+from mconet.core.spi.transport_response import TransportResponse
 from mconet.core.spi.transport_response_metadata import TransportResponseMetadata
 
 __all__ = (
@@ -19,5 +20,6 @@ __all__ = (
     "TransportBody",
     "TransportOutcome",
     "TransportRequest",
+    "TransportResponse",
     "TransportResponseMetadata",
 )

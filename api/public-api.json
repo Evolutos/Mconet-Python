@@ -1148,6 +1148,11 @@
       "members": {},
       "signature": "(method: 'str', url: 'UriValue', headers: 'Headers', query: 'QueryParameters', body: 'TransportBody') -> None"
     },
+    "mconet.core.spi.TransportResponse": {
+      "kind": "class",
+      "members": {},
+      "signature": "(response_metadata: 'TransportResponseMetadata', body: 'Bytes') -> None"
+    },
     "mconet.core.spi.TransportResponseMetadata": {
       "kind": "class",
       "members": {},
