@@ -30,6 +30,7 @@ from mconet.core.spi.message_request_mapper import MessageRequestMapper
 from mconet.core.spi.message_response_mapper import MessageResponseMapper
 from mconet.core.spi.model_integration_match import ModelIntegrationMatch
 from mconet.core.spi.model_integration_plan import ModelIntegrationPlan
+from mconet.core.spi.model_integration_resolver import ModelIntegrationResolver
 from mconet.core.spi.model_target_match import ModelTargetMatch
 from mconet.core.spi.monitoring_event import MonitoringEvent
 from mconet.core.spi.mutable_transport_request import MutableTransportRequest
@@ -82,6 +83,7 @@ __all__ = (
     "MessageResponseMapper",
     "ModelIntegrationMatch",
     "ModelIntegrationPlan",
+    "ModelIntegrationResolver",
     "ModelTargetMatch",
     "MonitoringEvent",
     "MutableTransportRequest",
