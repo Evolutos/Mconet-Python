@@ -1113,6 +1113,11 @@
       "members": {},
       "signature": "(name: 'str', type_id: 'OpenIdentifier', schema_id: 'str | None' = None, media_type: 'MediaType | None' = None) -> None"
     },
+    "mconet.core.spi.EncoderSelection": {
+      "kind": "class",
+      "members": {},
+      "signature": "(media_type: 'MediaType | None' = None, schema_id: 'str | None' = None) -> None"
+    },
     "mconet.core.spi.ErasedRuntimeValue": {
       "kind": "class",
       "members": {
