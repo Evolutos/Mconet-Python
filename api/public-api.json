@@ -1108,6 +1108,11 @@
       "members": {},
       "signature": "(id: 'OpenIdentifier') -> None"
     },
+    "mconet.core.spi.ComponentSelectionResolution": {
+      "kind": "class",
+      "members": {},
+      "signature": "(components: 'tuple[SelectedComponent, ...]' = ()) -> None"
+    },
     "mconet.core.spi.ComponentTypeContract": {
       "kind": "class",
       "members": {},
