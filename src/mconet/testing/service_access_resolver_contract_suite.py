@@ -8,7 +8,6 @@ from typing import TypeVar, cast
 
 from mconet.core.domain import (
     Authorization,
-    Extensions,
     Headers,
     OpenIdentifier,
     QueryParameters,
@@ -18,6 +17,10 @@ from mconet.core.domain import (
     validate_service_access,
 )
 from mconet.core.spi import ComponentDescriptor, ServiceAccessResolver
+from mconet.testing._json_value_snapshot import (
+    JsonValueSnapshot,
+    snapshot_json_value,
+)
 
 _ValueT = TypeVar("_ValueT")
 _SourceTuple = tuple[
@@ -35,7 +38,7 @@ _AccessSnapshot = tuple[
     str | None,
     str | None,
     str | None,
-    tuple[tuple[str, object], ...],
+    JsonValueSnapshot,
 ]
 _SOURCE_MUTATION_MESSAGE = "resolver must not mutate service access sources."
 
@@ -227,7 +230,7 @@ def _snapshot_access(access: ServiceAccess) -> _AccessSnapshot:
     """Capture one validated source without inspecting authorization secrets."""
     authorization = access.authorization
     authorization_kind = authorization.kind if authorization is not None else None
-    extensions = _snapshot_extensions(access.extensions)
+    extensions = snapshot_json_value(dict(access.extensions))
 
     # Nominal endpoint, header, and query values are immutable. Authorization is
     # retained only as an opaque reference plus its non-sensitive selection kind;
@@ -272,7 +275,7 @@ def _source_matches_snapshot(
         validate_service_access(access)
         authorization = access.authorization
         authorization_kind = authorization.kind if authorization is not None else None
-        current_extensions = _snapshot_extensions(access.extensions)
+        current_extensions = snapshot_json_value(dict(access.extensions))
 
         # Authorization identity prevents replacement of the atomic policy value;
         # kind equality also detects mutation visible to later handler selection.
@@ -291,57 +294,6 @@ def _source_matches_snapshot(
         # A resolver may have replaced a field with unreadable or malformed data.
         # Fail closed using implementation-owned text and no source representation.
         return False
-
-
-def _snapshot_extensions(value: Extensions) -> tuple[tuple[str, object], ...]:
-    """Create a recursion-independent canonical snapshot of JSON extensions."""
-    # The caller validates the complete JSON graph first. Converting only the
-    # top-level Mapping detaches custom membership while nested values remain the
-    # concrete list/dict/primitive shapes guaranteed by domain validation.
-    root = dict(value)
-    pending: list[tuple[str, object]] = [("value", root)]
-    events: list[tuple[str, object]] = []
-
-    while pending:
-        action, current = pending.pop()
-        if action == "key":
-            events.append(("key", current))
-            continue
-        if isinstance(current, dict):
-            mapping = cast(dict[str, object], current)
-            events.append(("object", len(mapping)))
-            # Sorted keys make mapping insertion order irrelevant. Reverse push
-            # order preserves ascending key order when the LIFO stack is read.
-            for key in reversed(sorted(mapping)):
-                pending.append(("value", mapping[key]))
-                pending.append(("key", key))
-            continue
-        if isinstance(current, list):
-            sequence = cast(list[object], current)
-            events.append(("array", len(sequence)))
-            # Array order remains semantic, so reverse insertion restores the
-            # original order during iterative traversal.
-            pending.extend(("value", item) for item in reversed(sequence))
-            continue
-        if isinstance(current, bool):
-            events.append(("boolean", current))
-            continue
-        if type(current) in (int, float):
-            # JSON has one number kind. Python equality deliberately treats
-            # portable integer and equal floating-point representations alike.
-            events.append(("number", current))
-            continue
-        if current is None:
-            events.append(("null", None))
-            continue
-        if isinstance(current, str):
-            events.append(("string", current))
-            continue
-        # Reaching this branch would contradict successful domain validation;
-        # fail closed without rendering the extension value.
-        raise TypeError("validated extensions contain unsupported JSON data.")
-
-    return tuple(events)
 
 
 def _validate_assertion(

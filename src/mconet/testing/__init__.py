@@ -23,6 +23,7 @@ from mconet.testing.mock_transport import MockTransport
 from mconet.testing.model_integration_resolver_contract_suite import (
     ModelIntegrationResolverContractSuite,
 )
+from mconet.testing.monitor_contract_suite import MonitorContractSuite
 from mconet.testing.payload_encoder_contract_suite import PayloadEncoderContractSuite
 from mconet.testing.recording_transport import RecordingTransport
 from mconet.testing.schema_loader import SchemaLoader
@@ -66,6 +67,7 @@ __all__ = (
     "FixtureLoader",
     "MockTransport",
     "ModelIntegrationResolverContractSuite",
+    "MonitorContractSuite",
     "PayloadEncoderContractSuite",
     "RecordingTransport",
     "SchemaLoader",

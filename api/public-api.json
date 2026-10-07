@@ -1840,6 +1840,24 @@
       },
       "signature": "(resolver: 'ModelIntegrationResolver') -> 'None'"
     },
+    "mconet.testing.MonitorContractSuite": {
+      "kind": "class",
+      "members": {
+        "assert_failure_isolated": {
+          "kind": "method",
+          "signature": "(self, event: 'MonitoringEvent', *, secret: 'str', assertion: 'Callable[[BaseException], None]') -> 'None'"
+        },
+        "assert_observe": {
+          "kind": "method",
+          "signature": "(self, event: 'MonitoringEvent', *, secret: 'str', assertion: 'Callable[[MonitoringEvent], None]') -> 'None'"
+        },
+        "assert_observed_events": {
+          "kind": "method",
+          "signature": "(self, *, assertion: 'Callable[[frozenset[OpenIdentifier] | None], None]') -> 'None'"
+        }
+      },
+      "signature": "(monitor: 'InteractionMonitor') -> 'None'"
+    },
     "mconet.testing.PayloadEncoderContractSuite": {
       "kind": "class",
       "members": {
