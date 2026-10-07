@@ -1153,6 +1153,11 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.spi.SelectedComponent": {
+      "kind": "class",
+      "members": {},
+      "signature": "(role: 'ComponentRole', component: 'RuntimeComponent', descriptor: 'ComponentDescriptor') -> None"
+    },
     "mconet.core.spi.TransportBody": {
       "kind": "class",
       "members": {},
