@@ -21,6 +21,7 @@ from mconet.core.spi.interaction_capability import InteractionCapability
 from mconet.core.spi.model_integration_match import ModelIntegrationMatch
 from mconet.core.spi.model_integration_plan import ModelIntegrationPlan
 from mconet.core.spi.model_target_match import ModelTargetMatch
+from mconet.core.spi.monitoring_event import MonitoringEvent
 from mconet.core.spi.mutable_transport_request import MutableTransportRequest
 from mconet.core.spi.planned_component_selection import PlannedComponentSelection
 from mconet.core.spi.protocol_execution_plan import ProtocolExecutionPlan
@@ -56,6 +57,7 @@ __all__ = (
     "ModelIntegrationMatch",
     "ModelIntegrationPlan",
     "ModelTargetMatch",
+    "MonitoringEvent",
     "MutableTransportRequest",
     "PlannedComponentSelection",
     "ProtocolExecutionPlan",

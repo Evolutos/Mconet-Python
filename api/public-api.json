@@ -1255,6 +1255,11 @@
       "members": {},
       "signature": "(matched: 'bool', score: 'int', diagnostics: 'tuple[Diagnostic, ...]' = ()) -> None"
     },
+    "mconet.core.spi.MonitoringEvent": {
+      "kind": "class",
+      "members": {},
+      "signature": "(id: 'str', type: 'OpenIdentifier', interaction_id: 'str', trace_id: 'str | None', timestamp: 'Timestamp', payload: 'JsonValue', metadata: 'Extensions') -> None"
+    },
     "mconet.core.spi.MutableTransportRequest": {
       "kind": "class",
       "members": {
