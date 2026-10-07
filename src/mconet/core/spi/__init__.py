@@ -21,6 +21,7 @@ from mconet.core.spi.erased_runtime_value import ErasedRuntimeValue
 from mconet.core.spi.interaction_capability import InteractionCapability
 from mconet.core.spi.message_mapping_result import MessageMappingResult
 from mconet.core.spi.message_request_mapper import MessageRequestMapper
+from mconet.core.spi.message_response_mapper import MessageResponseMapper
 from mconet.core.spi.model_integration_match import ModelIntegrationMatch
 from mconet.core.spi.model_integration_plan import ModelIntegrationPlan
 from mconet.core.spi.model_target_match import ModelTargetMatch
@@ -64,6 +65,7 @@ __all__ = (
     "InteractionCapability",
     "MessageMappingResult",
     "MessageRequestMapper",
+    "MessageResponseMapper",
     "ModelIntegrationMatch",
     "ModelIntegrationPlan",
     "ModelTargetMatch",
