@@ -31,6 +31,7 @@ def test_core_spi_exports_only_implemented_contracts() -> None:
         "ModelTargetMatch",
         "MonitoringEvent",
         "MutableTransportRequest",
+        "PayloadEncoder",
         "PlannedComponentSelection",
         "ProtocolExecutionPlan",
         "ProtocolRequestPlan",
