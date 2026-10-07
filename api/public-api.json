@@ -2001,6 +2001,20 @@
       },
       "signature": "(descriptor: 'ComponentDescriptor', *, supports_result: 'bool', prepare_plan_result: 'ProtocolExecutionPlan', build_request_result: 'ProtocolRequestPlan', parse_response_result: 'ParsedTaskResponse', parse_error_result: 'ModelInteractionError | None', supports_error: 'BaseException | None' = None, prepare_plan_error: 'BaseException | None' = None, build_request_error: 'BaseException | None' = None, parse_response_error: 'BaseException | None' = None, parse_error_error: 'BaseException | None' = None) -> 'None'"
     },
+    "mconet.testing.SuccessPayloadDecoderContractSuite": {
+      "kind": "class",
+      "members": {
+        "assert_decode": {
+          "kind": "method",
+          "signature": "(self, raw_data: 'Bytes', *, assertion: 'Callable[[ErasedRuntimeValue], None]') -> 'None'"
+        },
+        "assert_decode_failure": {
+          "kind": "method",
+          "signature": "(self, raw_data: 'Bytes', *, assertion: 'Callable[[BaseException], None]') -> 'None'"
+        }
+      },
+      "signature": "(decoder: 'PayloadDecoder') -> 'None'"
+    },
     "mconet.testing.json_fixtures_equal": {
       "kind": "function",
       "signature": "(actual: 'JsonValue', expected: 'JsonValue') -> 'bool'"

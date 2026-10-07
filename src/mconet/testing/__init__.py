@@ -32,6 +32,9 @@ from mconet.testing.stub_payload_decoder import StubPayloadDecoder
 from mconet.testing.stub_payload_encoder import StubPayloadEncoder
 from mconet.testing.stub_service_access_resolver import StubServiceAccessResolver
 from mconet.testing.stub_task_protocol_adapter import StubTaskProtocolAdapter
+from mconet.testing.success_payload_decoder_contract_suite import (
+    SuccessPayloadDecoderContractSuite,
+)
 
 __all__ = (
     "AdapterContractSuite",
@@ -57,5 +60,6 @@ __all__ = (
     "StubPayloadEncoder",
     "StubServiceAccessResolver",
     "StubTaskProtocolAdapter",
+    "SuccessPayloadDecoderContractSuite",
     "json_fixtures_equal",
 )
