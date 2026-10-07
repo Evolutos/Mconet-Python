@@ -15,6 +15,7 @@ from mconet.testing.schema_validator import (
     SchemaValidationIssue,
     SchemaValidatorAdapter,
 )
+from mconet.testing.secret_scanner import SecretScanner
 from mconet.testing.snapshot_comparator import SnapshotComparator
 from mconet.testing.stub_authorization_handler import StubAuthorizationHandler
 from mconet.testing.stub_authorization_handler_resolver import (
@@ -40,6 +41,7 @@ __all__ = (
     "SchemaLoader",
     "SchemaValidationIssue",
     "SchemaValidatorAdapter",
+    "SecretScanner",
     "SnapshotComparator",
     "StubAuthorizationHandler",
     "StubAuthorizationHandlerResolver",

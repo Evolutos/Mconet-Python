@@ -1771,6 +1771,16 @@
       },
       "signature": "(loader: 'SchemaLoader') -> 'None'"
     },
+    "mconet.testing.SecretScanner": {
+      "kind": "class",
+      "members": {
+        "assert_absent": {
+          "kind": "method",
+          "signature": "(self, secret: 'str', *carriers: 'object') -> 'None'"
+        }
+      },
+      "signature": "()"
+    },
     "mconet.testing.SnapshotComparator": {
       "kind": "class",
       "members": {
