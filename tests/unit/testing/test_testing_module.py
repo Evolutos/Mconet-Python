@@ -13,6 +13,7 @@ def test_testing_module_imports_without_public_utilities() -> None:
         "StubModelIntegrationResolver",
         "StubPayloadDecoder",
         "StubPayloadEncoder",
+        "StubServiceAccessResolver",
         "StubTaskProtocolAdapter",
         "json_fixtures_equal",
     )

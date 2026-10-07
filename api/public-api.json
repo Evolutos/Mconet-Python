@@ -1729,6 +1729,20 @@
       },
       "signature": "(descriptor: 'ComponentDescriptor', result: 'TransportBody', *, error: 'BaseException | None' = None) -> 'None'"
     },
+    "mconet.testing.StubServiceAccessResolver": {
+      "kind": "class",
+      "members": {
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "resolve": {
+          "kind": "method",
+          "signature": "(self, interaction_override: 'ServiceAccess | None', request_service_access: 'ServiceAccess | None', client_default_service_access: 'ServiceAccess | None', protocol_default_service_access: 'ServiceAccess | None') -> 'ResolvedServiceAccess'"
+        }
+      },
+      "signature": "(descriptor: 'ComponentDescriptor', result: 'ResolvedServiceAccess', *, error: 'BaseException | None' = None) -> 'None'"
+    },
     "mconet.testing.StubTaskProtocolAdapter": {
       "kind": "class",
       "members": {

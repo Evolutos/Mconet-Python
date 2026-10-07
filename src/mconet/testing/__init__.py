@@ -12,6 +12,7 @@ from mconet.testing.stub_model_integration_resolver import (
 )
 from mconet.testing.stub_payload_decoder import StubPayloadDecoder
 from mconet.testing.stub_payload_encoder import StubPayloadEncoder
+from mconet.testing.stub_service_access_resolver import StubServiceAccessResolver
 from mconet.testing.stub_task_protocol_adapter import StubTaskProtocolAdapter
 
 __all__ = (
@@ -22,6 +23,7 @@ __all__ = (
     "StubModelIntegrationResolver",
     "StubPayloadDecoder",
     "StubPayloadEncoder",
+    "StubServiceAccessResolver",
     "StubTaskProtocolAdapter",
     "json_fixtures_equal",
 )
