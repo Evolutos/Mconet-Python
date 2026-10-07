@@ -1771,6 +1771,16 @@
       },
       "signature": "(loader: 'SchemaLoader') -> 'None'"
     },
+    "mconet.testing.SnapshotComparator": {
+      "kind": "class",
+      "members": {
+        "compare": {
+          "kind": "method",
+          "signature": "(self, actual: 'JsonValue', expected: 'JsonValue') -> 'bool'"
+        }
+      },
+      "signature": "()"
+    },
     "mconet.testing.StubAuthorizationHandler": {
       "kind": "class",
       "members": {
