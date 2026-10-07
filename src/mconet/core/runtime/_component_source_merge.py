@@ -11,7 +11,7 @@ from mconet.core.spi import (
     RuntimeComponents,
 )
 
-_ComponentLayers = tuple[
+ComponentSourceLayers = tuple[
     tuple[RuntimeComponent, ...],
     tuple[RuntimeComponent, ...],
     tuple[RuntimeComponent, ...],
@@ -23,7 +23,7 @@ _ComponentLayers = tuple[
 class _MergedComponentSources:
     """Store role candidates in fixed source-precedence order.
 
-    Every ``_ComponentLayers`` value contains exactly four immutable tuples:
+    Every ``ComponentSourceLayers`` value contains exactly four immutable tuples:
     interaction injection, Client injection, integration-plan candidates, and
     SDK defaults. Empty tuples preserve an absent layer without collapsing its
     priority position. Later selection owns compatibility filtering, uniqueness,
@@ -35,25 +35,25 @@ class _MergedComponentSources:
     not treat this stored order as a tie-breaker.
     """
 
-    task_protocol_adapter: _ComponentLayers
+    task_protocol_adapter: ComponentSourceLayers
     """Adapter candidates from direct injection, the plan, and SDK defaults."""
 
-    service_access_resolver: _ComponentLayers
+    service_access_resolver: ComponentSourceLayers
     """Three direct resolver sources with an explicit empty integration layer."""
 
-    payload_encoder: _ComponentLayers
+    payload_encoder: ComponentSourceLayers
     """Request encoder candidates retained within their original source layers."""
 
-    success_payload_decoder: _ComponentLayers
+    success_payload_decoder: ComponentSourceLayers
     """Success decoder candidates retained for later plan-based selection."""
 
-    error_payload_decoder: _ComponentLayers
+    error_payload_decoder: ComponentSourceLayers
     """Error decoder candidates retained independently from success candidates."""
 
-    transport: _ComponentLayers
+    transport: ComponentSourceLayers
     """Unary transport candidates retained within their original source layers."""
 
-    authorization_handler_resolver: _ComponentLayers
+    authorization_handler_resolver: ComponentSourceLayers
     """Three direct resolver sources with an explicit empty integration layer."""
 
     authorization_handlers: tuple[RuntimeComponent, ...]
@@ -186,7 +186,7 @@ def _layers(
     client: tuple[RuntimeComponent, ...],
     integration: tuple[RuntimeComponent, ...],
     sdk_default: tuple[RuntimeComponent, ...],
-) -> _ComponentLayers:
+) -> ComponentSourceLayers:
     """Build one role's fixed four-position immutable source sequence."""
     # Keeping empty tuples in place makes source precedence structural. Later
     # selection never infers a source from descriptor metadata or tuple length.
