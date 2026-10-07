@@ -7,6 +7,9 @@ from mconet.testing.schema_validator import (
     SchemaValidationIssue,
     SchemaValidatorAdapter,
 )
+from mconet.testing.stub_model_integration_resolver import (
+    StubModelIntegrationResolver,
+)
 from mconet.testing.stub_payload_decoder import StubPayloadDecoder
 from mconet.testing.stub_payload_encoder import StubPayloadEncoder
 from mconet.testing.stub_task_protocol_adapter import StubTaskProtocolAdapter
@@ -16,6 +19,7 @@ __all__ = (
     "SchemaLoader",
     "SchemaValidationIssue",
     "SchemaValidatorAdapter",
+    "StubModelIntegrationResolver",
     "StubPayloadDecoder",
     "StubPayloadEncoder",
     "StubTaskProtocolAdapter",

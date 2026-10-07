@@ -10,6 +10,7 @@ def test_testing_module_imports_without_public_utilities() -> None:
         "SchemaLoader",
         "SchemaValidationIssue",
         "SchemaValidatorAdapter",
+        "StubModelIntegrationResolver",
         "StubPayloadDecoder",
         "StubPayloadEncoder",
         "StubTaskProtocolAdapter",
