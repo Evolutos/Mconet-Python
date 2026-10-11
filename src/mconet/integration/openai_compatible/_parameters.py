@@ -4,7 +4,22 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from mconet.core.domain import GenerationParameters
+from mconet.core.domain import (
+    ErrorCategory,
+    GenerationParameters,
+    InteractionPhase,
+    ModelInteractionError,
+    OpenIdentifier,
+)
+
+UNSUPPORTED_GENERATION_PARAMETER_CODE = "unsupported_generation_parameter"
+"""Stable code for a parameter value outside the frozen wire profile."""
+
+MAX_TEMPERATURE = 2
+"""Largest ``temperature`` the wire profile defines."""
+
+_UNSUPPORTED_FEATURE = ErrorCategory(OpenIdentifier("unsupported_feature"))
+_PROTOCOL_ADAPTATION = InteractionPhase(OpenIdentifier("protocol_adaptation"))
 
 
 @dataclass(frozen=True, slots=True)
@@ -33,7 +48,9 @@ class WireParameters:
 _NO_PARAMETERS = WireParameters()
 
 
-def wire_parameters(parameters: GenerationParameters | None) -> WireParameters:
+def wire_parameters(
+    parameters: GenerationParameters | None, *, enforce_profile: bool
+) -> WireParameters:
     """Return the request members for validated generation parameters.
 
     Each value is copied exactly; numbers keep their int or float type and are
@@ -42,21 +59,43 @@ def wire_parameters(parameters: GenerationParameters | None) -> WireParameters:
     than sent as ``[]``. Stop sequences keep their order and are sent as an
     array even when there is one.
 
-    Domain validation already enforces the ranges every protocol shares. The
-    frozen wire profile declares no tighter bound, so service-specific limits,
-    such as a maximum temperature or stop count, are left to the service.
+    Domain validation already bounds ``top_p`` to ``[0, 1]``, requires a
+    non-negative ``temperature`` and a positive ``max_output_tokens``, and
+    keeps ``seed`` a safe integer. The profile adds only the ``temperature``
+    maximum of 2, enforced when the policy requires the profile; a relaxed
+    policy sends a larger value unchanged and leaves acceptance to the service.
+    ``seed`` is part of the profile, so it is sent in every mode. Limits the
+    profile does not declare, such as a stop count, are left to the service.
 
     Args:
         parameters: Parameters of the request's GenerationParametersNode, or
             ``None`` when the request has none.
+        enforce_profile: Whether values outside the wire profile fail.
 
     Returns:
         The members to send. Every member is ``None`` without parameters.
+
+    Raises:
+        ModelInteractionError: If the profile is enforced and ``temperature``
+            exceeds its maximum.
     """
     if parameters is None:
         return _NO_PARAMETERS
+    temperature = parameters.temperature
+    if enforce_profile and temperature is not None and temperature > MAX_TEMPERATURE:
+        # The value is caller request data, so naming the bound, not the value,
+        # is enough to correct it without echoing request content.
+        raise ModelInteractionError(
+            category=_UNSUPPORTED_FEATURE,
+            phase=_PROTOCOL_ADAPTATION,
+            code=UNSUPPORTED_GENERATION_PARAMETER_CODE,
+            message=(
+                "Generation parameter temperature exceeds the OpenAI-compatible "
+                f"chat completions maximum of {MAX_TEMPERATURE}."
+            ),
+        )
     return WireParameters(
-        temperature=parameters.temperature,
+        temperature=temperature,
         top_p=parameters.top_p,
         max_tokens=parameters.max_output_tokens,
         stop=parameters.stop or None,

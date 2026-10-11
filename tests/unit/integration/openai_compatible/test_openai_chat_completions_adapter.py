@@ -6,6 +6,7 @@ from typing import Literal, cast
 
 from mconet.core.domain import (
     ArtifactCatalog,
+    CompatibilityPolicy,
     ConversationInputNode,
     ConversationTaskBuilder,
     ConversationTaskResult,
@@ -39,6 +40,7 @@ from mconet.core.domain import (
     TextMessageContent,
     TokenUsage,
     UriValue,
+    default_compatibility_policy,
     validate_parsed_task_response,
 )
 from mconet.core.spi import (
@@ -377,9 +379,11 @@ class _RawRequest:
     extensions: Extensions = field(default_factory=_empty_extensions)
 
 
-def _payload(request: ModelRequest) -> dict[str, JsonValue]:
+def _payload(
+    request: ModelRequest, adapter: OpenAIChatCompletionsAdapter | None = None
+) -> dict[str, JsonValue]:
     """Build a request and return its payload body."""
-    adapter = OpenAIChatCompletionsAdapter()
+    adapter = adapter or OpenAIChatCompletionsAdapter()
     plan = adapter.prepare_plan(request, _access(), _Mode())
     request_plan = adapter.build_request(request, plan)
     assert request_plan.execution_plan is plan
@@ -458,14 +462,10 @@ def test_build_request_rejects_a_foreign_task_request() -> None:
     assert error.code == UNSUPPORTED_TASK_REQUEST_CODE
 
 
-def test_build_request_reports_unsupported_message_roles() -> None:
-    """Verify message mapping failures reach the caller unchanged."""
-    real = _request()
-    root = MessageGroup(
-        "root",
-        _Kind(OpenIdentifier("message.root")),
-        (_entry("tool", "message.tool", "result"),),
-    )
+def _role_request(role: _Role) -> ModelRequest:
+    """Create one request whose only entry uses the given role."""
+    entry = MessageEntry("e", role, (TextMessageContent("e-text", "result"),))
+    root = MessageGroup("root", _Kind(OpenIdentifier("message.root")), (entry,))
     document = TaskDocument(
         "1.0",
         TaskGroupNode(
@@ -475,14 +475,84 @@ def test_build_request_reports_unsupported_message_roles() -> None:
         ),
     )
     task = ConversationTaskBuilder(document).build()
-    request = ModelRequestBuilder(_Target(), task).build()
-    adapter = OpenAIChatCompletionsAdapter()
-    plan = adapter.prepare_plan(real, _access(), _Mode())
+    return ModelRequestBuilder(_Target(), task).build()
 
-    error = _capture(lambda: adapter.build_request(request, plan))
 
-    assert isinstance(error, ModelInteractionError)
-    assert error.code == "unsupported_message_role"
+def _build_error(
+    request: ModelRequest, adapter: OpenAIChatCompletionsAdapter
+) -> BaseException:
+    """Plan a request and return the error build_request raises for it."""
+    plan = adapter.prepare_plan(request, _access(), _Mode())
+    return _capture(lambda: adapter.build_request(request, plan))
+
+
+def test_adapter_defaults_to_the_compatible_policy() -> None:
+    """Verify an adapter without a policy uses the SDK default policy."""
+    assert OpenAIChatCompletionsAdapter().compatibility_policy == (
+        default_compatibility_policy()
+    )
+    strict = CompatibilityPolicy(OpenIdentifier("strict"))
+    assert OpenAIChatCompletionsAdapter(strict).compatibility_policy is strict
+
+
+def test_adapter_rejects_a_policy_of_another_type() -> None:
+    """Verify a policy is not accepted by its mode text alone."""
+    for policy in ("strict", OpenIdentifier("strict")):
+        error = _capture(
+            lambda policy=policy: OpenAIChatCompletionsAdapter(
+                cast(CompatibilityPolicy, policy)
+            )
+        )
+
+        assert isinstance(error, TypeError)
+
+
+def test_strict_and_unknown_policies_reject_out_of_profile_values() -> None:
+    """Verify fail-closed modes reject unknown roles and large temperatures."""
+    role_request = _role_request(_Role(OpenIdentifier("vendor.dev"), raw_value="dev"))
+    hot_request = _request(GenerationParameters(temperature=2.5))
+    for mode in ("strict", "vendor.future"):
+        adapter = OpenAIChatCompletionsAdapter(
+            CompatibilityPolicy(OpenIdentifier(mode))
+        )
+
+        role_error = _build_error(role_request, adapter)
+        hot_error = _build_error(hot_request, adapter)
+
+        assert isinstance(role_error, ModelInteractionError)
+        assert role_error.code == "unsupported_message_role"
+        assert isinstance(hot_error, ModelInteractionError)
+        assert hot_error.code == "unsupported_generation_parameter"
+
+
+def test_relaxed_policies_send_out_of_profile_values_unchanged() -> None:
+    """Verify compatible and permissive keep the caller's original values."""
+    role_request = _role_request(_Role(OpenIdentifier("vendor.dev"), raw_value="dev"))
+    hot_request = _request(GenerationParameters(temperature=2.5))
+    for mode in ("compatible", "permissive"):
+        adapter = OpenAIChatCompletionsAdapter(
+            CompatibilityPolicy(OpenIdentifier(mode))
+        )
+
+        role_body = _payload(role_request, adapter)
+        hot_body = _payload(hot_request, adapter)
+
+        assert role_body["messages"] == [{"role": "dev", "content": "result"}]
+        assert hot_body["temperature"] == 2.5
+
+
+def test_every_policy_rejects_an_unknown_role_without_raw_value() -> None:
+    """Verify no policy lets the adapter guess a role spelling."""
+    request = _role_request(_Role(OpenIdentifier("message.tool")))
+    for mode in ("strict", "compatible", "permissive"):
+        adapter = OpenAIChatCompletionsAdapter(
+            CompatibilityPolicy(OpenIdentifier(mode))
+        )
+
+        error = _build_error(request, adapter)
+
+        assert isinstance(error, ModelInteractionError)
+        assert error.code == "unsupported_message_role"
 
 
 def _decoded(body: JsonValue) -> ErasedRuntimeValue:

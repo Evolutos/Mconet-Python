@@ -1887,6 +1887,10 @@
           "kind": "method",
           "signature": "(self, request: 'ModelRequest', plan: 'ProtocolExecutionPlan') -> 'ProtocolRequestPlan'"
         },
+        "compatibility_policy": {
+          "kind": "property",
+          "signature": null
+        },
         "descriptor": {
           "kind": "property",
           "signature": null
@@ -1908,7 +1912,7 @@
           "signature": "(self, target: 'ModelTarget', task: 'TaskDescriptor', mode: 'InteractionMode') -> 'bool'"
         }
       },
-      "signature": "()"
+      "signature": "(compatibility_policy: 'CompatibilityPolicy | None' = None) -> 'None'"
     },
     "mconet.testing.AdapterContractSuite": {
       "kind": "class",

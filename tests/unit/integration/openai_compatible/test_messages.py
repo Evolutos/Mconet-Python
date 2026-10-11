@@ -151,7 +151,9 @@ def test_entry_joins_text_parts_in_order_without_a_separator() -> None:
     """Verify multi-part entries become one message with exact text."""
     entry = _entry("a", "message.assistant", "Caf", "e\u0301", "", " done")
 
-    assert wire_message(entry) == OpenAIChatMessageDTO("assistant", "Cafe\u0301 done")
+    assert wire_message(entry, enforce_profile=True) == OpenAIChatMessageDTO(
+        "assistant", "Cafe\u0301 done"
+    )
 
 
 def test_entry_reports_the_role_before_the_content() -> None:
@@ -160,7 +162,7 @@ def test_entry_reports_the_role_before_the_content() -> None:
         "t", _Role(OpenIdentifier("message.tool")), (_ImageContent("image"),)
     )
 
-    error = _capture(lambda: wire_message(entry))
+    error = _capture(lambda: wire_message(entry, enforce_profile=True))
 
     assert isinstance(error, ModelInteractionError)
     assert error.code == "unsupported_message_role"
@@ -174,7 +176,7 @@ def test_entry_with_mixed_content_is_unsupported() -> None:
         (TextMessageContent("t", "look"), _ImageContent("image")),
     )
 
-    error = _capture(lambda: wire_message(entry))
+    error = _capture(lambda: wire_message(entry, enforce_profile=True))
 
     assert isinstance(error, ModelInteractionError)
     assert error.code == UNSUPPORTED_MESSAGE_CONTENT_CODE
@@ -192,7 +194,7 @@ def test_document_maps_entries_in_preorder_across_nested_groups() -> None:
         _entry("u2", "message.user", "Next"),
     )
 
-    assert wire_messages(document) == (
+    assert wire_messages(document, enforce_profile=True) == (
         OpenAIChatMessageDTO("system", "Be exact."),
         OpenAIChatMessageDTO("user", "Hi"),
         OpenAIChatMessageDTO("assistant", "Hello"),
@@ -204,7 +206,7 @@ def test_document_rejects_a_custom_leaf_element() -> None:
     """Verify a leaf that is not an entry fails instead of being skipped."""
     document = _document(_entry("u", "message.user", "Hi"), _CustomLeaf("note"))
 
-    error = _capture(lambda: wire_messages(document))
+    error = _capture(lambda: wire_messages(document, enforce_profile=True))
 
     assert isinstance(error, ModelInteractionError)
     assert error.category.id.value == "unsupported_feature"
@@ -222,16 +224,39 @@ def test_document_reports_the_first_failure_in_preorder() -> None:
         _group("g", _entry("t", "message.tool", "x")), _CustomLeaf("note")
     )
 
-    error = _capture(lambda: wire_messages(document))
+    error = _capture(lambda: wire_messages(document, enforce_profile=True))
 
     assert isinstance(error, ModelInteractionError)
     assert error.code == "unsupported_message_role"
 
 
+def test_relaxed_document_keeps_unknown_role_raw_values_in_order() -> None:
+    """Verify a relaxed policy sends raw roles but keeps element rules."""
+    developer = MessageEntry(
+        "d",
+        _Role(OpenIdentifier("vendor.developer"), raw_value="developer"),
+        (TextMessageContent("d-0", "Rules"),),
+    )
+    document = _document(developer, _entry("u", "message.user", "Hi"))
+
+    assert wire_messages(document, enforce_profile=False) == (
+        OpenAIChatMessageDTO("developer", "Rules"),
+        OpenAIChatMessageDTO("user", "Hi"),
+    )
+
+    leaf = _document(_entry("u", "message.user", "Hi"), _CustomLeaf("note"))
+    error = _capture(lambda: wire_messages(leaf, enforce_profile=False))
+
+    assert isinstance(error, ModelInteractionError)
+    assert error.code == UNSUPPORTED_MESSAGE_ELEMENT_CODE
+
+
 def test_document_without_entries_is_an_invalid_request() -> None:
     """Verify a request needs at least one message."""
     for document in (_document(), _document(_group("empty"))):
-        error = _capture(lambda document=document: wire_messages(document))
+        error = _capture(
+            lambda document=document: wire_messages(document, enforce_profile=True)
+        )
 
         assert isinstance(error, ModelInteractionError)
         assert error.category.id.value == "invalid_request"

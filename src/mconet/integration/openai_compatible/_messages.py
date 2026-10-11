@@ -59,7 +59,7 @@ def wire_text(content: MessageContent) -> str:
     )
 
 
-def wire_message(entry: MessageEntry) -> OpenAIChatMessageDTO:
+def wire_message(entry: MessageEntry, *, enforce_profile: bool) -> OpenAIChatMessageDTO:
     """Return the wire message for one request MessageEntry.
 
     The role is mapped first so an entry with both an unsupported role and
@@ -69,6 +69,8 @@ def wire_message(entry: MessageEntry) -> OpenAIChatMessageDTO:
 
     Args:
         entry: One validated request entry.
+        enforce_profile: Whether unknown roles are rejected; see
+            :func:`wire_role`. Content rules do not depend on the policy.
 
     Returns:
         The ``{"role", "content"}`` message for the entry.
@@ -76,13 +78,15 @@ def wire_message(entry: MessageEntry) -> OpenAIChatMessageDTO:
     Raises:
         ModelInteractionError: If the role or any content value is unsupported.
     """
-    role = wire_role(entry.role)
+    role = wire_role(entry.role, enforce_profile=enforce_profile)
     return OpenAIChatMessageDTO(
         role, "".join(wire_text(part) for part in entry.content)
     )
 
 
-def wire_messages(document: MessageDocument) -> tuple[OpenAIChatMessageDTO, ...]:
+def wire_messages(
+    document: MessageDocument, *, enforce_profile: bool
+) -> tuple[OpenAIChatMessageDTO, ...]:
     """Return the ordered wire messages for one request MessageDocument.
 
     Entries are visited in document preorder, so the wire order is the reading
@@ -93,6 +97,8 @@ def wire_messages(document: MessageDocument) -> tuple[OpenAIChatMessageDTO, ...]
 
     Args:
         document: The validated input document of a conversation request.
+        enforce_profile: Whether unknown roles are rejected; see
+            :func:`wire_role`. Element and content rules do not depend on it.
 
     Returns:
         One message per entry, in preorder.
@@ -109,7 +115,7 @@ def wire_messages(document: MessageDocument) -> tuple[OpenAIChatMessageDTO, ...]
     while pending:
         element = pending.pop()
         if isinstance(element, MessageEntry):
-            messages.append(wire_message(element))
+            messages.append(wire_message(element, enforce_profile=enforce_profile))
             continue
         if element.kind.composition == "container":
             pending.extend(reversed(element.sub_elements))

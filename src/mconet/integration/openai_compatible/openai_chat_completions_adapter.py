@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import cast
 
 from mconet.core.domain import (
+    CompatibilityPolicy,
     ConversationTaskResult,
     ErrorCategory,
     InteractionMode,
@@ -19,6 +20,7 @@ from mconet.core.domain import (
     ResolvedServiceAccess,
     TaskDescriptor,
     UriValue,
+    default_compatibility_policy,
 )
 from mconet.core.spi import (
     BodySigningRequirement,
@@ -47,6 +49,7 @@ from mconet.integration.openai_compatible._openai_chat_completion_response_dto i
     OpenAIChatCompletionResponseDTO,
 )
 from mconet.integration.openai_compatible._parameters import wire_parameters
+from mconet.integration.openai_compatible._policy import enforces_wire_profile
 from mconet.integration.openai_compatible._response import (
     output_messages,
     output_status,
@@ -97,16 +100,53 @@ _ADAPTER_DESCRIPTOR = ComponentDescriptor(
 class OpenAIChatCompletionsAdapter:
     """Map conversation tasks to the OpenAI-compatible chat completions API.
 
-    The adapter is stateless. It handles exactly one combination: a target
-    whose protocol is ``openai.chat-completions``, the
-    ``conversation.generate`` task, and the ``unary`` interaction mode. Any
-    service and model may use the protocol, so neither is part of matching.
+    The adapter holds only its immutable compatibility policy. It handles
+    exactly one combination: a target whose protocol is
+    ``openai.chat-completions``, the ``conversation.generate`` task, and the
+    ``unary`` interaction mode. Any service and model may use the protocol, so
+    neither is part of matching.
+
+    The policy only decides request values outside the frozen wire profile:
+    ``strict`` and unknown modes reject unknown roles and a ``temperature``
+    above 2, while ``compatible`` and ``permissive`` send them unchanged. The
+    SPI has no diagnostics output, so a relaxed mode adds no diagnostic.
+    Structural rules, responses, and errors never depend on the policy.
 
     Its payload output and both decoded inputs are ``json.value`` values of
     media type ``application/json``, matching the JSON codec ports.
     """
 
-    __slots__ = ()
+    __slots__ = ("_compatibility_policy", "_enforce_profile")
+
+    def __init__(self, compatibility_policy: CompatibilityPolicy | None = None) -> None:
+        """Create the adapter for one compatibility policy.
+
+        Args:
+            compatibility_policy: Policy for request values outside the wire
+                profile. ``None`` uses the SDK default ``compatible`` policy.
+
+        Raises:
+            TypeError: If the policy is not a CompatibilityPolicy.
+        """
+        policy = (
+            default_compatibility_policy()
+            if compatibility_policy is None
+            else compatibility_policy
+        )
+        if not isinstance(cast(object, policy), CompatibilityPolicy):
+            raise TypeError(
+                "OpenAIChatCompletionsAdapter compatibility_policy must be a "
+                "CompatibilityPolicy."
+            )
+        self._compatibility_policy = policy
+        # The decision is fixed at construction so every request of this
+        # adapter instance is mapped under the same policy.
+        self._enforce_profile = enforces_wire_profile(policy)
+
+    @property
+    def compatibility_policy(self) -> CompatibilityPolicy:
+        """Return the policy used for request values outside the profile."""
+        return self._compatibility_policy
 
     @property
     def descriptor(self) -> ComponentDescriptor:
@@ -206,14 +246,14 @@ class OpenAIChatCompletionsAdapter:
 
         Raises:
             ModelInteractionError: If the task is not a ConversationTaskRequest,
-                or the conversation has no entry or an unsupported role,
-                content, or element.
+                the conversation has no entry or an unsupported role, content,
+                or element, or the policy rejects a parameter value.
         """
         messages, parameters = conversation_input(request.task)
-        members = wire_parameters(parameters)
+        members = wire_parameters(parameters, enforce_profile=self._enforce_profile)
         body = OpenAIChatCompletionRequestDTO(
             model=request.target.model.name,
-            messages=wire_messages(messages),
+            messages=wire_messages(messages, enforce_profile=self._enforce_profile),
             temperature=members.temperature,
             top_p=members.top_p,
             max_tokens=members.max_tokens,

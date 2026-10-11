@@ -66,24 +66,34 @@ _ROLE_BY_WIRE: MappingProxyType[str, MessageRole] = MappingProxyType(
 _SUPPORTED_WIRE_ROLES = "assistant, system, or user"
 
 
-def wire_role(role: MessageRole) -> str:
+def wire_role(role: MessageRole, *, enforce_profile: bool) -> str:
     """Return the wire spelling for one request message role.
 
-    Only ``role.id`` selects the spelling. ``semantic`` and ``raw_value`` are
-    descriptive and never turn an unknown identifier into a supported one.
+    ``role.id`` selects the spelling of the three standard roles, and their
+    ``raw_value`` is ignored. An unknown identifier is rejected when the wire
+    profile is enforced. Otherwise the caller-supplied ``raw_value`` is sent
+    unchanged, which keeps original data such as a service-specific role; an
+    unknown role without ``raw_value`` still fails, because inferring a
+    spelling from the identifier or ``semantic`` would be a guess.
 
     Args:
         role: Role of one request MessageEntry.
+        enforce_profile: Whether the compatibility policy requires the frozen
+            wire profile.
 
     Returns:
-        ``"system"``, ``"user"``, or ``"assistant"``.
+        ``"system"``, ``"user"``, ``"assistant"``, or, for an unknown role
+        when the profile is relaxed, the role's ``raw_value``.
 
     Raises:
-        ModelInteractionError: If the identifier is not one of the three
-            standard roles the protocol can carry.
+        ModelInteractionError: If the identifier is not a standard role and
+            either the profile is enforced or the role has no ``raw_value``.
     """
     spelling = _WIRE_BY_ROLE_ID.get(role.id)
-    if spelling is None:
+    if spelling is not None:
+        return spelling
+    raw_value = role.raw_value
+    if enforce_profile or raw_value is None:
         # The identifier is SDK-side request data, not service text, so naming
         # it tells the caller exactly which entry needs a different role.
         raise ModelInteractionError(
@@ -95,7 +105,7 @@ def wire_role(role: MessageRole) -> str:
                 "OpenAI-compatible chat completions protocol."
             ),
         )
-    return spelling
+    return raw_value
 
 
 def domain_role(spelling: str, path: str) -> MessageRole:
