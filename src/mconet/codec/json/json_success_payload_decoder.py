@@ -8,6 +8,9 @@ from typing import cast
 
 from mconet.codec.json.collect_bounded_bytes import collect_bounded_bytes
 from mconet.codec.json.json_payload import JsonPayload
+from mconet.codec.json.json_success_payload_decoder_descriptor import (
+    JSON_SUCCESS_PAYLOAD_DECODER_DESCRIPTOR,
+)
 from mconet.core.domain import (
     Bytes,
     ErrorCategory,
@@ -21,19 +24,12 @@ from mconet.core.spi.component_descriptor import ComponentDescriptor
 from mconet.core.spi.erased_runtime_value import ErasedRuntimeValue
 
 _JSON_VALUE_TYPE_ID = OpenIdentifier("json.value")
-_DECODER_NAME = "json-success-payload-decoder"
-_DECODER_VERSION = "1.0.0"
 _MIN_SAFE_INTEGER = -(2**53 - 1)
 _MAX_SAFE_INTEGER = 2**53 - 1
 _DECODING_PHASE = InteractionPhase(OpenIdentifier("decoding"))
 _DESERIALIZATION_CATEGORY = ErrorCategory(OpenIdentifier("deserialization"))
 _DESERIALIZATION_CODE = "deserialization"
 _DESERIALIZATION_MESSAGE = "JSON response body cannot be decoded."
-_DESCRIPTOR = ComponentDescriptor(
-    _DECODER_NAME,
-    _DECODER_VERSION,
-    "builtin",
-)
 
 
 class JsonSuccessPayloadDecoder:
@@ -73,8 +69,9 @@ class JsonSuccessPayloadDecoder:
     @property
     def descriptor(self) -> ComponentDescriptor:
         """Return diagnostic metadata that decode does not consult."""
-        # Selection uses the execution plan, not this name, version, or source.
-        return _DESCRIPTOR
+        # Every instance publishes the same diagnostic descriptor. Selection uses
+        # the instance and execution plan, not these labels.
+        return JSON_SUCCESS_PAYLOAD_DECODER_DESCRIPTOR
 
     def decode(self, raw_data: Bytes) -> ErasedRuntimeValue:
         """Decode one complete response body into a JSON value.

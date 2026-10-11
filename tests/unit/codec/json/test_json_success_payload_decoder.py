@@ -3,7 +3,10 @@
 from collections.abc import Callable
 from typing import cast
 
-from mconet.codec.json import JsonSuccessPayloadDecoder
+from mconet.codec.json import (
+    JSON_SUCCESS_PAYLOAD_DECODER_DESCRIPTOR,
+    JsonSuccessPayloadDecoder,
+)
 from mconet.core.domain import Bytes, JsonValue, ModelInteractionError, OpenIdentifier
 from mconet.core.spi import PayloadDecoder
 
@@ -58,6 +61,7 @@ def test_json_success_payload_decoder_decodes_object_null_and_empty_values() -> 
     duplicate = decoder.decode(_json_bytes('{"a":1,"a":2,"extra":true}'))
     assert duplicate.value == {"a": 2, "extra": True}
     assert isinstance(decoder, PayloadDecoder)
+    assert decoder.descriptor is JSON_SUCCESS_PAYLOAD_DECODER_DESCRIPTOR
     assert decoder.descriptor.name == "json-success-payload-decoder"
     assert decoder.descriptor.type_contract is None
 
