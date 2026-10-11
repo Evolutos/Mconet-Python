@@ -1886,6 +1886,26 @@
       },
       "signature": "(index: 'int', message: 'OpenAIChatMessageDTO', finish_reason: 'str', extensions: 'Extensions' = <factory>) -> None"
     },
+    "mconet.integration.openai_compatible.OpenAIChatCompletionErrorDTO": {
+      "kind": "class",
+      "members": {
+        "from_json": {
+          "kind": "method",
+          "signature": "(value: 'JsonValue', path: 'str' = '') -> 'OpenAIChatCompletionErrorDTO'"
+        }
+      },
+      "signature": "(message: 'str', type: 'str | None' = None, code: 'str | int | None' = None, extensions: 'Extensions' = <factory>) -> None"
+    },
+    "mconet.integration.openai_compatible.OpenAIChatCompletionErrorResponseDTO": {
+      "kind": "class",
+      "members": {
+        "from_json": {
+          "kind": "method",
+          "signature": "(value: 'JsonValue') -> 'OpenAIChatCompletionErrorResponseDTO'"
+        }
+      },
+      "signature": "(error: 'OpenAIChatCompletionErrorDTO', extensions: 'Extensions' = <factory>) -> None"
+    },
     "mconet.integration.openai_compatible.OpenAIChatCompletionRequestDTO": {
       "kind": "class",
       "members": {

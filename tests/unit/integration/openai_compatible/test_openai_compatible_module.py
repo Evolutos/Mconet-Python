@@ -3,6 +3,8 @@
 import mconet.integration.openai_compatible
 from mconet.integration.openai_compatible import (
     OpenAIChatCompletionChoiceDTO,
+    OpenAIChatCompletionErrorDTO,
+    OpenAIChatCompletionErrorResponseDTO,
     OpenAIChatCompletionRequestDTO,
     OpenAIChatCompletionResponseDTO,
     OpenAIChatCompletionUsageDTO,
@@ -16,12 +18,19 @@ def test_openai_compatible_exports_the_defined_protocol_values() -> None:
 
     assert module.__all__ == (
         "OpenAIChatCompletionChoiceDTO",
+        "OpenAIChatCompletionErrorDTO",
+        "OpenAIChatCompletionErrorResponseDTO",
         "OpenAIChatCompletionRequestDTO",
         "OpenAIChatCompletionResponseDTO",
         "OpenAIChatCompletionUsageDTO",
         "OpenAIChatMessageDTO",
     )
     assert module.OpenAIChatCompletionChoiceDTO is OpenAIChatCompletionChoiceDTO
+    assert module.OpenAIChatCompletionErrorDTO is OpenAIChatCompletionErrorDTO
+    assert (
+        module.OpenAIChatCompletionErrorResponseDTO
+        is OpenAIChatCompletionErrorResponseDTO
+    )
     assert module.OpenAIChatCompletionRequestDTO is OpenAIChatCompletionRequestDTO
     assert module.OpenAIChatCompletionResponseDTO is OpenAIChatCompletionResponseDTO
     assert module.OpenAIChatCompletionUsageDTO is OpenAIChatCompletionUsageDTO
