@@ -44,8 +44,8 @@ class JsonSuccessPayloadDecoder:
 
     The decoder does not interpret task or provider error semantics, choose a
     component, or retain the source bytes in a failure. Its descriptor carries
-    diagnostic name, version, and source only; the success type contract is a
-    separate metadata work item.
+    diagnostic name, version, and source plus the success payload output port.
+    It does not declare a capability.
     """
 
     __slots__ = ("_max_body_bytes",)

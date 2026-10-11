@@ -6,6 +6,7 @@ from mconet.codec.json import (
     JSON_PAYLOAD_ENCODER_DESCRIPTOR,
     JSON_PAYLOAD_ENCODER_TYPE_CONTRACT,
     JSON_SUCCESS_PAYLOAD_DECODER_DESCRIPTOR,
+    JSON_SUCCESS_PAYLOAD_DECODER_TYPE_CONTRACT,
     JsonErrorPayloadDecoder,
     JsonPayload,
     JsonPayloadEncoder,
@@ -19,12 +20,13 @@ from mconet.codec.json import (
 def test_json_codec_exports_payload_codecs_and_encoder_metadata() -> None:
     """Verify the public JSON module includes encoder and success-decoder metadata."""
     # Encoding, decoding, collection, and media-type matching stay available.
-    # Decoder type contracts and capabilities remain later work.
+    # The error-decoder contract and decoder capabilities remain later work.
     assert mconet.codec.json.__all__ == (
         "JSON_PAYLOAD_ENCODER_CAPABILITY",
         "JSON_PAYLOAD_ENCODER_DESCRIPTOR",
         "JSON_PAYLOAD_ENCODER_TYPE_CONTRACT",
         "JSON_SUCCESS_PAYLOAD_DECODER_DESCRIPTOR",
+        "JSON_SUCCESS_PAYLOAD_DECODER_TYPE_CONTRACT",
         "JsonErrorPayloadDecoder",
         "JsonPayload",
         "JsonPayloadEncoder",
@@ -50,6 +52,10 @@ def test_json_codec_exports_payload_codecs_and_encoder_metadata() -> None:
     assert (
         mconet.codec.json.JSON_SUCCESS_PAYLOAD_DECODER_DESCRIPTOR
         is JSON_SUCCESS_PAYLOAD_DECODER_DESCRIPTOR
+    )
+    assert (
+        mconet.codec.json.JSON_SUCCESS_PAYLOAD_DECODER_TYPE_CONTRACT
+        is JSON_SUCCESS_PAYLOAD_DECODER_TYPE_CONTRACT
     )
     assert mconet.codec.json.JsonPayloadEncoder is JsonPayloadEncoder
     assert mconet.codec.json.JsonSuccessPayloadDecoder is JsonSuccessPayloadDecoder

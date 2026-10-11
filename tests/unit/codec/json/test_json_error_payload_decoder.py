@@ -37,14 +37,14 @@ def test_json_error_payload_decoder_is_a_distinct_component() -> None:
     success_decoder = JsonSuccessPayloadDecoder(_MAXIMUM_DECODED_BODY_BYTES)
 
     # Outcome selection depends on distinct instances and distinct descriptors.
-    # Both type contracts stay empty until their own metadata work items.
+    # The error type contract stays empty until its own metadata work item.
     assert error_decoder is not success_decoder
     assert error_decoder.descriptor is not success_decoder.descriptor
     assert error_decoder.descriptor.name == "json-error-payload-decoder"
     assert error_decoder.descriptor.version == "1.0.0"
     assert error_decoder.descriptor.source == "builtin"
     assert error_decoder.descriptor.type_contract is None
-    assert success_decoder.descriptor.type_contract is None
+    assert success_decoder.descriptor.type_contract is not None
     assert error_decoder.descriptor.capabilities == frozenset()
     assert isinstance(error_decoder, PayloadDecoder)
 

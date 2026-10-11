@@ -2,7 +2,7 @@
 
 The frozen payload envelope, UTF-8 text utility, JSON payload encoder and its
 descriptor, type contract, and encode capability, bounded body collector,
-success payload decoder and its diagnostic descriptor, error payload
+success payload decoder and its descriptor and type contract, error payload
 decoder, and JSON media-type matcher are the public surface of this module
 until later work packages add the remaining decoder metadata.
 """
@@ -25,6 +25,9 @@ from mconet.codec.json.json_success_payload_decoder import (
 from mconet.codec.json.json_success_payload_decoder_descriptor import (
     JSON_SUCCESS_PAYLOAD_DECODER_DESCRIPTOR,
 )
+from mconet.codec.json.json_success_payload_decoder_type_contract import (
+    JSON_SUCCESS_PAYLOAD_DECODER_TYPE_CONTRACT,
+)
 from mconet.codec.json.utf8 import encode_utf8
 
 __all__: tuple[str, ...] = (
@@ -32,6 +35,7 @@ __all__: tuple[str, ...] = (
     "JSON_PAYLOAD_ENCODER_DESCRIPTOR",
     "JSON_PAYLOAD_ENCODER_TYPE_CONTRACT",
     "JSON_SUCCESS_PAYLOAD_DECODER_DESCRIPTOR",
+    "JSON_SUCCESS_PAYLOAD_DECODER_TYPE_CONTRACT",
     "JsonErrorPayloadDecoder",
     "JsonPayload",
     "JsonPayloadEncoder",

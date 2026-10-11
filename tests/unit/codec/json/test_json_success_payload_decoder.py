@@ -5,6 +5,7 @@ from typing import cast
 
 from mconet.codec.json import (
     JSON_SUCCESS_PAYLOAD_DECODER_DESCRIPTOR,
+    JSON_SUCCESS_PAYLOAD_DECODER_TYPE_CONTRACT,
     JsonSuccessPayloadDecoder,
 )
 from mconet.core.domain import Bytes, JsonValue, ModelInteractionError, OpenIdentifier
@@ -63,7 +64,9 @@ def test_json_success_payload_decoder_decodes_object_null_and_empty_values() -> 
     assert isinstance(decoder, PayloadDecoder)
     assert decoder.descriptor is JSON_SUCCESS_PAYLOAD_DECODER_DESCRIPTOR
     assert decoder.descriptor.name == "json-success-payload-decoder"
-    assert decoder.descriptor.type_contract is None
+    assert (
+        decoder.descriptor.type_contract is JSON_SUCCESS_PAYLOAD_DECODER_TYPE_CONTRACT
+    )
 
 
 def test_json_success_payload_decoder_accepts_a_body_at_the_exact_limit() -> None:
