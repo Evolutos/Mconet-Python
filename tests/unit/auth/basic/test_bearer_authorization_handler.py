@@ -15,6 +15,7 @@ from mconet.core.domain import (
     Headers,
     MediaType,
     ModelDescriptor,
+    ModelInteractionError,
     ModelTarget,
     NamedModel,
     OpenIdentifier,
@@ -147,3 +148,29 @@ def test_bearer_handler_rejects_a_non_text_credential_without_copying_it() -> No
 
     assert request.body is body
     assert request.headers.values == (HeaderField("X-Trace", "trace-value"),)
+
+
+def test_bearer_handler_rejects_a_control_in_the_token_without_copying_it() -> None:
+    """Verify a control in the token is not written and is not copied into the error."""
+    authorization = BearerAuthorization(
+        FixedCredentialSource(SecretValue(f"{_PLACEHOLDER}\r\n"))
+    )
+    request = _request()
+    headers = request.headers
+
+    async def apply() -> None:
+        await BearerAuthorizationHandler().apply(
+            authorization,
+            _context(),
+            request,
+        )
+
+    try:
+        asyncio.run(apply())
+    except ModelInteractionError as error:
+        assert error.code == "invalid_authorization_header_value"
+        assert _PLACEHOLDER not in str(error)
+    else:
+        raise AssertionError("Expected a control character in the token to fail.")
+
+    assert request.headers is headers

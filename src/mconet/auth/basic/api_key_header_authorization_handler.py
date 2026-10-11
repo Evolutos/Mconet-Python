@@ -7,6 +7,7 @@ from typing import cast
 from mconet.auth.basic.api_key_header_authorization import ApiKeyHeaderAuthorization
 from mconet.auth.basic.authorization_header_validation import (
     validate_authorization_header_name,
+    validate_authorization_header_value,
 )
 from mconet.core.domain.authorization import Authorization
 from mconet.core.domain.error_category import ErrorCategory
@@ -105,8 +106,9 @@ class ApiKeyHeaderAuthorizationHandler(AuthorizedSecretConsumer):
             TypeError: If ``context`` or ``request`` has the wrong nominal type,
                 or if the revealed credential is not text.
             ModelInteractionError: If the decision does not belong to this
-                handler, if the header name is not an HTTP token, or if the
-                selected signing mode is not ``none``.
+                handler, if the header name is not an HTTP token, if the
+                header value contains a control character, or if the selected
+                signing mode is not ``none``.
             BaseException: The credential source's exact failure.
         """
         context_value = cast(object, context)
@@ -122,9 +124,13 @@ class ApiKeyHeaderAuthorizationHandler(AuthorizedSecretConsumer):
         # Reject the name before reading a credential so a bad field cannot
         # reveal the key or copy the illegal name into an error.
         validate_authorization_header_name(authorization.header_name)
+        # A control in the prefix is already an illegal field. Stop before the
+        # credential source is called.
+        validate_authorization_header_value(authorization.prefix)
 
         credential = await authorization.credential_source.resolve(context_value)
         header_value = _header_value(self, authorization.prefix, credential)
+        validate_authorization_header_value(header_value)
         # Append one field. Existing headers and the encoded body stay in place.
         request_value.replace_headers(
             Headers(

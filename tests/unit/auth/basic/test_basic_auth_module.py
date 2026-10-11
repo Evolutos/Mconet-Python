@@ -14,6 +14,7 @@ from mconet.auth.basic import (
     NoAuthorization,
     NoAuthorizationHandler,
     validate_authorization_header_name,
+    validate_authorization_header_value,
 )
 
 
@@ -32,6 +33,7 @@ def test_basic_auth_exports_defined_authorization_decisions() -> None:
         "NoAuthorization",
         "NoAuthorizationHandler",
         "validate_authorization_header_name",
+        "validate_authorization_header_value",
     )
     assert mconet.auth.basic.NoAuthorization is NoAuthorization
     assert mconet.auth.basic.NO_AUTHORIZATION_KIND is NO_AUTHORIZATION_KIND
@@ -53,4 +55,8 @@ def test_basic_auth_exports_defined_authorization_decisions() -> None:
     assert (
         mconet.auth.basic.validate_authorization_header_name
         is validate_authorization_header_name
+    )
+    assert (
+        mconet.auth.basic.validate_authorization_header_value
+        is validate_authorization_header_value
     )

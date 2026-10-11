@@ -4,6 +4,7 @@ from typing import cast
 
 from mconet.auth.basic.authorization_header_validation import (
     validate_authorization_header_name,
+    validate_authorization_header_value,
 )
 from mconet.core.domain.model_interaction_error import ModelInteractionError
 
@@ -44,3 +45,39 @@ def test_authorization_header_name_requires_text() -> None:
         assert "must be a string" in str(error)
     else:
         raise AssertionError("Expected a non-string header name to fail.")
+
+
+_INVALID_VALUES = ("\r", "\n", "\r\n", "\x00", "\x7f", "\t", "ok\nmore")
+_STABLE_VALUE_MESSAGE = "Authorization header value contains a control character."
+_VALID_VALUES = ("", " ", "Bearer token", "Key value")
+
+
+def test_authorization_header_value_rejects_controls_with_one_error() -> None:
+    """Verify CR, LF, and other controls share one content-free error."""
+    for value in _INVALID_VALUES:
+        try:
+            validate_authorization_header_value(value)
+        except ModelInteractionError as error:
+            assert error.code == "invalid_authorization_header_value"
+            assert error.message == _STABLE_VALUE_MESSAGE
+            assert str(error.category.id) == "invalid_request"
+            assert str(error.phase.id) == "authentication"
+            assert value not in error.message
+        else:
+            raise AssertionError("Expected a control character to fail.")
+
+
+def test_authorization_header_value_accepts_ordinary_text() -> None:
+    """Verify space and ordinary text are left unchanged."""
+    for value in _VALID_VALUES:
+        validate_authorization_header_value(value)
+
+
+def test_authorization_header_value_requires_text() -> None:
+    """Verify a non-string value fails before any control-character rule runs."""
+    try:
+        validate_authorization_header_value(cast(str, None))
+    except TypeError as error:
+        assert "must be a string" in str(error)
+    else:
+        raise AssertionError("Expected a non-string header value to fail.")

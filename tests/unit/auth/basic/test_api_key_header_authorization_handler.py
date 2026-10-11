@@ -188,3 +188,66 @@ def test_api_key_handler_rejects_an_illegal_header_name_before_credentials() -> 
 
     assert calls == []
     assert request.headers is headers
+
+
+def test_api_key_handler_rejects_a_control_prefix_before_credentials() -> None:
+    """Verify a CR or LF in the prefix fails without reading the key."""
+    calls: list[str] = []
+
+    async def provider(_context: AuthorizationContext) -> SecretValue:
+        calls.append("resolved")
+        return SecretValue(_PLACEHOLDER)
+
+    authorization = ApiKeyHeaderAuthorization(
+        "X-Api-Key",
+        "\r\n",
+        DynamicCredentialSource(provider),
+    )
+    request = _request()
+    headers = request.headers
+
+    async def apply() -> None:
+        await ApiKeyHeaderAuthorizationHandler().apply(
+            authorization,
+            _context(),
+            request,
+        )
+
+    try:
+        asyncio.run(apply())
+    except ModelInteractionError as error:
+        assert error.code == "invalid_authorization_header_value"
+        assert _PLACEHOLDER not in str(error)
+    else:
+        raise AssertionError("Expected a control character in the prefix to fail.")
+
+    assert calls == []
+    assert request.headers is headers
+
+
+def test_api_key_handler_rejects_a_control_in_the_key_without_copying_it() -> None:
+    """Verify a control in the key is not written and is not copied into the error."""
+    authorization = ApiKeyHeaderAuthorization(
+        "X-Api-Key",
+        "",
+        FixedCredentialSource(SecretValue(f"{_PLACEHOLDER}\n")),
+    )
+    request = _request()
+    headers = request.headers
+
+    async def apply() -> None:
+        await ApiKeyHeaderAuthorizationHandler().apply(
+            authorization,
+            _context(),
+            request,
+        )
+
+    try:
+        asyncio.run(apply())
+    except ModelInteractionError as error:
+        assert error.code == "invalid_authorization_header_value"
+        assert _PLACEHOLDER not in str(error)
+    else:
+        raise AssertionError("Expected a control character in the key to fail.")
+
+    assert request.headers is headers

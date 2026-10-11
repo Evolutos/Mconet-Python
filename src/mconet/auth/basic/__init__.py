@@ -9,6 +9,7 @@ from mconet.auth.basic.api_key_header_authorization_handler import (
 )
 from mconet.auth.basic.authorization_header_validation import (
     validate_authorization_header_name,
+    validate_authorization_header_value,
 )
 from mconet.auth.basic.bearer_authorization import (
     BEARER_AUTHORIZATION_KIND,
@@ -36,4 +37,5 @@ __all__: tuple[str, ...] = (
     "NoAuthorization",
     "NoAuthorizationHandler",
     "validate_authorization_header_name",
+    "validate_authorization_header_value",
 )

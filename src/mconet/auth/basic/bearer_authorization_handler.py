@@ -4,6 +4,9 @@ from __future__ import annotations
 
 from typing import cast
 
+from mconet.auth.basic.authorization_header_validation import (
+    validate_authorization_header_value,
+)
 from mconet.auth.basic.bearer_authorization import BearerAuthorization
 from mconet.core.domain.authorization import Authorization
 from mconet.core.domain.error_category import ErrorCategory
@@ -104,7 +107,8 @@ class BearerAuthorizationHandler(AuthorizedSecretConsumer):
             TypeError: If ``context`` or ``request`` has the wrong nominal type,
                 or if the revealed credential is not text.
             ModelInteractionError: If the decision does not belong to this
-                handler, or if the selected signing mode is not ``none``.
+                handler, if the bearer value contains a control character, or
+                if the selected signing mode is not ``none``.
             BaseException: The credential source's exact failure.
         """
         context_value = cast(object, context)
@@ -120,12 +124,15 @@ class BearerAuthorizationHandler(AuthorizedSecretConsumer):
 
         credential = await authorization.credential_source.resolve(context_value)
         token = _token(self, credential)
+        header_value = f"{_BEARER_PREFIX}{token}"
+        # Reject a control in the token before it can become another header.
+        validate_authorization_header_value(header_value)
         # Append the scheme header. Existing headers and the encoded body stay.
         request_value.replace_headers(
             Headers(
                 (
                     *request_value.headers.values,
-                    HeaderField(_BEARER_HEADER_NAME, f"{_BEARER_PREFIX}{token}"),
+                    HeaderField(_BEARER_HEADER_NAME, header_value),
                 )
             )
         )
