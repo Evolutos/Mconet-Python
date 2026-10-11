@@ -2,6 +2,246 @@
   "package": "mconet",
   "schema_version": 1,
   "symbols": {
+    "mconet.auth.basic.API_KEY_HEADER_AUTHORIZATION_KIND": {
+      "kind": "value",
+      "type": "OpenIdentifier"
+    },
+    "mconet.auth.basic.ApiKeyHeaderAuthorization": {
+      "kind": "class",
+      "members": {
+        "credential_source": {
+          "kind": "property",
+          "signature": null
+        },
+        "header_name": {
+          "kind": "property",
+          "signature": null
+        },
+        "kind": {
+          "kind": "property",
+          "signature": null
+        },
+        "prefix": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(header_name: 'str', prefix: 'str', credential_source: 'CredentialSource', kind: 'OpenIdentifier' = OpenIdentifier(value='authorization.api_key_header')) -> 'None'"
+    },
+    "mconet.auth.basic.ApiKeyHeaderAuthorizationHandler": {
+      "kind": "class",
+      "members": {
+        "apply": {
+          "kind": "method",
+          "signature": "(self, authorization: 'Authorization', context: 'AuthorizationContext', request: 'MutableTransportRequest') -> 'None'"
+        },
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "supports": {
+          "kind": "method",
+          "signature": "(self, authorization: 'Authorization', body_signing_requirement: 'BodySigningRequirement') -> 'frozenset[BodySigningMode]'"
+        }
+      },
+      "signature": "(*args: 'object', **kwargs: 'object') -> 'Self'"
+    },
+    "mconet.auth.basic.BEARER_AUTHORIZATION_KIND": {
+      "kind": "value",
+      "type": "OpenIdentifier"
+    },
+    "mconet.auth.basic.BearerAuthorization": {
+      "kind": "class",
+      "members": {
+        "credential_source": {
+          "kind": "property",
+          "signature": null
+        },
+        "kind": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(credential_source: 'CredentialSource', kind: 'OpenIdentifier' = OpenIdentifier(value='authorization.bearer')) -> 'None'"
+    },
+    "mconet.auth.basic.BearerAuthorizationHandler": {
+      "kind": "class",
+      "members": {
+        "apply": {
+          "kind": "method",
+          "signature": "(self, authorization: 'Authorization', context: 'AuthorizationContext', request: 'MutableTransportRequest') -> 'None'"
+        },
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "supports": {
+          "kind": "method",
+          "signature": "(self, authorization: 'Authorization', body_signing_requirement: 'BodySigningRequirement') -> 'frozenset[BodySigningMode]'"
+        }
+      },
+      "signature": "(*args: 'object', **kwargs: 'object') -> 'Self'"
+    },
+    "mconet.auth.basic.DynamicCredentialSource": {
+      "kind": "class",
+      "members": {
+        "resolve": {
+          "kind": "method",
+          "signature": "(self, context: 'AuthorizationContext') -> 'CredentialValue'"
+        }
+      },
+      "signature": "(provider: 'CredentialProvider') -> 'None'"
+    },
+    "mconet.auth.basic.FixedCredentialSource": {
+      "kind": "class",
+      "members": {
+        "resolve": {
+          "kind": "method",
+          "signature": "(self, context: 'AuthorizationContext') -> 'CredentialValue'"
+        }
+      },
+      "signature": "(secret: 'SecretValue') -> 'None'"
+    },
+    "mconet.auth.basic.NO_AUTHORIZATION_KIND": {
+      "kind": "value",
+      "type": "OpenIdentifier"
+    },
+    "mconet.auth.basic.NoAuthorization": {
+      "kind": "class",
+      "members": {
+        "kind": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "()"
+    },
+    "mconet.auth.basic.NoAuthorizationHandler": {
+      "kind": "class",
+      "members": {
+        "apply": {
+          "kind": "method",
+          "signature": "(self, authorization: 'Authorization', context: 'AuthorizationContext', request: 'MutableTransportRequest') -> 'None'"
+        },
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "supports": {
+          "kind": "method",
+          "signature": "(self, authorization: 'Authorization', body_signing_requirement: 'BodySigningRequirement') -> 'frozenset[BodySigningMode]'"
+        }
+      },
+      "signature": "()"
+    },
+    "mconet.auth.basic.reject_unsupported_body_signing": {
+      "kind": "function",
+      "signature": "(body_signing_mode: 'str') -> 'None'"
+    },
+    "mconet.auth.basic.validate_authorization_header_name": {
+      "kind": "function",
+      "signature": "(name: 'str') -> 'None'"
+    },
+    "mconet.auth.basic.validate_authorization_header_value": {
+      "kind": "function",
+      "signature": "(value: 'str') -> 'None'"
+    },
+    "mconet.codec.json.JSON_ERROR_PAYLOAD_DECODER_DESCRIPTOR": {
+      "kind": "value",
+      "type": "ComponentDescriptor"
+    },
+    "mconet.codec.json.JSON_ERROR_PAYLOAD_DECODER_TYPE_CONTRACT": {
+      "kind": "value",
+      "type": "ComponentTypeContract"
+    },
+    "mconet.codec.json.JSON_PAYLOAD_ENCODER_CAPABILITY": {
+      "kind": "value",
+      "type": "OpenIdentifier"
+    },
+    "mconet.codec.json.JSON_PAYLOAD_ENCODER_DESCRIPTOR": {
+      "kind": "value",
+      "type": "ComponentDescriptor"
+    },
+    "mconet.codec.json.JSON_PAYLOAD_ENCODER_TYPE_CONTRACT": {
+      "kind": "value",
+      "type": "ComponentTypeContract"
+    },
+    "mconet.codec.json.JSON_SUCCESS_PAYLOAD_DECODER_DESCRIPTOR": {
+      "kind": "value",
+      "type": "ComponentDescriptor"
+    },
+    "mconet.codec.json.JSON_SUCCESS_PAYLOAD_DECODER_TYPE_CONTRACT": {
+      "kind": "value",
+      "type": "ComponentTypeContract"
+    },
+    "mconet.codec.json.JsonErrorPayloadDecoder": {
+      "kind": "class",
+      "members": {
+        "decode": {
+          "kind": "method",
+          "signature": "(self, raw_data: 'Bytes') -> 'ErasedRuntimeValue'"
+        },
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(max_body_bytes: 'int') -> 'None'"
+    },
+    "mconet.codec.json.JsonPayload": {
+      "kind": "class",
+      "members": {
+        "from_erased": {
+          "kind": "method",
+          "signature": "(erased: 'ErasedRuntimeValue') -> 'JsonPayload'"
+        },
+        "value_as": {
+          "kind": "method",
+          "signature": "(self, expected_type: 'type[_ValueT]') -> '_ValueT'"
+        }
+      },
+      "signature": "(type_id: 'OpenIdentifier', value: 'JsonValue', schema_id: 'str | None' = None) -> None"
+    },
+    "mconet.codec.json.JsonPayloadEncoder": {
+      "kind": "class",
+      "members": {
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "encode": {
+          "kind": "method",
+          "signature": "(self, payload: 'ErasedRuntimeValue') -> 'TransportBody'"
+        }
+      },
+      "signature": "()"
+    },
+    "mconet.codec.json.JsonSuccessPayloadDecoder": {
+      "kind": "class",
+      "members": {
+        "decode": {
+          "kind": "method",
+          "signature": "(self, raw_data: 'Bytes') -> 'ErasedRuntimeValue'"
+        },
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(max_body_bytes: 'int') -> 'None'"
+    },
+    "mconet.codec.json.collect_bounded_bytes": {
+      "kind": "function",
+      "signature": "(chunks: 'Iterable[bytes]', max_byte_length: 'int') -> 'Bytes'"
+    },
+    "mconet.codec.json.encode_utf8": {
+      "kind": "function",
+      "signature": "(text: 'str') -> 'Bytes'"
+    },
+    "mconet.codec.json.is_json_media_type": {
+      "kind": "function",
+      "signature": "(value: 'object') -> 'bool'"
+    },
     "mconet.core.domain.Artifact": {
       "kind": "class",
       "members": {
@@ -2220,6 +2460,166 @@
     "mconet.testing.json_fixtures_equal": {
       "kind": "function",
       "signature": "(actual: 'JsonValue', expected: 'JsonValue') -> 'bool'"
+    },
+    "mconet.transport.http_system.DefaultSystemHttpTransport": {
+      "kind": "class",
+      "members": {
+        "close": {
+          "kind": "method",
+          "signature": "(self) -> 'None'"
+        },
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "send": {
+          "kind": "method",
+          "signature": "(self, request: 'TransportRequest', context: 'TransportContext') -> 'TransportResponse'"
+        }
+      },
+      "signature": "(*, proxy_environment: 'Mapping[str, str] | None' = None, proxy_override: 'HttpProxyOverride | None' = None, tls_options: 'Mapping[str, object] | None' = None, now: 'Callable[[], Timestamp] | None' = None, network_client: 'object | None' = None) -> 'None'"
+    },
+    "mconet.transport.http_system.HttpBaseUrl": {
+      "kind": "class",
+      "members": {},
+      "signature": "(scheme: 'str', host: 'str', path: 'str', href: 'str') -> None"
+    },
+    "mconet.transport.http_system.HttpCancellationBridge": {
+      "kind": "class",
+      "members": {
+        "close": {
+          "kind": "method",
+          "signature": "(self) -> 'None'"
+        },
+        "is_cancelled": {
+          "kind": "property",
+          "signature": null
+        },
+        "reason": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(signal: 'CancellationSignal | None') -> 'None'"
+    },
+    "mconet.transport.http_system.HttpHeaderField": {
+      "kind": "class",
+      "members": {},
+      "signature": "(name: 'str', value: 'str') -> None"
+    },
+    "mconet.transport.http_system.HttpProxyEndpoint": {
+      "kind": "class",
+      "members": {},
+      "signature": "(scheme: 'str', host: 'str', username: 'str | None' = None, password: 'str | None' = None) -> None"
+    },
+    "mconet.transport.http_system.HttpProxyOverride": {
+      "kind": "class",
+      "members": {},
+      "signature": "(endpoint: 'HttpProxyEndpoint | None') -> None"
+    },
+    "mconet.transport.http_system.HttpProxySelection": {
+      "kind": "class",
+      "members": {},
+      "signature": "(source: 'HttpProxySource', endpoint: 'HttpProxyEndpoint | None') -> None"
+    },
+    "mconet.transport.http_system.HttpStatusOutcome": {
+      "kind": "class",
+      "members": {},
+      "signature": "(outcome: 'TransportOutcome', status_code: 'int') -> None"
+    },
+    "mconet.transport.http_system.HttpTlsPolicy": {
+      "kind": "class",
+      "members": {
+        "verifies_certificates": {
+          "kind": "property",
+          "signature": null
+        },
+        "verifies_hostname": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "() -> None"
+    },
+    "mconet.transport.http_system.apply_default_http_headers": {
+      "kind": "function",
+      "signature": "(headers: 'tuple[HttpHeaderField, ...]') -> 'tuple[HttpHeaderField, ...]'"
+    },
+    "mconet.transport.http_system.apply_http_content_length": {
+      "kind": "function",
+      "signature": "(headers: 'tuple[HttpHeaderField, ...]', body: 'bytes') -> 'tuple[HttpHeaderField, ...]'"
+    },
+    "mconet.transport.http_system.apply_http_content_type": {
+      "kind": "function",
+      "signature": "(headers: 'tuple[HttpHeaderField, ...]', media_type: 'MediaType') -> 'tuple[HttpHeaderField, ...]'"
+    },
+    "mconet.transport.http_system.ensure_http_deadline": {
+      "kind": "function",
+      "signature": "(deadline: 'Timestamp | None', now: 'Callable[[], Timestamp]') -> 'None'"
+    },
+    "mconet.transport.http_system.ensure_secure_http_tls": {
+      "kind": "function",
+      "signature": "(options: 'Mapping[str, object] | None' = None) -> 'HttpTlsPolicy'"
+    },
+    "mconet.transport.http_system.extract_http_response_media_type": {
+      "kind": "function",
+      "signature": "(headers: 'tuple[HttpHeaderField, ...]') -> 'MediaType | None'"
+    },
+    "mconet.transport.http_system.headers_for_http_redirect": {
+      "kind": "function",
+      "signature": "(current: 'HttpBaseUrl', target: 'HttpBaseUrl', headers: 'tuple[HttpHeaderField, ...]') -> 'tuple[HttpHeaderField, ...]'"
+    },
+    "mconet.transport.http_system.map_http_body": {
+      "kind": "function",
+      "signature": "(body: 'TransportBody') -> 'bytes'"
+    },
+    "mconet.transport.http_system.map_http_headers": {
+      "kind": "function",
+      "signature": "(headers: 'Headers') -> 'tuple[HttpHeaderField, ...]'"
+    },
+    "mconet.transport.http_system.map_http_method": {
+      "kind": "function",
+      "signature": "(method: 'str') -> 'str'"
+    },
+    "mconet.transport.http_system.map_http_proxy_endpoint": {
+      "kind": "function",
+      "signature": "(url: 'str') -> 'HttpProxyEndpoint'"
+    },
+    "mconet.transport.http_system.map_http_query": {
+      "kind": "function",
+      "signature": "(query: 'QueryParameters') -> 'str'"
+    },
+    "mconet.transport.http_system.map_http_status": {
+      "kind": "function",
+      "signature": "(status_code: 'int') -> 'HttpStatusOutcome'"
+    },
+    "mconet.transport.http_system.map_http_url": {
+      "kind": "function",
+      "signature": "(url: 'UriValue') -> 'HttpBaseUrl'"
+    },
+    "mconet.transport.http_system.normalize_http_network_timeout": {
+      "kind": "function",
+      "signature": "(error: 'BaseException') -> 'ModelInteractionError'"
+    },
+    "mconet.transport.http_system.read_bounded_http_response_body": {
+      "kind": "function",
+      "signature": "(chunks: 'Iterable[bytes]', max_byte_length: 'int') -> 'Bytes'"
+    },
+    "mconet.transport.http_system.read_bounded_http_response_releasing_connection": {
+      "kind": "function",
+      "signature": "(chunks: 'Iterable[bytes]', max_byte_length: 'int', release: 'Callable[[], None]') -> 'Bytes'"
+    },
+    "mconet.transport.http_system.select_http_proxy": {
+      "kind": "function",
+      "signature": "(target: 'HttpBaseUrl', environment: 'Mapping[str, str]', override: 'HttpProxyOverride | None' = None) -> 'HttpProxySelection'"
+    },
+    "mconet.transport.http_system.summarize_http_response_headers": {
+      "kind": "function",
+      "signature": "(headers: 'tuple[HttpHeaderField, ...]') -> 'tuple[HttpHeaderField, ...]'"
+    },
+    "mconet.transport.http_system.system_http_tls_policy": {
+      "kind": "function",
+      "signature": "() -> 'HttpTlsPolicy'"
     }
   }
 }
