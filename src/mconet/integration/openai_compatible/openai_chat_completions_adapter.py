@@ -2,15 +2,20 @@
 
 from __future__ import annotations
 
+from typing import cast
+
 from mconet.core.domain import (
+    ConversationTaskResult,
     ErrorCategory,
     InteractionMode,
     InteractionPhase,
+    JsonValue,
     MediaType,
     ModelInteractionError,
     ModelRequest,
     ModelTarget,
     OpenIdentifier,
+    ParsedTaskResponse,
     ResolvedServiceAccess,
     TaskDescriptor,
     UriValue,
@@ -31,8 +36,18 @@ from mconet.core.spi import (
 from mconet.integration.openai_compatible._conversation import conversation_input
 from mconet.integration.openai_compatible._messages import wire_messages
 from mconet.integration.openai_compatible._parameters import wire_parameters
+from mconet.integration.openai_compatible._response import (
+    output_messages,
+    output_status,
+    resolved_model,
+    single_choice,
+    token_usage,
+)
 from mconet.integration.openai_compatible.openai_chat_completion_request_dto import (
     OpenAIChatCompletionRequestDTO,
+)
+from mconet.integration.openai_compatible.openai_chat_completion_response_dto import (
+    OpenAIChatCompletionResponseDTO,
 )
 
 OPENAI_CHAT_COMPLETIONS_PROTOCOL_ID = OpenIdentifier("openai.chat-completions")
@@ -202,6 +217,46 @@ class OpenAIChatCompletionsAdapter:
         )
         payload = ErasedRuntimeValue(_JSON_VALUE_TYPE_ID, body.to_json())
         return ProtocolRequestPlan(payload, plan)
+
+    def parse_response(self, response: ErasedRuntimeValue) -> ParsedTaskResponse:
+        """Return the service-reported facts of one decoded success body.
+
+        The single choice message becomes the result MessageDocument, and the
+        choice's extra members become result extensions. ``finish_reason``
+        gives both the status and the exact stop reason. ``usage`` and
+        ``model`` are copied when sent and stay ``None`` otherwise; the
+        request target is never consulted. The response ``id`` and unknown
+        top-level members become response extensions.
+
+        Args:
+            response: Decoded ``json.value`` success payload.
+
+        Returns:
+            The parsed service facts. No ModelOutput is built here.
+
+        Raises:
+            ModelInteractionError: If the body violates the wire profile, does
+                not have exactly one choice, has an unknown message role, or
+                reports an empty model name.
+        """
+        body = OpenAIChatCompletionResponseDTO.from_json(
+            cast(JsonValue, response.value)
+        )
+        choice = single_choice(body)
+        extensions: dict[str, JsonValue] = {}
+        if body.id is not None:
+            extensions["id"] = body.id
+        extensions.update(body.extensions)
+        return ParsedTaskResponse(
+            result=ConversationTaskResult(
+                output_messages(choice), extensions=choice.extensions
+            ),
+            status=output_status(choice.finish_reason),
+            resolved_model=resolved_model(body.model),
+            stop_reason=choice.finish_reason,
+            usage=token_usage(body.usage),
+            extensions=extensions,
+        )
 
 
 def _profile_endpoint(endpoint: UriValue | None) -> UriValue:

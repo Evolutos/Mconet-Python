@@ -37,13 +37,16 @@ from mconet.core.domain import (
     TaskGroupNode,
     TaskNode,
     TextMessageContent,
+    TokenUsage,
     UriValue,
+    validate_parsed_task_response,
 )
 from mconet.core.spi import (
     BodySigningRequirement,
     ComponentTypePort,
     DecoderSelection,
     EncoderSelection,
+    ErasedRuntimeValue,
     TransportSelection,
 )
 from mconet.integration.openai_compatible._conversation import (
@@ -480,6 +483,120 @@ def test_build_request_reports_unsupported_message_roles() -> None:
 
     assert isinstance(error, ModelInteractionError)
     assert error.code == "unsupported_message_role"
+
+
+def _decoded(body: JsonValue) -> ErasedRuntimeValue:
+    """Wrap one decoded body as the JSON decoder output."""
+    return ErasedRuntimeValue(_JSON_VALUE, body)
+
+
+def _success_body(**members: JsonValue) -> dict[str, JsonValue]:
+    """Return a one-choice success body with optional extra members."""
+    body: dict[str, JsonValue] = {
+        "choices": [
+            {
+                "index": 0,
+                "message": {"role": "assistant", "content": "Hello"},
+                "finish_reason": "stop",
+            }
+        ]
+    }
+    body.update(members)
+    return body
+
+
+def test_parse_response_maps_every_reported_fact() -> None:
+    """Verify result, status, stop reason, usage, model, and extensions."""
+    body: JsonValue = {
+        "id": "chatcmpl-1",
+        "object": "chat.completion",
+        "created": 1_800_000_000,
+        "model": "fixture-model-2026",
+        "choices": [
+            {
+                "index": 0,
+                "message": {"role": "assistant", "content": "\u4f60\u597d \U0001f30d"},
+                "finish_reason": "stop",
+                "logprobs": None,
+            }
+        ],
+        "usage": {
+            "prompt_tokens": 37,
+            "completion_tokens": 12,
+            "total_tokens": 49,
+            "prompt_tokens_details": {"cached_tokens": 8},
+        },
+        "system_fingerprint": "fp_1",
+    }
+
+    parsed = OpenAIChatCompletionsAdapter().parse_response(_decoded(body))
+
+    assert validate_parsed_task_response(parsed) is parsed
+    result = parsed.result
+    assert isinstance(result, ConversationTaskResult)
+    assert result.text == "\u4f60\u597d \U0001f30d"
+    assert dict(result.extensions) == {"logprobs": None}
+    assert parsed.status.id.value == "completed"
+    assert parsed.stop_reason == "stop"
+    assert parsed.usage == TokenUsage(
+        37, 12, 49, extensions={"prompt_tokens_details": {"cached_tokens": 8}}
+    )
+    assert parsed.resolved_model == NamedModel("fixture-model-2026")
+    assert parsed.protocol_state == ()
+    assert dict(parsed.extensions) == {
+        "id": "chatcmpl-1",
+        "object": "chat.completion",
+        "created": 1_800_000_000,
+        "system_fingerprint": "fp_1",
+    }
+
+
+def test_parse_response_leaves_unreported_facts_absent() -> None:
+    """Verify missing id, model, and usage are not filled from the request."""
+    parsed = OpenAIChatCompletionsAdapter().parse_response(_decoded(_success_body()))
+
+    assert parsed.resolved_model is None
+    assert parsed.usage is None
+    assert dict(parsed.extensions) == {}
+
+
+def test_parse_response_keeps_unmapped_finish_reasons_exactly() -> None:
+    """Verify each finish reason gives its status and stays the stop reason."""
+    adapter = OpenAIChatCompletionsAdapter()
+
+    for finish_reason, status in (
+        ("length", "incomplete"),
+        ("content_filter", "filtered"),
+        ("tool_calls", "requires_action"),
+        ("vendor_paused", "unknown"),
+    ):
+        body = _success_body()
+        choices = cast(list[dict[str, JsonValue]], body["choices"])
+        choices[0]["finish_reason"] = finish_reason
+
+        parsed = adapter.parse_response(_decoded(body))
+
+        assert parsed.status.id.value == status
+        assert parsed.stop_reason == finish_reason
+
+
+def test_parse_response_reports_protocol_violations() -> None:
+    """Verify malformed bodies fail as located protocol errors."""
+    adapter = OpenAIChatCompletionsAdapter()
+    cases: tuple[tuple[JsonValue, str], ...] = (
+        ({"choices": []}, "/choices must contain exactly one choice."),
+        ("not an object", "/ must be an object."),
+        (_success_body(model=""), "/model must not be empty or whitespace."),
+        (_success_body(usage=None), "/usage must be an object."),
+    )
+
+    for body, message in cases:
+        error = _capture(lambda body=body: adapter.parse_response(_decoded(body)))
+
+        assert isinstance(error, ModelInteractionError)
+        assert error.category.id.value == "protocol"
+        assert error.phase.id.value == "response_parsing"
+        assert error.message == f"OpenAI-compatible response field {message}"
 
 
 def test_prepare_plan_keeps_an_endpoint_with_a_base_path() -> None:
