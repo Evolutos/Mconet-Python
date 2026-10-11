@@ -8,6 +8,7 @@ import http.client
 import os
 import socket
 import ssl
+import threading
 import time
 from collections.abc import Callable, Iterator, Mapping
 from typing import cast
@@ -62,6 +63,11 @@ _NETWORK_CATEGORY = ErrorCategory(OpenIdentifier("network"))
 _TRANSPORT_PHASE = InteractionPhase(OpenIdentifier("transport"))
 _CONNECTION_FAILED_CODE = "http_connection_failed"
 _CONNECTION_FAILED_MESSAGE = "HTTP connection failed."
+_CLOSED_CODE = "http_transport_closed"
+_CLOSED_MESSAGE = "HTTP transport is closed."
+_CONFIGURATION_CATEGORY = ErrorCategory(
+    OpenIdentifier("invalid_component_configuration")
+)
 _DESCRIPTOR = ComponentDescriptor(
     name="default-system-http-transport",
     version="1",
@@ -76,11 +82,15 @@ class DefaultSystemHttpTransport:
     next request, so authorization and signature headers are not forwarded.
     Certificate verification uses the platform default context. Proxy selection
     follows the explicit override or the supplied environment. Standard-library
-    connection objects stay inside this implementation.
+    connection objects stay inside this implementation. ``close`` refuses later
+    exchanges. Connections opened for an exchange that already started are
+    closed by that exchange, not by ``close``.
     """
 
-    __slots__ = ("_now", "_proxy_environment", "_proxy_override")
+    __slots__ = ("_closed", "_lock", "_now", "_proxy_environment", "_proxy_override")
 
+    _closed: bool
+    _lock: threading.Lock
     _now: Callable[[], Timestamp]
     _proxy_environment: Mapping[str, str] | None
     _proxy_override: HttpProxyOverride | None
@@ -121,6 +131,8 @@ class DefaultSystemHttpTransport:
         self._proxy_environment = proxy_environment
         self._proxy_override = proxy_override
         self._now = _system_now if now is None else now
+        self._lock = threading.Lock()
+        self._closed = False
 
     @property
     def descriptor(self) -> ComponentDescriptor:
@@ -143,10 +155,12 @@ class DefaultSystemHttpTransport:
 
         Raises:
             TypeError: If ``request`` or ``context`` has an invalid shape.
-            ModelInteractionError: If the request, deadline, proxy, or exchange
-                fails. A platform timeout uses ``network_timeout``.
+            ModelInteractionError: If the transport is closed, or the request,
+                deadline, proxy, or exchange fails. A platform timeout uses
+                ``network_timeout``.
             asyncio.CancelledError: If the caller signal is cancelled.
         """
+        self._reject_if_closed()
         prepared = _prepare_attempt(request, context)
         signal = context.cancellation
         abort = _SocketAbort()
@@ -177,6 +191,23 @@ class DefaultSystemHttpTransport:
         finally:
             if unsubscribe is not None:
                 unsubscribe()
+
+    async def close(self) -> None:
+        """Refuse later exchanges without interrupting one already started.
+
+        Each exchange closes the connection it opened. This method does not
+        close that connection again. A second call observes the closed state
+        and does not repeat a release.
+        """
+        with self._lock:
+            self._closed = True
+
+    def _reject_if_closed(self) -> None:
+        """Raise when ``close`` has already begun."""
+        with self._lock:
+            closed = self._closed
+        if closed:
+            raise _transport_closed_error()
 
 
 class _PreparedHttpAttempt:
@@ -524,6 +555,16 @@ def _cancellation_reason(signal: CancellationSignal) -> str | None:
     if isinstance(reason, str):
         return reason
     return None
+
+
+def _transport_closed_error() -> ModelInteractionError:
+    """Create the failure for a send after close."""
+    return ModelInteractionError(
+        category=_CONFIGURATION_CATEGORY,
+        phase=_TRANSPORT_PHASE,
+        code=_CLOSED_CODE,
+        message=_CLOSED_MESSAGE,
+    )
 
 
 def _connection_failed() -> ModelInteractionError:

@@ -19,7 +19,12 @@ from mconet.core.domain import (
     Timestamp,
     UriValue,
 )
-from mconet.core.spi import TransportBody, TransportContext, TransportRequest
+from mconet.core.spi import (
+    CloseableRuntimeComponent,
+    TransportBody,
+    TransportContext,
+    TransportRequest,
+)
 from mconet.testing import (
     ControllableCancellationSignal,
     MockHttpResponseScript,
@@ -211,3 +216,26 @@ def test_system_http_transport_cancels_an_in_flight_exchange() -> None:
         assert time.monotonic() - started < 1.0
 
     assert cast(asyncio.CancelledError, error).args == ("stop-this-attempt",)
+
+
+def test_system_http_transport_close_refuses_later_exchanges() -> None:
+    """Verify close is idempotent and does not open a connection afterward."""
+    transport = _transport()
+    assert isinstance(transport, CloseableRuntimeComponent)
+    asyncio.run(transport.close())
+    asyncio.run(transport.close())
+    script = MockHttpResponseScript(status_code=200, body=b"closed")
+    with MockHttpServer((script,)) as server:
+        error = _assert_raises(
+            ModelInteractionError,
+            lambda: asyncio.run(transport.send(_request(server.uri), _context())),
+            "transport is closed",
+        )
+        assert server.requests == ()
+
+    interaction_error = cast(ModelInteractionError, error)
+    assert interaction_error.code == "http_transport_closed"
+    assert interaction_error.category.id == OpenIdentifier(
+        "invalid_component_configuration"
+    )
+    assert interaction_error.phase.id == OpenIdentifier("transport")
