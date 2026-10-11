@@ -8,13 +8,14 @@ from mconet.codec.json import (
     JsonSuccessPayloadDecoder,
     collect_bounded_bytes,
     encode_utf8,
+    is_json_media_type,
 )
 
 
-def test_json_codec_exports_payload_codecs_without_component_metadata() -> None:
-    """Verify media-type matching and type contracts stay out of the module."""
-    # Encoding, bounded collection, and both decoders are available. The
-    # media-type matcher and component type contracts remain later work.
+def test_json_codec_exports_payload_codecs_without_component_contracts() -> None:
+    """Verify component type contracts stay out of the public JSON module."""
+    # Encoding, decoding, collection, and media-type matching are available.
+    # Component type contracts and capabilities remain later work.
     assert mconet.codec.json.__all__ == (
         "JsonErrorPayloadDecoder",
         "JsonPayload",
@@ -22,6 +23,7 @@ def test_json_codec_exports_payload_codecs_without_component_metadata() -> None:
         "JsonSuccessPayloadDecoder",
         "collect_bounded_bytes",
         "encode_utf8",
+        "is_json_media_type",
     )
     assert mconet.codec.json.JsonErrorPayloadDecoder is JsonErrorPayloadDecoder
     assert mconet.codec.json.JsonPayload is JsonPayload
@@ -29,3 +31,4 @@ def test_json_codec_exports_payload_codecs_without_component_metadata() -> None:
     assert mconet.codec.json.JsonSuccessPayloadDecoder is JsonSuccessPayloadDecoder
     assert mconet.codec.json.collect_bounded_bytes is collect_bounded_bytes
     assert mconet.codec.json.encode_utf8 is encode_utf8
+    assert mconet.codec.json.is_json_media_type is is_json_media_type
