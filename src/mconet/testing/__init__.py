@@ -19,6 +19,12 @@ from mconet.testing.fake_clock import FakeClock
 from mconet.testing.fault_injection_harness import FaultInjectionHarness
 from mconet.testing.fixture_loader import FixtureLoader
 from mconet.testing.json_fixture import json_fixtures_equal
+from mconet.testing.mock_http_server import (
+    MockHttpAbort,
+    MockHttpRequest,
+    MockHttpResponseScript,
+    MockHttpServer,
+)
 from mconet.testing.mock_transport import MockTransport
 from mconet.testing.model_integration_resolver_contract_suite import (
     ModelIntegrationResolverContractSuite,
@@ -65,6 +71,10 @@ __all__ = (
     "FakeClock",
     "FaultInjectionHarness",
     "FixtureLoader",
+    "MockHttpAbort",
+    "MockHttpRequest",
+    "MockHttpResponseScript",
+    "MockHttpServer",
     "MockTransport",
     "ModelIntegrationResolverContractSuite",
     "MonitorContractSuite",

@@ -1804,6 +1804,47 @@
       },
       "signature": "(root: 'Path') -> 'None'"
     },
+    "mconet.testing.MockHttpAbort": {
+      "kind": "class",
+      "members": {},
+      "signature": "(point: 'str') -> None"
+    },
+    "mconet.testing.MockHttpRequest": {
+      "kind": "class",
+      "members": {},
+      "signature": "(method: 'str', target: 'str', http_version: 'str', headers: 'Headers', body: 'Bytes') -> None"
+    },
+    "mconet.testing.MockHttpResponseScript": {
+      "kind": "class",
+      "members": {},
+      "signature": "(status_code: 'int', headers: 'Headers' = Headers(values=()), body: 'bytes' = b'', delay: 'Duration' = Duration(total_nanoseconds=0), abort: 'MockHttpAbort | None' = None, body_prefix_length: 'int | None' = None) -> None"
+    },
+    "mconet.testing.MockHttpServer": {
+      "kind": "class",
+      "members": {
+        "close": {
+          "kind": "method",
+          "signature": "(self) -> 'None'"
+        },
+        "host": {
+          "kind": "property",
+          "signature": null
+        },
+        "port": {
+          "kind": "property",
+          "signature": null
+        },
+        "requests": {
+          "kind": "property",
+          "signature": null
+        },
+        "uri": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(scripts: 'Sequence[MockHttpResponseScript]') -> 'None'"
+    },
     "mconet.testing.MockTransport": {
       "kind": "class",
       "members": {
