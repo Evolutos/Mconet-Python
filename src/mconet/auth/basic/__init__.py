@@ -11,6 +11,7 @@ from mconet.auth.basic.bearer_authorization import (
     BEARER_AUTHORIZATION_KIND,
     BearerAuthorization,
 )
+from mconet.auth.basic.bearer_authorization_handler import BearerAuthorizationHandler
 from mconet.auth.basic.dynamic_credential_source import DynamicCredentialSource
 from mconet.auth.basic.fixed_credential_source import FixedCredentialSource
 from mconet.auth.basic.no_authorization import (
@@ -26,6 +27,7 @@ __all__: tuple[str, ...] = (
     "ApiKeyHeaderAuthorization",
     "ApiKeyHeaderAuthorizationHandler",
     "BearerAuthorization",
+    "BearerAuthorizationHandler",
     "DynamicCredentialSource",
     "FixedCredentialSource",
     "NoAuthorization",
