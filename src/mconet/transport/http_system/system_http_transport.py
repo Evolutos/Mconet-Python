@@ -373,6 +373,10 @@ def _exchange(
                 context.resource_limits.max_response_body_bytes,
                 lambda: _release_exchange(response, connection),
             )
+            # A short read against Content-Length is a dropped connection, not
+            # a successful partial body. The received bytes are not returned.
+            if _body_was_truncated(fields, body):
+                raise _connection_failed()
             return _completed_response(response.status, fields, body)
         finally:
             response.close()
@@ -500,6 +504,19 @@ def _response_header_fields(
             continue
         fields.append(HttpHeaderField(pair[0], pair[1]))
     return tuple(fields)
+
+
+def _body_was_truncated(
+    fields: tuple[HttpHeaderField, ...],
+    body: bytes,
+) -> bool:
+    """Return whether one Content-Length does not match the received body."""
+    lengths = tuple(
+        field.value for field in fields if field.name.casefold() == "content-length"
+    )
+    if len(lengths) != 1 or not lengths[0].isdigit():
+        return False
+    return len(body) != int(lengths[0])
 
 
 def _completed_response(
