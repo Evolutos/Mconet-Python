@@ -1,10 +1,11 @@
 """Default HTTP transport backed by Python platform networking.
 
-The HTTP method, URL, query, and header mappers, including safe default
-headers, are the public surface of this module until later work adds body
-writing, response normalization, and the transport implementation.
+The HTTP method, URL, query, header, and body mappers are the public surface
+of this module until later work adds content headers, response normalization,
+and the transport implementation.
 """
 
+from mconet.transport.http_system.http_body import map_http_body
 from mconet.transport.http_system.http_default_header import apply_default_http_headers
 from mconet.transport.http_system.http_header import HttpHeaderField, map_http_headers
 from mconet.transport.http_system.http_method import map_http_method
@@ -15,6 +16,7 @@ __all__: tuple[str, ...] = (
     "HttpBaseUrl",
     "HttpHeaderField",
     "apply_default_http_headers",
+    "map_http_body",
     "map_http_headers",
     "map_http_method",
     "map_http_query",
