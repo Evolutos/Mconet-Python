@@ -19,13 +19,14 @@ from mconet.transport.http_system import (
     map_http_url,
     normalize_http_network_timeout,
     read_bounded_http_response_body,
+    read_bounded_http_response_releasing_connection,
     summarize_http_response_headers,
 )
 
 
 def test_http_system_transport_exports_request_field_mapping() -> None:
     """Verify the system HTTP module publishes field mapping and defaults."""
-    # Connection cancellation and the client remain later work.
+    # Redirect policy and the client remain later work.
     assert mconet.transport.http_system.__all__ == (
         "HttpBaseUrl",
         "HttpCancellationBridge",
@@ -44,6 +45,7 @@ def test_http_system_transport_exports_request_field_mapping() -> None:
         "map_http_url",
         "normalize_http_network_timeout",
         "read_bounded_http_response_body",
+        "read_bounded_http_response_releasing_connection",
         "summarize_http_response_headers",
     )
     assert mconet.transport.http_system.HttpBaseUrl is HttpBaseUrl
@@ -79,6 +81,10 @@ def test_http_system_transport_exports_request_field_mapping() -> None:
     assert (
         mconet.transport.http_system.read_bounded_http_response_body
         is read_bounded_http_response_body
+    )
+    assert (
+        mconet.transport.http_system.read_bounded_http_response_releasing_connection
+        is read_bounded_http_response_releasing_connection
     )
     assert (
         mconet.transport.http_system.summarize_http_response_headers
