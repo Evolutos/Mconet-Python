@@ -1,0 +1,192 @@
+{
+  "cases": [
+    {
+      "body": {"error": {"message": "Incorrect API key provided: fixture-credential-text", "type": "invalid_request_error", "code": "invalid_api_key"}},
+      "expected": {
+        "category": "authentication",
+        "code": "service_authentication_failed",
+        "message": "The model service rejected the request credentials.",
+        "phase": "response_parsing",
+        "recovery": {"requestMayHaveBeenProcessed": false, "retryAfterMilliseconds": null, "transient": false},
+        "requestId": "req-401",
+        "serviceErrorCode": "invalid_api_key",
+        "statusCode": 401
+      },
+      "headers": [],
+      "name": "authentication-401",
+      "requestId": "req-401",
+      "statusCode": 401
+    },
+    {
+      "body": {"error": {"message": "Project fixture-project has no access to this model.", "type": "invalid_request_error", "code": "model_not_permitted"}},
+      "expected": {
+        "category": "permission",
+        "code": "service_permission_denied",
+        "message": "The model service denied permission for the request.",
+        "phase": "response_parsing",
+        "recovery": {"requestMayHaveBeenProcessed": false, "retryAfterMilliseconds": null, "transient": false},
+        "requestId": "req-403",
+        "serviceErrorCode": "model_not_permitted",
+        "statusCode": 403
+      },
+      "headers": [],
+      "name": "permission-403",
+      "requestId": "req-403",
+      "statusCode": 403
+    },
+    {
+      "body": {"error": {"message": "Content filter triggered.", "type": "invalid_request_error", "code": "content_filter"}},
+      "expected": {
+        "category": "authentication",
+        "code": "service_authentication_failed",
+        "message": "The model service rejected the request credentials.",
+        "phase": "response_parsing",
+        "recovery": {"requestMayHaveBeenProcessed": false, "retryAfterMilliseconds": null, "transient": false},
+        "requestId": "req-401b",
+        "serviceErrorCode": "content_filter",
+        "statusCode": 401
+      },
+      "headers": [],
+      "name": "status-takes-precedence-over-service-code",
+      "requestId": "req-401b",
+      "statusCode": 401
+    },
+    {
+      "body": {"error": {"message": "Rate limit reached for requests.", "type": "requests", "code": "rate_limit_exceeded"}},
+      "expected": {
+        "category": "rate_limit",
+        "code": "service_rate_limited",
+        "message": "The model service rate limit or quota was exceeded.",
+        "phase": "response_parsing",
+        "recovery": {"requestMayHaveBeenProcessed": false, "retryAfterMilliseconds": 20000, "transient": true},
+        "requestId": "req-429",
+        "serviceErrorCode": "rate_limit_exceeded",
+        "statusCode": 429
+      },
+      "headers": [["Retry-After", "20"]],
+      "name": "rate-limit-429-with-retry-after-seconds",
+      "requestId": "req-429",
+      "statusCode": 429
+    },
+    {
+      "body": {"error": {"message": "Rate limit reached for requests.", "type": "requests", "code": "rate_limit_exceeded"}},
+      "expected": {
+        "category": "rate_limit",
+        "code": "service_rate_limited",
+        "message": "The model service rate limit or quota was exceeded.",
+        "phase": "response_parsing",
+        "recovery": {"requestMayHaveBeenProcessed": false, "retryAfterMilliseconds": null, "transient": true},
+        "requestId": "req-429b",
+        "serviceErrorCode": "rate_limit_exceeded",
+        "statusCode": 429
+      },
+      "headers": [["Retry-After", "Wed, 21 Oct 2026 07:28:00 GMT"]],
+      "name": "rate-limit-429-with-an-http-date-is-not-guessed",
+      "requestId": "req-429b",
+      "statusCode": 429
+    },
+    {
+      "body": {"error": {"message": "You exceeded your current quota.", "type": "insufficient_quota", "code": null}},
+      "expected": {
+        "category": "rate_limit",
+        "code": "service_rate_limited",
+        "message": "The model service rate limit or quota was exceeded.",
+        "phase": "response_parsing",
+        "recovery": {"requestMayHaveBeenProcessed": false, "retryAfterMilliseconds": null, "transient": false},
+        "requestId": "req-quota",
+        "serviceErrorCode": null,
+        "statusCode": 429
+      },
+      "headers": [["Retry-After", "60"]],
+      "name": "exhausted-quota-is-not-transient",
+      "requestId": "req-quota",
+      "statusCode": 429
+    },
+    {
+      "body": {"error": {"message": "The response was filtered: fixture prompt text.", "type": null, "code": "content_filter"}},
+      "expected": {
+        "category": "content_filter",
+        "code": "service_content_filtered",
+        "message": "The model service blocked the request or response content.",
+        "phase": "response_parsing",
+        "recovery": {"requestMayHaveBeenProcessed": null, "retryAfterMilliseconds": null, "transient": false},
+        "requestId": "req-filter",
+        "serviceErrorCode": "content_filter",
+        "statusCode": 400
+      },
+      "headers": [],
+      "name": "content-filter-service-code",
+      "requestId": "req-filter",
+      "statusCode": 400
+    },
+    {
+      "body": {"error": {"message": "The server had an error processing your request.", "type": "server_error", "code": "server_error"}},
+      "expected": {
+        "category": "model_service",
+        "code": "service_error",
+        "message": "The model service returned an error.",
+        "phase": "response_parsing",
+        "recovery": {"requestMayHaveBeenProcessed": null, "retryAfterMilliseconds": 2000, "transient": true},
+        "requestId": "req-500",
+        "serviceErrorCode": "server_error",
+        "statusCode": 500
+      },
+      "headers": [["Retry-After", "2"]],
+      "name": "server-error-500-is-transient",
+      "requestId": "req-500",
+      "statusCode": 500
+    },
+    {
+      "body": {"error": {"message": "Service unavailable."}},
+      "expected": {
+        "category": "model_service",
+        "code": "service_error",
+        "message": "The model service returned an error.",
+        "phase": "response_parsing",
+        "recovery": {"requestMayHaveBeenProcessed": null, "retryAfterMilliseconds": null, "transient": true},
+        "requestId": null,
+        "serviceErrorCode": null,
+        "statusCode": 503
+      },
+      "headers": [],
+      "name": "minimal-503-without-request-id",
+      "requestId": null,
+      "statusCode": 503
+    },
+    {
+      "body": {"error": {"message": "Unknown parameter: fixture.", "type": "invalid_request_error", "code": 1234}},
+      "expected": {
+        "category": "model_service",
+        "code": "service_error",
+        "message": "The model service returned an error.",
+        "phase": "response_parsing",
+        "recovery": {"requestMayHaveBeenProcessed": null, "retryAfterMilliseconds": null, "transient": false},
+        "requestId": "req-400",
+        "serviceErrorCode": "1234",
+        "statusCode": 400
+      },
+      "headers": [["Retry-After", "5"]],
+      "name": "client-error-with-an-integer-code-is-not-transient",
+      "requestId": "req-400",
+      "statusCode": 400
+    },
+    {
+      "body": {"message": "Bad gateway"},
+      "expected": null,
+      "headers": [],
+      "name": "unrecognized-gateway-body",
+      "requestId": "req-502",
+      "statusCode": 502
+    },
+    {
+      "body": "upstream connect error",
+      "expected": null,
+      "headers": [],
+      "name": "unrecognized-non-object-body",
+      "requestId": null,
+      "statusCode": 502
+    }
+  ],
+  "format_version": 1,
+  "protocolId": "openai.chat-completions"
+}
