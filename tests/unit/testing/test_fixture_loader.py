@@ -85,6 +85,7 @@ def test_fixture_loader_reads_the_committed_cross_language_collection() -> None:
         "message-document.json",
         "model-target.json",
         "openai-chat-request.json",
+        "openai-chat-response.json",
         "service-access.json",
     )
 

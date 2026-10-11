@@ -1,0 +1,216 @@
+{
+  "cases": [
+    {
+      "body": {
+        "id": "chatcmpl-fixture-1",
+        "model": "fixture-model-2026-10",
+        "choices": [
+          {
+            "index": 0,
+            "message": {"role": "assistant", "content": "東京は晴れです ☀️\nCafé"},
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {"prompt_tokens": 12, "completion_tokens": 7, "total_tokens": 19}
+      },
+      "expected": {
+        "messages": [
+          {
+            "extensions": {},
+            "id": "choice-0",
+            "rawRole": "assistant",
+            "role": "message.assistant",
+            "text": "東京は晴れです ☀️\nCafé"
+          }
+        ],
+        "resolvedModel": "fixture-model-2026-10",
+        "responseExtensions": {"id": "chatcmpl-fixture-1"},
+        "resultExtensions": {},
+        "status": "completed",
+        "stopReason": "stop",
+        "usage": {"extensions": {}, "inputTokens": 12, "outputTokens": 7, "totalTokens": 19}
+      },
+      "name": "complete-response"
+    },
+    {
+      "body": {
+        "choices": [
+          {"index": 0, "message": {"role": "assistant", "content": "Hi"}, "finish_reason": "stop"}
+        ]
+      },
+      "expected": {
+        "messages": [
+          {"extensions": {}, "id": "choice-0", "rawRole": "assistant", "role": "message.assistant", "text": "Hi"}
+        ],
+        "resolvedModel": null,
+        "responseExtensions": {},
+        "resultExtensions": {},
+        "status": "completed",
+        "stopReason": "stop",
+        "usage": null
+      },
+      "name": "unreported-model-usage-and-id-stay-absent"
+    },
+    {
+      "body": {
+        "choices": [
+          {"index": 0, "message": {"role": "assistant", "content": "Partial"}, "finish_reason": "length"}
+        ],
+        "usage": {"prompt_tokens": 5}
+      },
+      "expected": {
+        "messages": [
+          {"extensions": {}, "id": "choice-0", "rawRole": "assistant", "role": "message.assistant", "text": "Partial"}
+        ],
+        "resolvedModel": null,
+        "responseExtensions": {},
+        "resultExtensions": {},
+        "status": "incomplete",
+        "stopReason": "length",
+        "usage": {"extensions": {}, "inputTokens": 5, "outputTokens": null, "totalTokens": null}
+      },
+      "name": "length-with-partial-usage-is-not-zero-filled"
+    },
+    {
+      "body": {
+        "choices": [
+          {"index": 0, "message": {"role": "assistant", "content": ""}, "finish_reason": "content_filter"}
+        ]
+      },
+      "expected": {
+        "messages": [
+          {"extensions": {}, "id": "choice-0", "rawRole": "assistant", "role": "message.assistant", "text": ""}
+        ],
+        "resolvedModel": null,
+        "responseExtensions": {},
+        "resultExtensions": {},
+        "status": "filtered",
+        "stopReason": "content_filter",
+        "usage": null
+      },
+      "name": "content-filter-finish"
+    },
+    {
+      "body": {
+        "choices": [
+          {"index": 0, "message": {"role": "assistant", "content": "Calling"}, "finish_reason": "tool_calls"}
+        ]
+      },
+      "expected": {
+        "messages": [
+          {"extensions": {}, "id": "choice-0", "rawRole": "assistant", "role": "message.assistant", "text": "Calling"}
+        ],
+        "resolvedModel": null,
+        "responseExtensions": {},
+        "resultExtensions": {},
+        "status": "requires_action",
+        "stopReason": "tool_calls",
+        "usage": null
+      },
+      "name": "tool-calls-finish"
+    },
+    {
+      "body": {
+        "choices": [
+          {"index": 0, "message": {"role": "assistant", "content": "Done"}, "finish_reason": "Vendor_Halt"}
+        ]
+      },
+      "expected": {
+        "messages": [
+          {"extensions": {}, "id": "choice-0", "rawRole": "assistant", "role": "message.assistant", "text": "Done"}
+        ],
+        "resolvedModel": null,
+        "responseExtensions": {},
+        "resultExtensions": {},
+        "status": "unknown",
+        "stopReason": "Vendor_Halt",
+        "usage": null
+      },
+      "name": "unknown-finish-reason-is-kept-exactly"
+    },
+    {
+      "body": {
+        "id": "chatcmpl-fixture-2",
+        "system_fingerprint": "fp-1",
+        "choices": [
+          {
+            "index": 0,
+            "message": {"role": "assistant", "content": "Hi", "refusal": null},
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 1,
+          "completion_tokens": 1,
+          "total_tokens": 2,
+          "prompt_tokens_details": {"cached_tokens": 0}
+        }
+      },
+      "expected": {
+        "messages": [
+          {
+            "extensions": {"refusal": null},
+            "id": "choice-0",
+            "rawRole": "assistant",
+            "role": "message.assistant",
+            "text": "Hi"
+          }
+        ],
+        "resolvedModel": null,
+        "responseExtensions": {"id": "chatcmpl-fixture-2", "system_fingerprint": "fp-1"},
+        "resultExtensions": {"logprobs": null},
+        "status": "completed",
+        "stopReason": "stop",
+        "usage": {
+          "extensions": {"prompt_tokens_details": {"cached_tokens": 0}},
+          "inputTokens": 1,
+          "outputTokens": 1,
+          "totalTokens": 2
+        }
+      },
+      "name": "unknown-members-are-kept-as-extensions"
+    },
+    {
+      "body": {"choices": []},
+      "expectedError": {"category": "protocol", "code": "invalid_protocol_response", "phase": "response_parsing"},
+      "name": "no-choice"
+    },
+    {
+      "body": {
+        "choices": [
+          {"index": 0, "message": {"role": "assistant", "content": "A"}, "finish_reason": "stop"},
+          {"index": 1, "message": {"role": "assistant", "content": "B"}, "finish_reason": "stop"}
+        ]
+      },
+      "expectedError": {"category": "protocol", "code": "invalid_protocol_response", "phase": "response_parsing"},
+      "name": "more-than-one-choice"
+    },
+    {
+      "body": {
+        "model": " ",
+        "choices": [
+          {"index": 0, "message": {"role": "assistant", "content": "Hi"}, "finish_reason": "stop"}
+        ]
+      },
+      "expectedError": {"category": "protocol", "code": "invalid_protocol_response", "phase": "response_parsing"},
+      "name": "whitespace-model-name"
+    },
+    {
+      "body": {
+        "choices": [
+          {"index": 0, "message": {"role": "tool", "content": "Hi"}, "finish_reason": "stop"}
+        ]
+      },
+      "expectedError": {"category": "protocol", "code": "invalid_protocol_response", "phase": "response_parsing"},
+      "name": "unknown-response-role"
+    },
+    {
+      "body": {"id": "chatcmpl-fixture-3"},
+      "expectedError": {"category": "protocol", "code": "invalid_protocol_response", "phase": "response_parsing"},
+      "name": "missing-choices"
+    }
+  ],
+  "format_version": 1,
+  "protocolId": "openai.chat-completions"
+}
