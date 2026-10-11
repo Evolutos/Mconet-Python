@@ -1,6 +1,9 @@
 """Tests for default authorization handler resolution."""
 
 from mconet.auth.basic.api_key_header_authorization import ApiKeyHeaderAuthorization
+from mconet.auth.basic.api_key_header_authorization_handler import (
+    ApiKeyHeaderAuthorizationHandler,
+)
 from mconet.auth.basic.dynamic_credential_source import DynamicCredentialSource
 from mconet.auth.basic.no_authorization import NoAuthorization
 from mconet.auth.basic.no_authorization_handler import NoAuthorizationHandler
@@ -20,6 +23,7 @@ from mconet.core.spi import (
     BodySigningRequirement,
     ComponentDescriptor,
     MutableTransportRequest,
+    ResolvedAuthorizationHandler,
 )
 from mconet.testing import AuthorizationHandlerResolverContractSuite
 
@@ -131,5 +135,111 @@ def test_resolver_rejects_a_handler_that_supports_only_another_signing_mode() ->
         BodySigningRequirement(),
         (handler,),
         assertion=_assert_unsupported,
+    )
+    assert handler.apply_calls == 0
+
+
+def test_resolver_returns_the_only_matching_handler_in_any_position() -> None:
+    """Verify the unique instance is returned wherever it sits in the tuple."""
+    selected = NoAuthorizationHandler()
+    before = _RecordingHandler(frozenset())
+    after = _RecordingHandler(frozenset())
+    orders = (
+        (selected, before, after),
+        (before, selected, after),
+        (before, after, selected),
+    )
+
+    for handlers in orders:
+
+        def assert_selected(actual: ResolvedAuthorizationHandler) -> None:
+            """Require this loop's selected instance and the unsigned mode."""
+            assert actual.handler is selected
+            assert actual.body_signing_mode == "none"
+
+        AuthorizationHandlerResolverContractSuite(
+            DefaultAuthorizationHandlerResolver()
+        ).assert_unique_match(
+            NoAuthorization(),
+            BodySigningRequirement(),
+            handlers,
+            assertion=assert_selected,
+        )
+
+    assert before.support_calls == 3
+    assert after.support_calls == 3
+    assert before.apply_calls == 0
+    assert after.apply_calls == 0
+
+
+def test_resolver_returns_the_api_key_handler_without_reading_the_key() -> None:
+    """Verify the matching API key handler is selected before any credential read."""
+    calls: list[str] = []
+
+    async def provider(_context: AuthorizationContext) -> SecretValue:
+        calls.append("resolved")
+        return SecretValue(_PLACEHOLDER)
+
+    selected = ApiKeyHeaderAuthorizationHandler()
+    authorization = ApiKeyHeaderAuthorization(
+        "X-Api-Key",
+        "",
+        DynamicCredentialSource(provider),
+    )
+
+    def assert_selected(actual: ResolvedAuthorizationHandler) -> None:
+        """Require the API key handler instance and the unsigned mode."""
+        assert actual.handler is selected
+        assert actual.body_signing_mode == "none"
+
+    AuthorizationHandlerResolverContractSuite(
+        DefaultAuthorizationHandlerResolver()
+    ).assert_unique_match(
+        authorization,
+        BodySigningRequirement(),
+        (NoAuthorizationHandler(), selected),
+        assertion=assert_selected,
+    )
+    assert calls == []
+
+
+def test_resolver_selects_the_requirement_preferred_shared_mode() -> None:
+    """Verify one handler uses requirement order rather than its own set order."""
+    handler = _RecordingHandler(
+        frozenset(("unsigned_payload", "precomputed_digest")),
+    )
+    preferred_first = BodySigningRequirement(
+        required=True,
+        acceptable_modes=("precomputed_digest", "unsigned_payload"),
+    )
+    preferred_second = BodySigningRequirement(
+        required=True,
+        acceptable_modes=("unsigned_payload", "precomputed_digest"),
+    )
+
+    def assert_precomputed(actual: ResolvedAuthorizationHandler) -> None:
+        """Require the mode listed first by the requirement."""
+        assert actual.handler is handler
+        assert actual.body_signing_mode == "precomputed_digest"
+
+    def assert_unsigned(actual: ResolvedAuthorizationHandler) -> None:
+        """Require the other shared mode when the requirement lists it first."""
+        assert actual.handler is handler
+        assert actual.body_signing_mode == "unsigned_payload"
+
+    suite = AuthorizationHandlerResolverContractSuite(
+        DefaultAuthorizationHandlerResolver()
+    )
+    suite.assert_unique_match(
+        NoAuthorization(),
+        preferred_first,
+        (handler,),
+        assertion=assert_precomputed,
+    )
+    suite.assert_unique_match(
+        NoAuthorization(),
+        preferred_second,
+        (handler,),
+        assertion=assert_unsigned,
     )
     assert handler.apply_calls == 0
