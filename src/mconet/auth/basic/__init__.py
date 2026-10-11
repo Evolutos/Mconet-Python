@@ -8,6 +8,7 @@ from mconet.auth.basic.bearer_authorization import (
     BEARER_AUTHORIZATION_KIND,
     BearerAuthorization,
 )
+from mconet.auth.basic.fixed_credential_source import FixedCredentialSource
 from mconet.auth.basic.no_authorization import (
     NO_AUTHORIZATION_KIND,
     NoAuthorization,
@@ -19,5 +20,6 @@ __all__: tuple[str, ...] = (
     "NO_AUTHORIZATION_KIND",
     "ApiKeyHeaderAuthorization",
     "BearerAuthorization",
+    "FixedCredentialSource",
     "NoAuthorization",
 )

@@ -7,18 +7,20 @@ from mconet.auth.basic import (
     NO_AUTHORIZATION_KIND,
     ApiKeyHeaderAuthorization,
     BearerAuthorization,
+    FixedCredentialSource,
     NoAuthorization,
 )
 
 
 def test_basic_auth_exports_defined_authorization_decisions() -> None:
-    """Verify the module publishes the three built-in authorization decisions."""
+    """Verify the module publishes the defined authorization decisions and source."""
     assert mconet.auth.basic.__all__ == (
         "API_KEY_HEADER_AUTHORIZATION_KIND",
         "BEARER_AUTHORIZATION_KIND",
         "NO_AUTHORIZATION_KIND",
         "ApiKeyHeaderAuthorization",
         "BearerAuthorization",
+        "FixedCredentialSource",
         "NoAuthorization",
     )
     assert mconet.auth.basic.NoAuthorization is NoAuthorization
@@ -30,3 +32,4 @@ def test_basic_auth_exports_defined_authorization_decisions() -> None:
     )
     assert mconet.auth.basic.BearerAuthorization is BearerAuthorization
     assert mconet.auth.basic.BEARER_AUTHORIZATION_KIND is BEARER_AUTHORIZATION_KIND
+    assert mconet.auth.basic.FixedCredentialSource is FixedCredentialSource
