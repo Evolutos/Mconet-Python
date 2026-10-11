@@ -239,3 +239,60 @@ def test_system_http_transport_close_refuses_later_exchanges() -> None:
         "invalid_component_configuration"
     )
     assert interaction_error.phase.id == OpenIdentifier("transport")
+
+
+class _BusinessNetworkClient:
+    """Record whether the transport closes a caller-owned client."""
+
+    def __init__(self) -> None:
+        self.close_calls = 0
+        self.is_closed = False
+
+    def close(self) -> None:
+        """Mark the business client closed."""
+        self.close_calls += 1
+        self.is_closed = True
+
+
+def test_system_http_transport_does_not_close_an_injected_network_client() -> None:
+    """Verify transport close leaves a business-owned client open."""
+    client = _BusinessNetworkClient()
+    transport = DefaultSystemHttpTransport(
+        proxy_environment={},
+        network_client=client,
+    )
+    script = MockHttpResponseScript(status_code=200, body=b"owned")
+    with MockHttpServer((script,)) as server:
+        response = asyncio.run(transport.send(_request(server.uri), _context()))
+    assert response.body == b"owned"
+    asyncio.run(transport.close())
+    asyncio.run(transport.close())
+    assert client.close_calls == 0
+    assert client.is_closed is False
+
+    closed_client = _BusinessNetworkClient()
+    closed_client.is_closed = True
+    closed_transport = DefaultSystemHttpTransport(
+        proxy_environment={},
+        network_client=closed_client,
+    )
+    unused = MockHttpResponseScript(status_code=200, body=b"unused")
+    with MockHttpServer((unused,)) as server:
+        error = _assert_raises(
+            ModelInteractionError,
+            lambda: asyncio.run(
+                closed_transport.send(_request(server.uri), _context())
+            ),
+            "Injected HTTP client is closed",
+        )
+        assert server.requests == ()
+    assert cast(ModelInteractionError, error).code == "http_network_client_closed"
+    assert closed_client.close_calls == 0
+    _assert_raises(
+        TypeError,
+        lambda: DefaultSystemHttpTransport(
+            proxy_environment={},
+            network_client=object(),
+        ),
+        "network_client must provide close",
+    )

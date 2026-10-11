@@ -87,10 +87,18 @@ class DefaultSystemHttpTransport:
     closed by that exchange, not by ``close``.
     """
 
-    __slots__ = ("_closed", "_lock", "_now", "_proxy_environment", "_proxy_override")
+    __slots__ = (
+        "_closed",
+        "_lock",
+        "_network_client",
+        "_now",
+        "_proxy_environment",
+        "_proxy_override",
+    )
 
     _closed: bool
     _lock: threading.Lock
+    _network_client: object | None
     _now: Callable[[], Timestamp]
     _proxy_environment: Mapping[str, str] | None
     _proxy_override: HttpProxyOverride | None
@@ -102,6 +110,7 @@ class DefaultSystemHttpTransport:
         proxy_override: HttpProxyOverride | None = None,
         tls_options: Mapping[str, object] | None = None,
         now: Callable[[], Timestamp] | None = None,
+        network_client: object | None = None,
     ) -> None:
         """Store send policy without opening a connection.
 
@@ -111,6 +120,7 @@ class DefaultSystemHttpTransport:
             proxy_override: Explicit proxy choice that replaces the environment.
             tls_options: Optional confirmations of certificate verification.
             now: Clock used for the deadline. ``None`` uses the system clock.
+            network_client: Business-owned client. ``close`` does not call it.
 
         Raises:
             TypeError: If an argument has an invalid shape.
@@ -128,9 +138,14 @@ class DefaultSystemHttpTransport:
             raise TypeError("proxy_override must be an HttpProxyOverride or None.")
         if now is not None and not callable(cast(object, now)):
             raise TypeError("now must be callable or None.")
+        if network_client is not None and not callable(
+            getattr(network_client, "close", None)
+        ):
+            raise TypeError("network_client must provide close.")
         self._proxy_environment = proxy_environment
         self._proxy_override = proxy_override
         self._now = _system_now if now is None else now
+        self._network_client = network_client
         self._lock = threading.Lock()
         self._closed = False
 
@@ -161,6 +176,7 @@ class DefaultSystemHttpTransport:
             asyncio.CancelledError: If the caller signal is cancelled.
         """
         self._reject_if_closed()
+        self._reject_if_business_client_closed()
         prepared = _prepare_attempt(request, context)
         signal = context.cancellation
         abort = _SocketAbort()
@@ -196,11 +212,13 @@ class DefaultSystemHttpTransport:
         """Refuse later exchanges without interrupting one already started.
 
         Each exchange closes the connection it opened. This method does not
-        close that connection again. A second call observes the closed state
-        and does not repeat a release.
+        close that connection again, and it does not close an injected
+        ``network_client``. A second call observes the closed state and does
+        not repeat a release.
         """
         with self._lock:
             self._closed = True
+        # An injected client stays open. This transport does not own it.
 
     def _reject_if_closed(self) -> None:
         """Raise when ``close`` has already begun."""
@@ -208,6 +226,17 @@ class DefaultSystemHttpTransport:
             closed = self._closed
         if closed:
             raise _transport_closed_error()
+
+    def _reject_if_business_client_closed(self) -> None:
+        """Raise when the caller already closed the injected client."""
+        client = self._network_client
+        if client is None:
+            return
+        # Observe the business client's own flag. Do not call its close method;
+        # the caller owns that resource.
+        business_closed = getattr(client, "is_closed", False)
+        if business_closed is True:
+            raise _business_client_closed_error()
 
 
 class _PreparedHttpAttempt:
@@ -555,6 +584,16 @@ def _cancellation_reason(signal: CancellationSignal) -> str | None:
     if isinstance(reason, str):
         return reason
     return None
+
+
+def _business_client_closed_error() -> ModelInteractionError:
+    """Create the failure for a send whose injected client is already closed."""
+    return ModelInteractionError(
+        category=_CONFIGURATION_CATEGORY,
+        phase=_TRANSPORT_PHASE,
+        code="http_network_client_closed",
+        message="Injected HTTP client is closed.",
+    )
 
 
 def _transport_closed_error() -> ModelInteractionError:
