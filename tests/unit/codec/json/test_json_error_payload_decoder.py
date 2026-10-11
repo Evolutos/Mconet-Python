@@ -3,7 +3,11 @@
 from collections.abc import Callable
 from typing import cast
 
-from mconet.codec.json import JsonErrorPayloadDecoder, JsonSuccessPayloadDecoder
+from mconet.codec.json import (
+    JSON_ERROR_PAYLOAD_DECODER_DESCRIPTOR,
+    JsonErrorPayloadDecoder,
+    JsonSuccessPayloadDecoder,
+)
 from mconet.core.domain import Bytes, ModelInteractionError, OpenIdentifier
 from mconet.core.spi import PayloadDecoder
 
@@ -39,6 +43,7 @@ def test_json_error_payload_decoder_is_a_distinct_component() -> None:
     # Outcome selection depends on distinct instances and distinct descriptors.
     # The error type contract stays empty until its own metadata work item.
     assert error_decoder is not success_decoder
+    assert error_decoder.descriptor is JSON_ERROR_PAYLOAD_DECODER_DESCRIPTOR
     assert error_decoder.descriptor is not success_decoder.descriptor
     assert error_decoder.descriptor.name == "json-error-payload-decoder"
     assert error_decoder.descriptor.version == "1.0.0"

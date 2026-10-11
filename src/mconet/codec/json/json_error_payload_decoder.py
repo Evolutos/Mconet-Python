@@ -2,18 +2,13 @@
 
 from __future__ import annotations
 
+from mconet.codec.json.json_error_payload_decoder_descriptor import (
+    JSON_ERROR_PAYLOAD_DECODER_DESCRIPTOR,
+)
 from mconet.codec.json.json_success_payload_decoder import JsonSuccessPayloadDecoder
 from mconet.core.domain import Bytes
 from mconet.core.spi.component_descriptor import ComponentDescriptor
 from mconet.core.spi.erased_runtime_value import ErasedRuntimeValue
-
-_DECODER_NAME = "json-error-payload-decoder"
-_DECODER_VERSION = "1.0.0"
-_DESCRIPTOR = ComponentDescriptor(
-    _DECODER_NAME,
-    _DECODER_VERSION,
-    "builtin",
-)
 
 
 class JsonErrorPayloadDecoder:
@@ -46,9 +41,9 @@ class JsonErrorPayloadDecoder:
     @property
     def descriptor(self) -> ComponentDescriptor:
         """Return diagnostic metadata distinct from the success decoder."""
-        # A separate descriptor keeps error and success selection from sharing
-        # one component identity. Decode does not read the name.
-        return _DESCRIPTOR
+        # Every instance publishes the same diagnostic descriptor, and it is not
+        # the success decoder's descriptor. Decode does not read the labels.
+        return JSON_ERROR_PAYLOAD_DECODER_DESCRIPTOR
 
     def decode(self, raw_data: Bytes) -> ErasedRuntimeValue:
         """Decode one complete error body into a JSON value.
