@@ -1,0 +1,90 @@
+{
+  "cases": [
+    {
+      "canonical": "null",
+      "name": "null",
+      "value": null
+    },
+    {
+      "canonical": "false",
+      "name": "false",
+      "value": false
+    },
+    {
+      "canonical": "true",
+      "name": "true",
+      "value": true
+    },
+    {
+      "canonical": "0",
+      "name": "zero",
+      "value": 0
+    },
+    {
+      "canonical": "-1",
+      "name": "negative-one",
+      "value": -1
+    },
+    {
+      "canonical": "9007199254740991",
+      "name": "max-safe-integer",
+      "value": 9007199254740991
+    },
+    {
+      "canonical": "-9007199254740991",
+      "name": "min-safe-integer",
+      "value": -9007199254740991
+    },
+    {
+      "canonical": "1.5",
+      "name": "fraction",
+      "value": 1.5
+    },
+    {
+      "canonical": "\"\"",
+      "name": "empty-string",
+      "value": ""
+    },
+    {
+      "canonical": "\"A𐀀😀\"",
+      "name": "non-bmp-and-emoji",
+      "value": "A𐀀😀"
+    },
+    {
+      "canonical": "[]",
+      "name": "empty-array",
+      "value": []
+    },
+    {
+      "canonical": "{}",
+      "name": "empty-object",
+      "value": {}
+    },
+    {
+      "canonical": "{\"b\":1,\"a\":false}",
+      "name": "ordered-object",
+      "value": {
+        "b": 1,
+        "a": false
+      }
+    },
+    {
+      "canonical": "{\"items\":[\"hello\",null],\"enabled\":true}",
+      "name": "nested",
+      "value": {
+        "items": [
+          "hello",
+          null
+        ],
+        "enabled": true
+      }
+    },
+    {
+      "canonical": "{\"键\":\"值\"}",
+      "name": "unicode-object",
+      "value": {
+        "键": "值"
+      }
+    }
+  ]
+}

@@ -81,6 +81,7 @@ def test_fixture_loader_reads_the_committed_cross_language_collection() -> None:
         "conversation-request.json",
         "conversation-result.json",
         "foundation-values.json",
+        "json-codec.json",
         "message-document.json",
         "model-target.json",
         "service-access.json",

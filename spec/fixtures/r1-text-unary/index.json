@@ -10,6 +10,7 @@
     "conversation-request.json",
     "conversation-result.json",
     "foundation-values.json",
+    "json-codec.json",
     "message-document.json",
     "model-target.json",
     "service-access.json"
