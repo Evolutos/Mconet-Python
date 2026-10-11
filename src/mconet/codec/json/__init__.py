@@ -11,12 +11,16 @@ from mconet.codec.json.json_error_payload_decoder import JsonErrorPayloadDecoder
 from mconet.codec.json.json_media_type import is_json_media_type
 from mconet.codec.json.json_payload import JsonPayload
 from mconet.codec.json.json_payload_encoder import JsonPayloadEncoder
+from mconet.codec.json.json_payload_encoder_descriptor import (
+    JSON_PAYLOAD_ENCODER_DESCRIPTOR,
+)
 from mconet.codec.json.json_success_payload_decoder import (
     JsonSuccessPayloadDecoder,
 )
 from mconet.codec.json.utf8 import encode_utf8
 
 __all__: tuple[str, ...] = (
+    "JSON_PAYLOAD_ENCODER_DESCRIPTOR",
     "JsonErrorPayloadDecoder",
     "JsonPayload",
     "JsonPayloadEncoder",

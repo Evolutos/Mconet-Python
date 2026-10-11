@@ -7,6 +7,9 @@ import math
 from typing import cast
 
 from mconet.codec.json.json_payload import JsonPayload
+from mconet.codec.json.json_payload_encoder_descriptor import (
+    JSON_PAYLOAD_ENCODER_DESCRIPTOR,
+)
 from mconet.codec.json.utf8 import encode_utf8
 from mconet.core.domain import (
     ErrorCategory,
@@ -20,18 +23,11 @@ from mconet.core.spi.component_descriptor import ComponentDescriptor
 from mconet.core.spi.erased_runtime_value import ErasedRuntimeValue
 from mconet.core.spi.transport_body import TransportBody
 
-_ENCODER_NAME = "json-payload-encoder"
-_ENCODER_VERSION = "1.0.0"
 _JSON_MEDIA_TYPE = MediaType("application", "json")
 _SERIALIZATION_CATEGORY = ErrorCategory(OpenIdentifier("serialization"))
 _ENCODING_PHASE = InteractionPhase(OpenIdentifier("encoding"))
 _SERIALIZATION_CODE = "serialization"
 _SERIALIZATION_MESSAGE = "JSON payload cannot be serialized."
-_DESCRIPTOR = ComponentDescriptor(
-    _ENCODER_NAME,
-    _ENCODER_VERSION,
-    "builtin",
-)
 
 
 class JsonPayloadEncoder:
@@ -54,9 +50,9 @@ class JsonPayloadEncoder:
     @property
     def descriptor(self) -> ComponentDescriptor:
         """Return diagnostic metadata that encode does not consult."""
-        # The protocol requires a descriptor. Selection uses the execution plan,
-        # not this name, version, or source.
-        return _DESCRIPTOR
+        # Every instance publishes the same diagnostic descriptor. Selection uses
+        # the component instance and the execution plan, not these labels.
+        return JSON_PAYLOAD_ENCODER_DESCRIPTOR
 
     def encode(self, payload: ErasedRuntimeValue) -> TransportBody:
         """Serialize the payload value and return caller-owned UTF-8 bytes.
