@@ -3,6 +3,7 @@
 import mconet.transport.http_system
 from mconet.transport.http_system import (
     HttpBaseUrl,
+    HttpCancellationBridge,
     HttpHeaderField,
     HttpStatusOutcome,
     apply_default_http_headers,
@@ -24,6 +25,7 @@ def test_http_system_transport_exports_request_field_mapping() -> None:
     # Response reading and the client remain later work.
     assert mconet.transport.http_system.__all__ == (
         "HttpBaseUrl",
+        "HttpCancellationBridge",
         "HttpHeaderField",
         "HttpStatusOutcome",
         "apply_default_http_headers",
@@ -39,6 +41,7 @@ def test_http_system_transport_exports_request_field_mapping() -> None:
         "summarize_http_response_headers",
     )
     assert mconet.transport.http_system.HttpBaseUrl is HttpBaseUrl
+    assert mconet.transport.http_system.HttpCancellationBridge is HttpCancellationBridge
     assert mconet.transport.http_system.HttpHeaderField is HttpHeaderField
     assert mconet.transport.http_system.HttpStatusOutcome is HttpStatusOutcome
     assert (
