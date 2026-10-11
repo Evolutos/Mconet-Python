@@ -107,12 +107,24 @@ def test_no_authorization_handler_matches_only_the_unsigned_decision() -> None:
         acceptable_modes=(cast(BodySigningMode, "unsigned_payload"),),
     )
 
+    suite = AuthorizationHandlerContractSuite(handler)
+
+    def assert_none(modes: frozenset[BodySigningMode]) -> None:
+        """Require the only mode no-authorization can apply."""
+        assert modes == frozenset({"none"})
+
+    def assert_empty(modes: frozenset[BodySigningMode]) -> None:
+        """Require no match for another decision or a signing requirement."""
+        assert modes == frozenset()
+
     assert isinstance(handler, AuthorizationHandler)
-    assert handler.supports(NoAuthorization(), BodySigningRequirement()) == frozenset(
-        {"none"}
+    suite.assert_supports(
+        NoAuthorization(),
+        BodySigningRequirement(),
+        assertion=assert_none,
     )
-    assert handler.supports(other, BodySigningRequirement()) == frozenset()
-    assert handler.supports(NoAuthorization(), signing) == frozenset()
+    suite.assert_supports(other, BodySigningRequirement(), assertion=assert_empty)
+    suite.assert_supports(NoAuthorization(), signing, assertion=assert_empty)
     assert source.calls == 0
 
 
@@ -152,17 +164,23 @@ def test_no_authorization_handler_rejects_another_decision_without_credentials()
     request = _request()
     headers = request.headers
 
-    async def apply() -> None:
-        await NoAuthorizationHandler().apply(authorization, _context(), request)
-
-    try:
-        asyncio.run(apply())
-    except ModelInteractionError as error:
+    def assert_failure(error: BaseException) -> None:
+        """Require the stable mismatch failure without the header name."""
+        assert isinstance(error, ModelInteractionError)
         assert error.code == "unsupported_authorization"
         assert str(error.category.id) == "authentication"
         assert "X-Api-Key" not in error.message
-    else:
-        raise AssertionError("Expected an unsupported authorization failure.")
+
+    asyncio.run(
+        AuthorizationHandlerContractSuite(
+            NoAuthorizationHandler()
+        ).assert_apply_failure(
+            authorization,
+            _context(),
+            request,
+            assertion=assert_failure,
+        )
+    )
 
     assert source.calls == 0
     assert request.headers is headers
