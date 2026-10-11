@@ -18,7 +18,8 @@ class JsonErrorPayloadDecoder:
     parallel copy of the response bytes. This class is still a separate
     component: callers select it before transport and it publishes its own
     descriptor. It does not classify provider errors or attach the body to a
-    failure. The error type contract is a separate metadata work item.
+    failure. Its descriptor carries diagnostic name, version, and source plus
+    the error payload output port. It does not declare a capability.
     """
 
     __slots__ = ("_json_decoder",)

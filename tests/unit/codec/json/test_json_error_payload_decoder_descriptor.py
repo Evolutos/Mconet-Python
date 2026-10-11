@@ -2,6 +2,7 @@
 
 from mconet.codec.json import (
     JSON_ERROR_PAYLOAD_DECODER_DESCRIPTOR,
+    JSON_ERROR_PAYLOAD_DECODER_TYPE_CONTRACT,
     JSON_SUCCESS_PAYLOAD_DECODER_DESCRIPTOR,
     JsonErrorPayloadDecoder,
 )
@@ -30,12 +31,15 @@ def test_json_error_payload_decoder_descriptor_is_stable() -> None:
     first = JsonErrorPayloadDecoder(_MAXIMUM_DECODED_BODY_BYTES)
     second = JsonErrorPayloadDecoder(_MAXIMUM_DECODED_BODY_BYTES)
 
-    # Labels are diagnostic. The type contract and capabilities stay unset, and
-    # the success decoder keeps a different descriptor object.
+    # Labels are diagnostic. Capabilities stay empty, and the success decoder
+    # keeps a different descriptor object.
     assert JSON_ERROR_PAYLOAD_DECODER_DESCRIPTOR.name == "json-error-payload-decoder"
     assert JSON_ERROR_PAYLOAD_DECODER_DESCRIPTOR.version == "1.0.0"
     assert JSON_ERROR_PAYLOAD_DECODER_DESCRIPTOR.source == "builtin"
-    assert JSON_ERROR_PAYLOAD_DECODER_DESCRIPTOR.type_contract is None
+    assert (
+        JSON_ERROR_PAYLOAD_DECODER_DESCRIPTOR.type_contract
+        is JSON_ERROR_PAYLOAD_DECODER_TYPE_CONTRACT
+    )
     assert JSON_ERROR_PAYLOAD_DECODER_DESCRIPTOR.capabilities == frozenset()
     assert first.descriptor is JSON_ERROR_PAYLOAD_DECODER_DESCRIPTOR
     assert second.descriptor is first.descriptor

@@ -33,7 +33,7 @@ def test_json_success_payload_decoder_descriptor_is_stable() -> None:
     error_decoder = JsonErrorPayloadDecoder(_MAXIMUM_DECODED_BODY_BYTES)
 
     # Labels are diagnostic. Capabilities stay empty, and the error decoder
-    # keeps a different descriptor object and still has no type contract.
+    # keeps a different descriptor object.
     assert JSON_SUCCESS_PAYLOAD_DECODER_DESCRIPTOR.name == (
         "json-success-payload-decoder"
     )
