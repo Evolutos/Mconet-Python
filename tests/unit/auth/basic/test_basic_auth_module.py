@@ -1,16 +1,28 @@
 """Tests for the auth-basic module boundary."""
 
 import mconet.auth.basic
-from mconet.auth.basic import NO_AUTHORIZATION_KIND, NoAuthorization
+from mconet.auth.basic import (
+    API_KEY_HEADER_AUTHORIZATION_KIND,
+    NO_AUTHORIZATION_KIND,
+    ApiKeyHeaderAuthorization,
+    NoAuthorization,
+)
 
 
-def test_basic_auth_exports_the_explicit_no_authorization_decision() -> None:
-    """Verify the module publishes only the credential-free decision."""
-    # API key and bearer types stay out of this export until their own
-    # implementations define header and credential boundaries.
+def test_basic_auth_exports_defined_authorization_decisions() -> None:
+    """Verify the module publishes the decisions defined so far."""
+    # Bearer authorization stays out of this export until its own type defines
+    # how a token source is separated from the header.
     assert mconet.auth.basic.__all__ == (
+        "API_KEY_HEADER_AUTHORIZATION_KIND",
         "NO_AUTHORIZATION_KIND",
+        "ApiKeyHeaderAuthorization",
         "NoAuthorization",
     )
     assert mconet.auth.basic.NoAuthorization is NoAuthorization
     assert mconet.auth.basic.NO_AUTHORIZATION_KIND is NO_AUTHORIZATION_KIND
+    assert mconet.auth.basic.ApiKeyHeaderAuthorization is ApiKeyHeaderAuthorization
+    assert (
+        mconet.auth.basic.API_KEY_HEADER_AUTHORIZATION_KIND
+        is API_KEY_HEADER_AUTHORIZATION_KIND
+    )
