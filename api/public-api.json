@@ -1900,6 +1900,16 @@
       },
       "signature": "(model: 'str', messages: 'tuple[OpenAIChatMessageDTO, ...]', temperature: 'float | None' = None, top_p: 'float | None' = None, max_tokens: 'int | None' = None, stop: 'tuple[str, ...] | None' = None, seed: 'int | None' = None) -> None"
     },
+    "mconet.integration.openai_compatible.OpenAIChatCompletionResponseDTO": {
+      "kind": "class",
+      "members": {
+        "from_json": {
+          "kind": "method",
+          "signature": "(value: 'JsonValue') -> 'OpenAIChatCompletionResponseDTO'"
+        }
+      },
+      "signature": "(choices: 'tuple[OpenAIChatCompletionChoiceDTO, ...]', id: 'str | None' = None, model: 'str | None' = None, usage: 'OpenAIChatCompletionUsageDTO | None' = None, extensions: 'Extensions' = <factory>) -> None"
+    },
     "mconet.integration.openai_compatible.OpenAIChatCompletionUsageDTO": {
       "kind": "class",
       "members": {

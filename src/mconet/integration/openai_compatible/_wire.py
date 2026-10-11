@@ -69,6 +69,25 @@ def require_string(document: dict[str, JsonValue], name: str, path: str) -> str:
     return value
 
 
+def optional_string(document: dict[str, JsonValue], name: str, path: str) -> str | None:
+    """Return one optional string member, or None when absent."""
+    # Absence is allowed, but an explicit null is not: the frozen profile marks
+    # these members optional and not nullable.
+    if name not in document:
+        return None
+    return require_string(document, name, path)
+
+
+def require_array(
+    document: dict[str, JsonValue], name: str, path: str
+) -> list[JsonValue]:
+    """Return one required, non-null array member."""
+    value = document.get(name)
+    if not isinstance(value, list):
+        raise invalid_protocol_response(child_path(path, name), "must be an array")
+    return value
+
+
 def require_count(document: dict[str, JsonValue], name: str, path: str) -> int:
     """Return one required, non-null, non-negative integer member."""
     # bool is an int subclass but a different JSON kind, so exact type checks
