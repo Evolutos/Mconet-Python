@@ -1,6 +1,7 @@
 """Tests for the header API key authorization handler."""
 
 import asyncio
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import cast
 
@@ -38,6 +39,7 @@ from mconet.core.spi import (
 from mconet.testing import AuthorizationHandlerContractSuite
 
 _PLACEHOLDER = "mconet-test-api-key-not-secret"
+_SECOND_VALUE = "mconet-test-signing-secret-not-secret"
 
 
 def _empty_extensions() -> Extensions:
@@ -251,3 +253,69 @@ def test_api_key_handler_rejects_a_control_in_the_key_without_copying_it() -> No
         raise AssertionError("Expected a control character in the key to fail.")
 
     assert request.headers is headers
+
+
+def _expect_api_key_header(
+    secret: str,
+) -> Callable[[MutableTransportRequest], None]:
+    """Return a contract assertion for one freshly resolved key."""
+
+    def assert_request(actual: MutableTransportRequest) -> None:
+        """Require the trace header and this resolution's key header."""
+        assert actual.headers.values == (
+            HeaderField("X-Trace", "trace-value"),
+            HeaderField("X-Api-Key", f"Key {secret}"),
+        )
+        assert actual.is_frozen is False
+
+    return assert_request
+
+
+def test_api_key_contract_reads_each_dynamic_value_and_redacts_failures() -> None:
+    """Verify the header uses a new key and failures do not copy one."""
+    secrets = [SecretValue(_PLACEHOLDER), SecretValue(_SECOND_VALUE)]
+    calls: list[str] = []
+
+    async def provider(_context: AuthorizationContext) -> SecretValue:
+        calls.append("resolved")
+        return secrets.pop(0)
+
+    source = DynamicCredentialSource(provider)
+    authorization = ApiKeyHeaderAuthorization("X-Api-Key", "Key ", source)
+    suite = AuthorizationHandlerContractSuite(ApiKeyHeaderAuthorizationHandler())
+    assert _PLACEHOLDER not in repr(authorization)
+    assert _SECOND_VALUE not in repr(authorization)
+
+    for secret in (_PLACEHOLDER, _SECOND_VALUE):
+        asyncio.run(
+            suite.assert_apply(
+                authorization,
+                _context(),
+                _request(),
+                assertion=_expect_api_key_header(secret),
+            )
+        )
+
+    assert calls == ["resolved", "resolved"]
+
+    def assert_failure(error: BaseException) -> None:
+        """Require the stable name failure without either resolved key."""
+        assert isinstance(error, ModelInteractionError)
+        assert error.code == "invalid_authorization_header_name"
+        assert _PLACEHOLDER not in str(error)
+        assert _SECOND_VALUE not in str(error)
+
+    rejected = ApiKeyHeaderAuthorization(
+        "X:Api-Key",
+        "Key ",
+        DynamicCredentialSource(provider),
+    )
+    asyncio.run(
+        suite.assert_apply_failure(
+            rejected,
+            _context(),
+            _request(),
+            assertion=assert_failure,
+        )
+    )
+    assert calls == ["resolved", "resolved"]
