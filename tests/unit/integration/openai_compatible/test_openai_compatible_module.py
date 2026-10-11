@@ -5,46 +5,34 @@ from mconet.core.domain import OpenIdentifier
 from mconet.core.spi import TaskProtocolAdapter
 from mconet.integration.openai_compatible import (
     OPENAI_CHAT_COMPLETIONS_PROTOCOL_ID,
-    OpenAIChatCompletionChoiceDTO,
-    OpenAIChatCompletionErrorDTO,
-    OpenAIChatCompletionErrorResponseDTO,
-    OpenAIChatCompletionRequestDTO,
-    OpenAIChatCompletionResponseDTO,
     OpenAIChatCompletionsAdapter,
-    OpenAIChatCompletionUsageDTO,
-    OpenAIChatMessageDTO,
+)
+
+_PRIVATE_DTO_NAMES = (
+    "OpenAIChatCompletionChoiceDTO",
+    "OpenAIChatCompletionErrorDTO",
+    "OpenAIChatCompletionErrorResponseDTO",
+    "OpenAIChatCompletionRequestDTO",
+    "OpenAIChatCompletionResponseDTO",
+    "OpenAIChatCompletionUsageDTO",
+    "OpenAIChatMessageDTO",
 )
 
 
-def test_openai_compatible_exports_the_adapter_and_protocol_values() -> None:
-    """Verify the module publishes exactly the adapter and its wire values."""
+def test_openai_compatible_exports_only_the_adapter_and_protocol_id() -> None:
+    """Verify the module publishes the adapter and keeps wire DTOs private."""
     module = mconet.integration.openai_compatible
 
     assert module.__all__ == (
         "OPENAI_CHAT_COMPLETIONS_PROTOCOL_ID",
-        "OpenAIChatCompletionChoiceDTO",
-        "OpenAIChatCompletionErrorDTO",
-        "OpenAIChatCompletionErrorResponseDTO",
-        "OpenAIChatCompletionRequestDTO",
-        "OpenAIChatCompletionResponseDTO",
-        "OpenAIChatCompletionUsageDTO",
         "OpenAIChatCompletionsAdapter",
-        "OpenAIChatMessageDTO",
     )
     assert module.OPENAI_CHAT_COMPLETIONS_PROTOCOL_ID is (
         OPENAI_CHAT_COMPLETIONS_PROTOCOL_ID
     )
-    assert module.OpenAIChatCompletionChoiceDTO is OpenAIChatCompletionChoiceDTO
-    assert module.OpenAIChatCompletionErrorDTO is OpenAIChatCompletionErrorDTO
-    assert (
-        module.OpenAIChatCompletionErrorResponseDTO
-        is OpenAIChatCompletionErrorResponseDTO
-    )
-    assert module.OpenAIChatCompletionRequestDTO is OpenAIChatCompletionRequestDTO
-    assert module.OpenAIChatCompletionResponseDTO is OpenAIChatCompletionResponseDTO
-    assert module.OpenAIChatCompletionUsageDTO is OpenAIChatCompletionUsageDTO
     assert module.OpenAIChatCompletionsAdapter is OpenAIChatCompletionsAdapter
-    assert module.OpenAIChatMessageDTO is OpenAIChatMessageDTO
+    for name in _PRIVATE_DTO_NAMES:
+        assert not hasattr(module, name)
 
 
 def test_adapter_implements_the_task_protocol_adapter_contract() -> None:

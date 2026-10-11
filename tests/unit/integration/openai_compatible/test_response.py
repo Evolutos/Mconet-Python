@@ -12,10 +12,16 @@ from mconet.core.domain import (
     validate_message_document,
     validate_model_descriptor,
 )
-from mconet.integration.openai_compatible import (
+from mconet.integration.openai_compatible._openai_chat_completion_choice_dto import (
     OpenAIChatCompletionChoiceDTO,
+)
+from mconet.integration.openai_compatible._openai_chat_completion_response_dto import (
     OpenAIChatCompletionResponseDTO,
+)
+from mconet.integration.openai_compatible._openai_chat_completion_usage_dto import (
     OpenAIChatCompletionUsageDTO,
+)
+from mconet.integration.openai_compatible._openai_chat_message_dto import (
     OpenAIChatMessageDTO,
 )
 from mconet.integration.openai_compatible._response import (

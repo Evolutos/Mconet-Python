@@ -16,19 +16,19 @@ from mconet.core.domain import (
     TextMessageContent,
     TokenUsage,
 )
+from mconet.integration.openai_compatible._openai_chat_completion_choice_dto import (
+    OpenAIChatCompletionChoiceDTO,
+)
+from mconet.integration.openai_compatible._openai_chat_completion_response_dto import (
+    OpenAIChatCompletionResponseDTO,
+)
+from mconet.integration.openai_compatible._openai_chat_completion_usage_dto import (
+    OpenAIChatCompletionUsageDTO,
+)
 from mconet.integration.openai_compatible._roles import domain_role
 from mconet.integration.openai_compatible._wire import (
     child_path,
     invalid_protocol_response,
-)
-from mconet.integration.openai_compatible.openai_chat_completion_choice_dto import (
-    OpenAIChatCompletionChoiceDTO,
-)
-from mconet.integration.openai_compatible.openai_chat_completion_response_dto import (
-    OpenAIChatCompletionResponseDTO,
-)
-from mconet.integration.openai_compatible.openai_chat_completion_usage_dto import (
-    OpenAIChatCompletionUsageDTO,
 )
 
 _OUTPUT_DOCUMENT_VERSION = "1.0"

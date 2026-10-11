@@ -6,6 +6,9 @@ from dataclasses import dataclass, field
 from typing import cast
 
 from mconet.core.domain import Extensions, JsonValue
+from mconet.integration.openai_compatible._openai_chat_message_dto import (
+    OpenAIChatMessageDTO,
+)
 from mconet.integration.openai_compatible._wire import (
     child_path,
     require_count,
@@ -13,9 +16,6 @@ from mconet.integration.openai_compatible._wire import (
     require_string,
     snapshot_extensions,
     unknown_members,
-)
-from mconet.integration.openai_compatible.openai_chat_message_dto import (
-    OpenAIChatMessageDTO,
 )
 
 _KNOWN_MEMBERS = frozenset(("index", "message", "finish_reason"))

@@ -1880,70 +1880,6 @@
       "kind": "value",
       "type": "OpenIdentifier"
     },
-    "mconet.integration.openai_compatible.OpenAIChatCompletionChoiceDTO": {
-      "kind": "class",
-      "members": {
-        "from_json": {
-          "kind": "method",
-          "signature": "(value: 'JsonValue', path: 'str' = '') -> 'OpenAIChatCompletionChoiceDTO'"
-        }
-      },
-      "signature": "(index: 'int', message: 'OpenAIChatMessageDTO', finish_reason: 'str', extensions: 'Extensions' = <factory>) -> None"
-    },
-    "mconet.integration.openai_compatible.OpenAIChatCompletionErrorDTO": {
-      "kind": "class",
-      "members": {
-        "from_json": {
-          "kind": "method",
-          "signature": "(value: 'JsonValue', path: 'str' = '') -> 'OpenAIChatCompletionErrorDTO'"
-        }
-      },
-      "signature": "(message: 'str', type: 'str | None' = None, code: 'str | int | None' = None, extensions: 'Extensions' = <factory>) -> None"
-    },
-    "mconet.integration.openai_compatible.OpenAIChatCompletionErrorResponseDTO": {
-      "kind": "class",
-      "members": {
-        "from_json": {
-          "kind": "method",
-          "signature": "(value: 'JsonValue') -> 'OpenAIChatCompletionErrorResponseDTO'"
-        }
-      },
-      "signature": "(error: 'OpenAIChatCompletionErrorDTO', extensions: 'Extensions' = <factory>) -> None"
-    },
-    "mconet.integration.openai_compatible.OpenAIChatCompletionRequestDTO": {
-      "kind": "class",
-      "members": {
-        "stream": {
-          "kind": "property",
-          "signature": null
-        },
-        "to_json": {
-          "kind": "method",
-          "signature": "(self) -> 'dict[str, JsonValue]'"
-        }
-      },
-      "signature": "(model: 'str', messages: 'tuple[OpenAIChatMessageDTO, ...]', temperature: 'float | None' = None, top_p: 'float | None' = None, max_tokens: 'int | None' = None, stop: 'tuple[str, ...] | None' = None, seed: 'int | None' = None) -> None"
-    },
-    "mconet.integration.openai_compatible.OpenAIChatCompletionResponseDTO": {
-      "kind": "class",
-      "members": {
-        "from_json": {
-          "kind": "method",
-          "signature": "(value: 'JsonValue') -> 'OpenAIChatCompletionResponseDTO'"
-        }
-      },
-      "signature": "(choices: 'tuple[OpenAIChatCompletionChoiceDTO, ...]', id: 'str | None' = None, model: 'str | None' = None, usage: 'OpenAIChatCompletionUsageDTO | None' = None, extensions: 'Extensions' = <factory>) -> None"
-    },
-    "mconet.integration.openai_compatible.OpenAIChatCompletionUsageDTO": {
-      "kind": "class",
-      "members": {
-        "from_json": {
-          "kind": "method",
-          "signature": "(value: 'JsonValue', path: 'str' = '') -> 'OpenAIChatCompletionUsageDTO'"
-        }
-      },
-      "signature": "(prompt_tokens: 'int | None' = None, completion_tokens: 'int | None' = None, total_tokens: 'int | None' = None, extensions: 'Extensions' = <factory>) -> None"
-    },
     "mconet.integration.openai_compatible.OpenAIChatCompletionsAdapter": {
       "kind": "class",
       "members": {
@@ -1973,20 +1909,6 @@
         }
       },
       "signature": "()"
-    },
-    "mconet.integration.openai_compatible.OpenAIChatMessageDTO": {
-      "kind": "class",
-      "members": {
-        "from_json": {
-          "kind": "method",
-          "signature": "(value: 'JsonValue', path: 'str' = '') -> 'OpenAIChatMessageDTO'"
-        },
-        "to_json": {
-          "kind": "method",
-          "signature": "(self) -> 'dict[str, JsonValue]'"
-        }
-      },
-      "signature": "(role: 'str', content: 'str', extensions: 'Extensions' = <factory>) -> None"
     },
     "mconet.testing.AdapterContractSuite": {
       "kind": "class",

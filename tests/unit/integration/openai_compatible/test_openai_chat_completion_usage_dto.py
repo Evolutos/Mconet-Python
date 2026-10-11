@@ -5,7 +5,9 @@ from dataclasses import FrozenInstanceError
 from typing import cast
 
 from mconet.core.domain import JsonValue, ModelInteractionError
-from mconet.integration.openai_compatible import OpenAIChatCompletionUsageDTO
+from mconet.integration.openai_compatible._openai_chat_completion_usage_dto import (
+    OpenAIChatCompletionUsageDTO,
+)
 
 
 def _capture(action: Callable[[], object]) -> BaseException:

@@ -5,8 +5,10 @@ from dataclasses import FrozenInstanceError
 from typing import cast
 
 from mconet.core.domain import JsonValue, ModelInteractionError
-from mconet.integration.openai_compatible import (
+from mconet.integration.openai_compatible._openai_chat_completion_error_dto import (
     OpenAIChatCompletionErrorDTO,
+)
+from mconet.integration.openai_compatible._openai_chat_completion_error_response_dto import (
     OpenAIChatCompletionErrorResponseDTO,
 )
 

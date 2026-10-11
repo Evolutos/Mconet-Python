@@ -17,7 +17,6 @@ from mconet.core.domain import (
     OpenIdentifier,
     TextMessageContent,
 )
-from mconet.integration.openai_compatible import OpenAIChatMessageDTO
 from mconet.integration.openai_compatible._messages import (
     EMPTY_CONVERSATION_CODE,
     UNSUPPORTED_MESSAGE_CONTENT_CODE,
@@ -25,6 +24,9 @@ from mconet.integration.openai_compatible._messages import (
     wire_message,
     wire_messages,
     wire_text,
+)
+from mconet.integration.openai_compatible._openai_chat_message_dto import (
+    OpenAIChatMessageDTO,
 )
 
 

@@ -13,10 +13,10 @@ from mconet.core.domain import (
     OpenIdentifier,
     TextMessageContent,
 )
-from mconet.integration.openai_compatible._roles import wire_role
-from mconet.integration.openai_compatible.openai_chat_message_dto import (
+from mconet.integration.openai_compatible._openai_chat_message_dto import (
     OpenAIChatMessageDTO,
 )
+from mconet.integration.openai_compatible._roles import wire_role
 
 UNSUPPORTED_MESSAGE_CONTENT_CODE = "unsupported_message_content"
 """Stable code for request content the text protocol cannot carry."""

@@ -6,14 +6,14 @@ from dataclasses import dataclass, field
 from typing import cast
 
 from mconet.core.domain import Extensions, JsonValue
+from mconet.integration.openai_compatible._openai_chat_completion_error_dto import (
+    OpenAIChatCompletionErrorDTO,
+)
 from mconet.integration.openai_compatible._wire import (
     child_path,
     require_object,
     snapshot_extensions,
     unknown_members,
-)
-from mconet.integration.openai_compatible.openai_chat_completion_error_dto import (
-    OpenAIChatCompletionErrorDTO,
 )
 
 _KNOWN_MEMBERS = frozenset(("error",))

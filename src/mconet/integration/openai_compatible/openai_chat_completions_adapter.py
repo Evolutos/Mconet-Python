@@ -37,6 +37,15 @@ from mconet.core.spi import (
 from mconet.integration.openai_compatible._conversation import conversation_input
 from mconet.integration.openai_compatible._errors import service_error
 from mconet.integration.openai_compatible._messages import wire_messages
+from mconet.integration.openai_compatible._openai_chat_completion_error_response_dto import (
+    OpenAIChatCompletionErrorResponseDTO,
+)
+from mconet.integration.openai_compatible._openai_chat_completion_request_dto import (
+    OpenAIChatCompletionRequestDTO,
+)
+from mconet.integration.openai_compatible._openai_chat_completion_response_dto import (
+    OpenAIChatCompletionResponseDTO,
+)
 from mconet.integration.openai_compatible._parameters import wire_parameters
 from mconet.integration.openai_compatible._response import (
     output_messages,
@@ -44,15 +53,6 @@ from mconet.integration.openai_compatible._response import (
     resolved_model,
     single_choice,
     token_usage,
-)
-from mconet.integration.openai_compatible.openai_chat_completion_error_response_dto import (
-    OpenAIChatCompletionErrorResponseDTO,
-)
-from mconet.integration.openai_compatible.openai_chat_completion_request_dto import (
-    OpenAIChatCompletionRequestDTO,
-)
-from mconet.integration.openai_compatible.openai_chat_completion_response_dto import (
-    OpenAIChatCompletionResponseDTO,
 )
 
 OPENAI_CHAT_COMPLETIONS_PROTOCOL_ID = OpenIdentifier("openai.chat-completions")

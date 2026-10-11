@@ -6,7 +6,9 @@ from types import MappingProxyType
 from typing import cast
 
 from mconet.core.domain import JsonValue, ModelInteractionError
-from mconet.integration.openai_compatible import OpenAIChatMessageDTO
+from mconet.integration.openai_compatible._openai_chat_message_dto import (
+    OpenAIChatMessageDTO,
+)
 
 
 def _capture(action: Callable[[], object]) -> BaseException:

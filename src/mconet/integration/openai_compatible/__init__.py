@@ -1,39 +1,13 @@
 """OpenAI-compatible text conversation integration module."""
 
-from mconet.integration.openai_compatible.openai_chat_completion_choice_dto import (
-    OpenAIChatCompletionChoiceDTO,
-)
-from mconet.integration.openai_compatible.openai_chat_completion_error_dto import (
-    OpenAIChatCompletionErrorDTO,
-)
-from mconet.integration.openai_compatible.openai_chat_completion_error_response_dto import (
-    OpenAIChatCompletionErrorResponseDTO,
-)
-from mconet.integration.openai_compatible.openai_chat_completion_request_dto import (
-    OpenAIChatCompletionRequestDTO,
-)
-from mconet.integration.openai_compatible.openai_chat_completion_response_dto import (
-    OpenAIChatCompletionResponseDTO,
-)
-from mconet.integration.openai_compatible.openai_chat_completion_usage_dto import (
-    OpenAIChatCompletionUsageDTO,
-)
+# Wire DTOs stay in private modules so that the protocol JSON shape never becomes
+# a public SDK contract; only the adapter and its frozen protocol id are exported.
 from mconet.integration.openai_compatible.openai_chat_completions_adapter import (
     OPENAI_CHAT_COMPLETIONS_PROTOCOL_ID,
     OpenAIChatCompletionsAdapter,
 )
-from mconet.integration.openai_compatible.openai_chat_message_dto import (
-    OpenAIChatMessageDTO,
-)
 
 __all__: tuple[str, ...] = (
     "OPENAI_CHAT_COMPLETIONS_PROTOCOL_ID",
-    "OpenAIChatCompletionChoiceDTO",
-    "OpenAIChatCompletionErrorDTO",
-    "OpenAIChatCompletionErrorResponseDTO",
-    "OpenAIChatCompletionRequestDTO",
-    "OpenAIChatCompletionResponseDTO",
-    "OpenAIChatCompletionUsageDTO",
     "OpenAIChatCompletionsAdapter",
-    "OpenAIChatMessageDTO",
 )

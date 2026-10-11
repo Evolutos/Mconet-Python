@@ -14,10 +14,6 @@ from mconet.core.spi import (
     TransportOutcome,
     TransportResponseMetadata,
 )
-from mconet.integration.openai_compatible import (
-    OpenAIChatCompletionErrorDTO,
-    OpenAIChatCompletionErrorResponseDTO,
-)
 from mconet.integration.openai_compatible._errors import (
     SERVICE_AUTHENTICATION_FAILED_CODE,
     SERVICE_CONTENT_FILTERED_CODE,
@@ -25,6 +21,12 @@ from mconet.integration.openai_compatible._errors import (
     SERVICE_PERMISSION_DENIED_CODE,
     SERVICE_RATE_LIMITED_CODE,
     service_error,
+)
+from mconet.integration.openai_compatible._openai_chat_completion_error_dto import (
+    OpenAIChatCompletionErrorDTO,
+)
+from mconet.integration.openai_compatible._openai_chat_completion_error_response_dto import (
+    OpenAIChatCompletionErrorResponseDTO,
 )
 from mconet.integration.openai_compatible.openai_chat_completions_adapter import (
     OpenAIChatCompletionsAdapter,

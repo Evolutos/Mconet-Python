@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import Literal, cast
 
 from mconet.core.domain import JsonValue, validate_json_value_numbers
-from mconet.integration.openai_compatible.openai_chat_message_dto import (
+from mconet.integration.openai_compatible._openai_chat_message_dto import (
     OpenAIChatMessageDTO,
 )
 

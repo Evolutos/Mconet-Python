@@ -12,7 +12,7 @@ from mconet.core.domain import (
     validate_duration,
 )
 from mconet.core.spi import TransportResponseMetadata
-from mconet.integration.openai_compatible.openai_chat_completion_error_response_dto import (
+from mconet.integration.openai_compatible._openai_chat_completion_error_response_dto import (
     OpenAIChatCompletionErrorResponseDTO,
 )
 

@@ -6,6 +6,12 @@ from dataclasses import dataclass, field
 from typing import cast
 
 from mconet.core.domain import Extensions, JsonValue
+from mconet.integration.openai_compatible._openai_chat_completion_choice_dto import (
+    OpenAIChatCompletionChoiceDTO,
+)
+from mconet.integration.openai_compatible._openai_chat_completion_usage_dto import (
+    OpenAIChatCompletionUsageDTO,
+)
 from mconet.integration.openai_compatible._wire import (
     child_path,
     optional_string,
@@ -13,12 +19,6 @@ from mconet.integration.openai_compatible._wire import (
     require_object,
     snapshot_extensions,
     unknown_members,
-)
-from mconet.integration.openai_compatible.openai_chat_completion_choice_dto import (
-    OpenAIChatCompletionChoiceDTO,
-)
-from mconet.integration.openai_compatible.openai_chat_completion_usage_dto import (
-    OpenAIChatCompletionUsageDTO,
 )
 
 _KNOWN_MEMBERS = frozenset(("id", "model", "choices", "usage"))

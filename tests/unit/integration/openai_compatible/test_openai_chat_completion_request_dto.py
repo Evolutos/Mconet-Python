@@ -4,8 +4,10 @@ from collections.abc import Callable
 from dataclasses import FrozenInstanceError
 from typing import cast
 
-from mconet.integration.openai_compatible import (
+from mconet.integration.openai_compatible._openai_chat_completion_request_dto import (
     OpenAIChatCompletionRequestDTO,
+)
+from mconet.integration.openai_compatible._openai_chat_message_dto import (
     OpenAIChatMessageDTO,
 )
 
