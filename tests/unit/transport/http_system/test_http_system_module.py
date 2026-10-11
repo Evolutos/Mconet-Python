@@ -15,6 +15,7 @@ from mconet.transport.http_system import (
     map_http_query,
     map_http_status,
     map_http_url,
+    summarize_http_response_headers,
 )
 
 
@@ -35,6 +36,7 @@ def test_http_system_transport_exports_request_field_mapping() -> None:
         "map_http_query",
         "map_http_status",
         "map_http_url",
+        "summarize_http_response_headers",
     )
     assert mconet.transport.http_system.HttpBaseUrl is HttpBaseUrl
     assert mconet.transport.http_system.HttpHeaderField is HttpHeaderField
@@ -60,3 +62,7 @@ def test_http_system_transport_exports_request_field_mapping() -> None:
     assert mconet.transport.http_system.map_http_query is map_http_query
     assert mconet.transport.http_system.map_http_status is map_http_status
     assert mconet.transport.http_system.map_http_url is map_http_url
+    assert (
+        mconet.transport.http_system.summarize_http_response_headers
+        is summarize_http_response_headers
+    )

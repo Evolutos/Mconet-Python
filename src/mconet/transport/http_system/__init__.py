@@ -1,8 +1,8 @@
 """Default HTTP transport backed by Python platform networking.
 
-The HTTP request mappers and response media-type extraction are the public
-surface of this module until later work adds the response header summary and
-the transport implementation.
+The HTTP request mappers, response media-type extraction, and response header
+summary are the public surface of this module until later work adds
+cancellation, deadlines, and the transport implementation.
 """
 
 from mconet.transport.http_system.http_body import map_http_body
@@ -12,6 +12,9 @@ from mconet.transport.http_system.http_default_header import apply_default_http_
 from mconet.transport.http_system.http_header import HttpHeaderField, map_http_headers
 from mconet.transport.http_system.http_method import map_http_method
 from mconet.transport.http_system.http_query import map_http_query
+from mconet.transport.http_system.http_response_header_summary import (
+    summarize_http_response_headers,
+)
 from mconet.transport.http_system.http_response_media_type import (
     extract_http_response_media_type,
 )
@@ -32,4 +35,5 @@ __all__: tuple[str, ...] = (
     "map_http_query",
     "map_http_status",
     "map_http_url",
+    "summarize_http_response_headers",
 )
