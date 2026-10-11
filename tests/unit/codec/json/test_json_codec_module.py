@@ -2,6 +2,7 @@
 
 import mconet.codec.json
 from mconet.codec.json import (
+    JsonErrorPayloadDecoder,
     JsonPayload,
     JsonPayloadEncoder,
     JsonSuccessPayloadDecoder,
@@ -10,17 +11,19 @@ from mconet.codec.json import (
 )
 
 
-def test_json_codec_exports_success_decoding_without_error_decoding() -> None:
-    """Verify error decoding stays out of the public JSON module."""
-    # Success decoding is available. The error decoder, media-type matcher, and
-    # component type contracts remain later work.
+def test_json_codec_exports_payload_codecs_without_component_metadata() -> None:
+    """Verify media-type matching and type contracts stay out of the module."""
+    # Encoding, bounded collection, and both decoders are available. The
+    # media-type matcher and component type contracts remain later work.
     assert mconet.codec.json.__all__ == (
+        "JsonErrorPayloadDecoder",
         "JsonPayload",
         "JsonPayloadEncoder",
         "JsonSuccessPayloadDecoder",
         "collect_bounded_bytes",
         "encode_utf8",
     )
+    assert mconet.codec.json.JsonErrorPayloadDecoder is JsonErrorPayloadDecoder
     assert mconet.codec.json.JsonPayload is JsonPayload
     assert mconet.codec.json.JsonPayloadEncoder is JsonPayloadEncoder
     assert mconet.codec.json.JsonSuccessPayloadDecoder is JsonSuccessPayloadDecoder
