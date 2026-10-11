@@ -41,6 +41,27 @@ def unsupported_model_integration_error() -> ModelInteractionError:
     )
 
 
+def unsupported_direct_adapter_error() -> ModelInteractionError:
+    """Return the failure for an injected adapter that rejects the request.
+
+    It shares the ``unsupported_model_integration`` code, because the only
+    integration the caller allowed cannot serve the request, but its message
+    tells the caller the injected adapter, not the default resolver, refused.
+
+    Returns:
+        A new ``unsupported_feature`` error in the resolution phase.
+    """
+    return ModelInteractionError(
+        category=_UNSUPPORTED_FEATURE,
+        phase=_MODEL_INTEGRATION_RESOLUTION,
+        code=UNSUPPORTED_MODEL_INTEGRATION_CODE,
+        message=(
+            "The injected task protocol adapter does not support the target, "
+            "task, and mode."
+        ),
+    )
+
+
 def ambiguous_model_integration_error() -> ModelInteractionError:
     """Return the failure for resolver assembly with no single answer.
 
