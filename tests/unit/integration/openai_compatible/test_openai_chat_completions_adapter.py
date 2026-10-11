@@ -2,9 +2,10 @@
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Literal
+from typing import Literal, cast
 
 from mconet.core.domain import (
+    ArtifactCatalog,
     ConversationInputNode,
     ConversationTaskBuilder,
     ConversationTaskResult,
@@ -13,6 +14,7 @@ from mconet.core.domain import (
     GenerationParametersNode,
     HeaderField,
     Headers,
+    JsonValue,
     MediaType,
     MessageDocument,
     MessageElementKind,
@@ -22,11 +24,15 @@ from mconet.core.domain import (
     ModelInteractionError,
     ModelRequest,
     ModelRequestBuilder,
+    ModelTarget,
+    ModelTaskRequest,
     NamedModel,
     OpenIdentifier,
     QueryParameter,
     QueryParameters,
     ResolvedServiceAccess,
+    ServiceAccess,
+    TaskDescriptor,
     TaskDocument,
     TaskGroupNode,
     TaskNode,
@@ -39,6 +45,9 @@ from mconet.core.spi import (
     DecoderSelection,
     EncoderSelection,
     TransportSelection,
+)
+from mconet.integration.openai_compatible._conversation import (
+    UNSUPPORTED_TASK_REQUEST_CODE,
 )
 from mconet.integration.openai_compatible.openai_chat_completions_adapter import (
     CHAT_COMPLETIONS_PATH,
@@ -341,6 +350,136 @@ def test_prepare_plan_rejects_endpoints_the_profile_forbids_without_echoing() ->
             "without a query or fragment."
         )
         assert "token-value" not in str(error)
+
+
+@dataclass(frozen=True, slots=True)
+class _ForeignTask:
+    """Task request that reports the conversation type without being one."""
+
+    descriptor: TaskDescriptor
+    document: TaskDocument
+    artifacts: ArtifactCatalog = field(default_factory=ArtifactCatalog)
+    metadata: Extensions = field(default_factory=_empty_extensions)
+    extensions: Extensions = field(default_factory=_empty_extensions)
+
+
+@dataclass(frozen=True, slots=True)
+class _RawRequest:
+    """Model request wrapper that skips builder validation."""
+
+    target: ModelTarget
+    task: ModelTaskRequest
+    service_access: ServiceAccess | None = None
+    metadata: Extensions = field(default_factory=_empty_extensions)
+    extensions: Extensions = field(default_factory=_empty_extensions)
+
+
+def _payload(request: ModelRequest) -> dict[str, JsonValue]:
+    """Build a request and return its payload body."""
+    adapter = OpenAIChatCompletionsAdapter()
+    plan = adapter.prepare_plan(request, _access(), _Mode())
+    request_plan = adapter.build_request(request, plan)
+    assert request_plan.execution_plan is plan
+    assert request_plan.payload.type_id == _JSON_VALUE
+    assert request_plan.payload.schema_id is None
+    return cast(dict[str, JsonValue], request_plan.payload.value_as(dict))
+
+
+def test_build_request_sends_model_messages_and_stream_false_only() -> None:
+    """Verify a request without parameters sends only required members."""
+    body = _payload(_request())
+
+    assert body == {
+        "model": "fixture-model",
+        "messages": [
+            {"role": "system", "content": "Be exact."},
+            {"role": "user", "content": "Hi"},
+        ],
+        "stream": False,
+    }
+
+
+def test_build_request_writes_every_parameter_in_profile_order() -> None:
+    """Verify member order and exact parameter values."""
+    parameters = GenerationParameters(
+        temperature=0.25,
+        top_p=0.9,
+        max_output_tokens=512,
+        stop=("<END>", "\u505c\u6b62"),
+        seed=42,
+    )
+
+    body = _payload(_request(parameters))
+
+    assert list(body) == [
+        "model",
+        "messages",
+        "temperature",
+        "top_p",
+        "max_tokens",
+        "stop",
+        "seed",
+        "stream",
+    ]
+    assert body["temperature"] == 0.25
+    assert body["top_p"] == 0.9
+    assert body["max_tokens"] == 512
+    assert body["stop"] == ["<END>", "\u505c\u6b62"]
+    assert body["seed"] == 42
+    assert body["stream"] is False
+
+
+def test_build_request_uses_the_target_model_name_exactly() -> None:
+    """Verify the model member is the target model name, not the deployment."""
+    target = _Target(model=NamedModel("Vendor/Model-1 "), deployment_id="east")
+
+    body = _payload(_request(target=target))
+
+    assert body["model"] == "Vendor/Model-1 "
+
+
+def test_build_request_rejects_a_foreign_task_request() -> None:
+    """Verify a task that only reports the conversation type is not guessed at."""
+    real = _request()
+    foreign = _RawRequest(
+        _Target(), _ForeignTask(real.task.descriptor, real.task.document)
+    )
+    adapter = OpenAIChatCompletionsAdapter()
+    plan = adapter.prepare_plan(real, _access(), _Mode())
+
+    error = _capture(lambda: adapter.build_request(foreign, plan))
+
+    assert isinstance(error, ModelInteractionError)
+    assert error.category.id.value == "unsupported_feature"
+    assert error.phase.id.value == "protocol_adaptation"
+    assert error.code == UNSUPPORTED_TASK_REQUEST_CODE
+
+
+def test_build_request_reports_unsupported_message_roles() -> None:
+    """Verify message mapping failures reach the caller unchanged."""
+    real = _request()
+    root = MessageGroup(
+        "root",
+        _Kind(OpenIdentifier("message.root")),
+        (_entry("tool", "message.tool", "result"),),
+    )
+    document = TaskDocument(
+        "1.0",
+        TaskGroupNode(
+            "root",
+            _TaskKind(OpenIdentifier("task.root")),
+            (ConversationInputNode("input", MessageDocument("1.0", "input", root)),),
+        ),
+    )
+    task = ConversationTaskBuilder(document).build()
+    request = ModelRequestBuilder(_Target(), task).build()
+    adapter = OpenAIChatCompletionsAdapter()
+    plan = adapter.prepare_plan(real, _access(), _Mode())
+
+    error = _capture(lambda: adapter.build_request(request, plan))
+
+    assert isinstance(error, ModelInteractionError)
+    assert error.code == "unsupported_message_role"
 
 
 def test_prepare_plan_keeps_an_endpoint_with_a_base_path() -> None:

@@ -22,9 +22,17 @@ from mconet.core.spi import (
     ComponentTypePort,
     DecoderSelection,
     EncoderSelection,
+    ErasedRuntimeValue,
     ProtocolExecutionPlan,
+    ProtocolRequestPlan,
     TransportRequestPlan,
     TransportSelection,
+)
+from mconet.integration.openai_compatible._conversation import conversation_input
+from mconet.integration.openai_compatible._messages import wire_messages
+from mconet.integration.openai_compatible._parameters import wire_parameters
+from mconet.integration.openai_compatible.openai_chat_completion_request_dto import (
+    OpenAIChatCompletionRequestDTO,
 )
 
 OPENAI_CHAT_COMPLETIONS_PROTOCOL_ID = OpenIdentifier("openai.chat-completions")
@@ -156,6 +164,44 @@ class OpenAIChatCompletionsAdapter:
             transport=TransportSelection(_HTTP_TRANSPORT_KIND),
             type_contract=_ADAPTER_TYPE_CONTRACT,
         )
+
+    def build_request(
+        self,
+        request: ModelRequest,
+        plan: ProtocolExecutionPlan,
+    ) -> ProtocolRequestPlan:
+        """Return the chat completion body paired with the prepared plan.
+
+        The body is ``model`` (the target model name), ``messages`` (input
+        entries in preorder), the set sampling members, and
+        ``"stream": false``, in profile order. It is not encoded here.
+
+        Args:
+            request: Validated conversation request.
+            plan: Plan from :meth:`prepare_plan`, kept by identity because
+                components were already selected from it.
+
+        Returns:
+            A request plan whose payload is a ``json.value`` holding the body.
+
+        Raises:
+            ModelInteractionError: If the task is not a ConversationTaskRequest,
+                or the conversation has no entry or an unsupported role,
+                content, or element.
+        """
+        messages, parameters = conversation_input(request.task)
+        members = wire_parameters(parameters)
+        body = OpenAIChatCompletionRequestDTO(
+            model=request.target.model.name,
+            messages=wire_messages(messages),
+            temperature=members.temperature,
+            top_p=members.top_p,
+            max_tokens=members.max_tokens,
+            stop=members.stop,
+            seed=members.seed,
+        )
+        payload = ErasedRuntimeValue(_JSON_VALUE_TYPE_ID, body.to_json())
+        return ProtocolRequestPlan(payload, plan)
 
 
 def _profile_endpoint(endpoint: UriValue | None) -> UriValue:
