@@ -2,9 +2,9 @@
 
 The HTTP request mappers, response media-type extraction, response header
 summary, caller-cancellation bridge, deadline gate, network-timeout
-normalization, bounded response reading, and connection release on an
-oversized body are the public surface of this module until later work adds
-redirect policy and the transport implementation.
+normalization, bounded response reading, connection release on an
+oversized body, and redirect header policy are the public surface of this
+module until later work adds TLS rules and the transport implementation.
 """
 
 from mconet.transport.http_system.http_body import map_http_body
@@ -19,6 +19,7 @@ from mconet.transport.http_system.http_network_timeout import (
     normalize_http_network_timeout,
 )
 from mconet.transport.http_system.http_query import map_http_query
+from mconet.transport.http_system.http_redirect import headers_for_http_redirect
 from mconet.transport.http_system.http_response_body import (
     read_bounded_http_response_body,
 )
@@ -44,6 +45,7 @@ __all__: tuple[str, ...] = (
     "apply_http_content_type",
     "ensure_http_deadline",
     "extract_http_response_media_type",
+    "headers_for_http_redirect",
     "map_http_body",
     "map_http_headers",
     "map_http_method",

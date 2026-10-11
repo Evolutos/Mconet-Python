@@ -11,6 +11,7 @@ from mconet.transport.http_system import (
     apply_http_content_type,
     ensure_http_deadline,
     extract_http_response_media_type,
+    headers_for_http_redirect,
     map_http_body,
     map_http_headers,
     map_http_method,
@@ -26,7 +27,7 @@ from mconet.transport.http_system import (
 
 def test_http_system_transport_exports_request_field_mapping() -> None:
     """Verify the system HTTP module publishes field mapping and defaults."""
-    # Redirect policy and the client remain later work.
+    # TLS rules and the client remain later work.
     assert mconet.transport.http_system.__all__ == (
         "HttpBaseUrl",
         "HttpCancellationBridge",
@@ -37,6 +38,7 @@ def test_http_system_transport_exports_request_field_mapping() -> None:
         "apply_http_content_type",
         "ensure_http_deadline",
         "extract_http_response_media_type",
+        "headers_for_http_redirect",
         "map_http_body",
         "map_http_headers",
         "map_http_method",
@@ -68,6 +70,10 @@ def test_http_system_transport_exports_request_field_mapping() -> None:
     assert (
         mconet.transport.http_system.extract_http_response_media_type
         is extract_http_response_media_type
+    )
+    assert (
+        mconet.transport.http_system.headers_for_http_redirect
+        is headers_for_http_redirect
     )
     assert mconet.transport.http_system.map_http_headers is map_http_headers
     assert mconet.transport.http_system.map_http_method is map_http_method
