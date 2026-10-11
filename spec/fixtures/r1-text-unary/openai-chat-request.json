@@ -1,0 +1,250 @@
+{
+  "cases": [
+    {
+      "entries": [
+        {"role": "message.system", "texts": ["你是一个严谨的助手。"]},
+        {"role": "message.user", "texts": ["你好，世界 👋\n第二行"]},
+        {"role": "message.assistant", "texts": ["Café", "é — preserved combining form"]},
+        {"role": "message.user", "texts": ["東京の天気は？ ☀️"]}
+      ],
+      "expectedBody": {
+        "model": "fixture-model",
+        "messages": [
+          {"role": "system", "content": "你是一个严谨的助手。"},
+          {"role": "user", "content": "你好，世界 👋\n第二行"},
+          {"role": "assistant", "content": "Caféé — preserved combining form"},
+          {"role": "user", "content": "東京の天気は？ ☀️"}
+        ],
+        "stream": false
+      },
+      "name": "multi-turn-unicode-without-parameters",
+      "policy": "compatible"
+    },
+    {
+      "entries": [
+        {"children": [{"role": "message.system", "texts": ["Be exact."]}], "group": "instructions"},
+        {
+          "children": [
+            {"role": "message.user", "texts": ["Hi"]},
+            {"children": [{"role": "message.assistant", "texts": ["Hel", "lo"]}], "group": "inner"}
+          ],
+          "group": "history"
+        },
+        {"role": "message.user", "texts": ["Next", ""]}
+      ],
+      "expectedBody": {
+        "model": "fixture-model",
+        "messages": [
+          {"role": "system", "content": "Be exact."},
+          {"role": "user", "content": "Hi"},
+          {"role": "assistant", "content": "Hello"},
+          {"role": "user", "content": "Next"}
+        ],
+        "stream": false
+      },
+      "name": "nested-groups-in-preorder",
+      "policy": "strict"
+    },
+    {
+      "entries": [{"role": "message.user", "texts": ["Hi"]}],
+      "expectedBody": {
+        "model": "fixture-model",
+        "messages": [{"role": "user", "content": "Hi"}],
+        "temperature": 0.25,
+        "stream": false
+      },
+      "name": "temperature-only",
+      "parameters": {"temperature": 0.25},
+      "policy": "strict"
+    },
+    {
+      "entries": [{"role": "message.user", "texts": ["Hi"]}],
+      "expectedBody": {
+        "model": "fixture-model",
+        "messages": [{"role": "user", "content": "Hi"}],
+        "temperature": 2,
+        "stream": false
+      },
+      "name": "temperature-at-the-strict-maximum",
+      "parameters": {"temperature": 2},
+      "policy": "strict"
+    },
+    {
+      "entries": [{"role": "message.user", "texts": ["Hi"]}],
+      "expectedError": {
+        "category": "unsupported_feature",
+        "code": "unsupported_generation_parameter",
+        "phase": "protocol_adaptation"
+      },
+      "name": "temperature-above-the-maximum-under-strict",
+      "parameters": {"temperature": 2.5},
+      "policy": "strict"
+    },
+    {
+      "entries": [{"role": "message.user", "texts": ["Hi"]}],
+      "expectedBody": {
+        "model": "fixture-model",
+        "messages": [{"role": "user", "content": "Hi"}],
+        "temperature": 2.5,
+        "stream": false
+      },
+      "name": "temperature-above-the-maximum-under-compatible",
+      "parameters": {"temperature": 2.5},
+      "policy": "compatible"
+    },
+    {
+      "entries": [{"role": "message.user", "texts": ["Hi"]}],
+      "expectedBody": {
+        "model": "fixture-model",
+        "messages": [{"role": "user", "content": "Hi"}],
+        "top_p": 0.9,
+        "stream": false
+      },
+      "name": "top-p-only",
+      "parameters": {"topP": 0.9},
+      "policy": "strict"
+    },
+    {
+      "entries": [{"role": "message.user", "texts": ["Hi"]}],
+      "expectedBody": {
+        "model": "fixture-model",
+        "messages": [{"role": "user", "content": "Hi"}],
+        "max_tokens": 1,
+        "stream": false
+      },
+      "name": "max-output-tokens-minimum",
+      "parameters": {"maxOutputTokens": 1},
+      "policy": "strict"
+    },
+    {
+      "entries": [{"role": "message.user", "texts": ["Hi"]}],
+      "expectedBody": {
+        "model": "fixture-model",
+        "messages": [{"role": "user", "content": "Hi"}],
+        "max_tokens": 9007199254740991,
+        "stream": false
+      },
+      "name": "max-output-tokens-largest-safe-integer",
+      "parameters": {"maxOutputTokens": 9007199254740991},
+      "policy": "strict"
+    },
+    {
+      "entries": [{"role": "message.user", "texts": ["Hi"]}],
+      "expectedBody": {
+        "model": "fixture-model",
+        "messages": [{"role": "user", "content": "Hi"}],
+        "stream": false
+      },
+      "name": "empty-stop-is-omitted",
+      "parameters": {"stop": []},
+      "policy": "strict"
+    },
+    {
+      "entries": [{"role": "message.user", "texts": ["Hi"]}],
+      "expectedBody": {
+        "model": "fixture-model",
+        "messages": [{"role": "user", "content": "Hi"}],
+        "stop": [" "],
+        "stream": false
+      },
+      "name": "single-stop-stays-an-array",
+      "parameters": {"stop": [" "]},
+      "policy": "strict"
+    },
+    {
+      "entries": [{"role": "message.user", "texts": ["Hi"]}],
+      "expectedBody": {
+        "model": "fixture-model",
+        "messages": [{"role": "user", "content": "Hi"}],
+        "stop": ["<END>", "停止", "🛑"],
+        "stream": false
+      },
+      "name": "multiple-stops-keep-their-order",
+      "parameters": {"stop": ["<END>", "停止", "🛑"]},
+      "policy": "strict"
+    },
+    {
+      "entries": [{"role": "message.user", "texts": ["Hi"]}],
+      "expectedBody": {
+        "model": "fixture-model",
+        "messages": [{"role": "user", "content": "Hi"}],
+        "seed": -42,
+        "stream": false
+      },
+      "name": "seed-is-supported-under-strict",
+      "parameters": {"seed": -42},
+      "policy": "strict"
+    },
+    {
+      "entries": [
+        {"role": "message.system", "texts": ["Be exact."]},
+        {"role": "message.user", "texts": ["Hi"]}
+      ],
+      "expectedBody": {
+        "model": "fixture-model",
+        "messages": [
+          {"role": "system", "content": "Be exact."},
+          {"role": "user", "content": "Hi"}
+        ],
+        "temperature": 0.25,
+        "top_p": 0.9,
+        "max_tokens": 512,
+        "stop": ["<END>", "停止"],
+        "seed": 42,
+        "stream": false
+      },
+      "name": "every-parameter-in-profile-order",
+      "parameters": {
+        "maxOutputTokens": 512,
+        "seed": 42,
+        "stop": ["<END>", "停止"],
+        "temperature": 0.25,
+        "topP": 0.9
+      },
+      "policy": "strict"
+    },
+    {
+      "entries": [{"rawValue": "developer", "role": "vendor.developer", "texts": ["Rules"]}],
+      "expectedError": {
+        "category": "unsupported_feature",
+        "code": "unsupported_message_role",
+        "phase": "protocol_adaptation"
+      },
+      "name": "unknown-role-under-strict",
+      "policy": "strict"
+    },
+    {
+      "entries": [{"rawValue": "developer", "role": "vendor.developer", "texts": ["Rules"]}],
+      "expectedBody": {
+        "model": "fixture-model",
+        "messages": [{"role": "developer", "content": "Rules"}],
+        "stream": false
+      },
+      "name": "unknown-role-raw-value-under-compatible",
+      "policy": "compatible"
+    },
+    {
+      "entries": [{"role": "message.tool", "texts": ["result"]}],
+      "expectedError": {
+        "category": "unsupported_feature",
+        "code": "unsupported_message_role",
+        "phase": "protocol_adaptation"
+      },
+      "name": "unknown-role-without-raw-value-under-compatible",
+      "policy": "compatible"
+    },
+    {
+      "entries": [{"children": [], "group": "empty"}],
+      "expectedError": {
+        "category": "invalid_request",
+        "code": "empty_conversation",
+        "phase": "protocol_adaptation"
+      },
+      "name": "conversation-without-entries",
+      "policy": "compatible"
+    }
+  ],
+  "format_version": 1,
+  "model": "fixture-model",
+  "protocolId": "openai.chat-completions"
+}
