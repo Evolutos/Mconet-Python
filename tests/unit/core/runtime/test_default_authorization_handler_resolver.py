@@ -243,3 +243,88 @@ def test_resolver_selects_the_requirement_preferred_shared_mode() -> None:
         assertion=assert_unsigned,
     )
     assert handler.apply_calls == 0
+
+
+def _assert_ambiguous(error: BaseException) -> None:
+    """Require the stable multiple-match failure without handler names."""
+    assert isinstance(error, ModelInteractionError)
+    assert error.code == "ambiguous_authorization_handler"
+    assert error.message == (
+        "More than one authorization handler supports this decision."
+    )
+    assert str(error.category.id) == "authentication"
+    assert str(error.phase.id) == "authorization_resolution"
+
+
+def test_resolver_rejects_two_handlers_for_the_same_decision() -> None:
+    """Verify two compatible handlers fail instead of using tuple order."""
+    first = NoAuthorizationHandler()
+    second = NoAuthorizationHandler()
+    ignored = _RecordingHandler(frozenset())
+    orders = (
+        (first, second),
+        (second, first),
+        (ignored, first, second),
+        (first, ignored, second),
+    )
+
+    for handlers in orders:
+        AuthorizationHandlerResolverContractSuite(
+            DefaultAuthorizationHandlerResolver()
+        ).assert_ambiguous_match(
+            NoAuthorization(),
+            BodySigningRequirement(),
+            handlers,
+            assertion=_assert_ambiguous,
+        )
+
+    assert ignored.apply_calls == 0
+
+
+def test_resolver_rejects_handlers_that_support_different_accepted_modes() -> None:
+    """Verify distinct modes do not choose one of two compatible handlers."""
+    digest = _RecordingHandler(frozenset(("precomputed_digest",)))
+    unsigned = _RecordingHandler(frozenset(("unsigned_payload",)))
+    requirement = BodySigningRequirement(
+        required=True,
+        acceptable_modes=("precomputed_digest", "unsigned_payload"),
+    )
+    orders = ((digest, unsigned), (unsigned, digest))
+
+    for handlers in orders:
+        AuthorizationHandlerResolverContractSuite(
+            DefaultAuthorizationHandlerResolver()
+        ).assert_ambiguous_match(
+            NoAuthorization(),
+            requirement,
+            handlers,
+            assertion=_assert_ambiguous,
+        )
+
+    assert digest.apply_calls == 0
+    assert unsigned.apply_calls == 0
+
+
+def test_resolver_rejects_duplicate_api_key_handlers_before_credentials() -> None:
+    """Verify an ambiguous API key match does not read the key."""
+    calls: list[str] = []
+
+    async def provider(_context: AuthorizationContext) -> SecretValue:
+        calls.append("resolved")
+        return SecretValue(_PLACEHOLDER)
+
+    authorization = ApiKeyHeaderAuthorization(
+        "X-Api-Key",
+        "",
+        DynamicCredentialSource(provider),
+    )
+
+    AuthorizationHandlerResolverContractSuite(
+        DefaultAuthorizationHandlerResolver()
+    ).assert_ambiguous_match(
+        authorization,
+        BodySigningRequirement(),
+        (ApiKeyHeaderAuthorizationHandler(), ApiKeyHeaderAuthorizationHandler()),
+        assertion=_assert_ambiguous,
+    )
+    assert calls == []
