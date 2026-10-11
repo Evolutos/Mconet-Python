@@ -81,6 +81,15 @@ def require_count(document: dict[str, JsonValue], name: str, path: str) -> int:
     return value
 
 
+def optional_count(document: dict[str, JsonValue], name: str, path: str) -> int | None:
+    """Return one optional non-negative integer member, or None when absent."""
+    # Absence is allowed, but an explicit null is not: the frozen profile marks
+    # these members optional and not nullable.
+    if name not in document:
+        return None
+    return require_count(document, name, path)
+
+
 def unknown_members(
     document: dict[str, JsonValue],
     known: frozenset[str],
