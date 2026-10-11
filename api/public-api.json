@@ -1712,6 +1712,11 @@
       },
       "signature": "() -> 'None'"
     },
+    "mconet.testing.ContractCase": {
+      "kind": "class",
+      "members": {},
+      "signature": "(component: 'str', fixture: 'str') -> None"
+    },
     "mconet.testing.ControllableCancellationSignal": {
       "kind": "class",
       "members": {
@@ -2199,6 +2204,18 @@
         }
       },
       "signature": "(transport: 'Transport') -> 'None'"
+    },
+    "mconet.testing.annotate_contract_failure": {
+      "kind": "function",
+      "signature": "(error: 'BaseException', case: 'ContractCase') -> 'None'"
+    },
+    "mconet.testing.contract_case_for_node": {
+      "kind": "function",
+      "signature": "(node_id: 'str') -> 'ContractCase | None'"
+    },
+    "mconet.testing.contract_suite_components": {
+      "kind": "function",
+      "signature": "() -> 'MappingProxyType[str, str]'"
     },
     "mconet.testing.json_fixtures_equal": {
       "kind": "function",

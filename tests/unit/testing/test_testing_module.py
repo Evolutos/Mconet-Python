@@ -10,6 +10,7 @@ def test_testing_module_imports_without_public_utilities() -> None:
         "AuthorizationHandlerContractSuite",
         "AuthorizationHandlerResolverContractSuite",
         "ComponentCallRecorder",
+        "ContractCase",
         "ControllableCancellationSignal",
         "DeterministicIdGenerator",
         "ErrorPayloadDecoderContractSuite",
@@ -42,5 +43,8 @@ def test_testing_module_imports_without_public_utilities() -> None:
         "StubTaskProtocolAdapter",
         "SuccessPayloadDecoderContractSuite",
         "TransportContractSuite",
+        "annotate_contract_failure",
+        "contract_case_for_node",
+        "contract_suite_components",
         "json_fixtures_equal",
     )

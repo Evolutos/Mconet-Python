@@ -53,7 +53,11 @@ def test_contract_stage_is_independent_and_blocks_conformance() -> None:
 
     assert "name: Contract" in contract_job
     assert "needs: unit" in contract_job
-    assert "- run: pytest tests/contract" in contract_job
+    assert "- run: python scripts/run_contract_ci.py" in contract_job
+    assert "name: contract-report" in contract_job
+    assert "path: contract-report.xml" in contract_job
+    assert "retention-days: 14" in contract_job
+    assert "if: always()" in contract_job
     assert "needs: contract" in conformance_job
 
 

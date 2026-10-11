@@ -8,6 +8,12 @@ from mconet.testing.authorization_handler_resolver_contract_suite import (
     AuthorizationHandlerResolverContractSuite,
 )
 from mconet.testing.component_call_recorder import ComponentCallRecorder
+from mconet.testing.contract_location import (
+    ContractCase,
+    annotate_contract_failure,
+    contract_case_for_node,
+    contract_suite_components,
+)
 from mconet.testing.controllable_cancellation_signal import (
     ControllableCancellationSignal,
 )
@@ -65,6 +71,7 @@ __all__ = (
     "AuthorizationHandlerContractSuite",
     "AuthorizationHandlerResolverContractSuite",
     "ComponentCallRecorder",
+    "ContractCase",
     "ControllableCancellationSignal",
     "DeterministicIdGenerator",
     "ErrorPayloadDecoderContractSuite",
@@ -97,5 +104,8 @@ __all__ = (
     "StubTaskProtocolAdapter",
     "SuccessPayloadDecoderContractSuite",
     "TransportContractSuite",
+    "annotate_contract_failure",
+    "contract_case_for_node",
+    "contract_suite_components",
     "json_fixtures_equal",
 )
