@@ -6,6 +6,7 @@ from mconet.transport.http_system import (
     HttpCancellationBridge,
     HttpHeaderField,
     HttpStatusOutcome,
+    HttpTlsPolicy,
     apply_default_http_headers,
     apply_http_content_length,
     apply_http_content_type,
@@ -22,17 +23,19 @@ from mconet.transport.http_system import (
     read_bounded_http_response_body,
     read_bounded_http_response_releasing_connection,
     summarize_http_response_headers,
+    system_http_tls_policy,
 )
 
 
 def test_http_system_transport_exports_request_field_mapping() -> None:
     """Verify the system HTTP module publishes field mapping and defaults."""
-    # TLS rules and the client remain later work.
+    # Proxy rules and the client remain later work.
     assert mconet.transport.http_system.__all__ == (
         "HttpBaseUrl",
         "HttpCancellationBridge",
         "HttpHeaderField",
         "HttpStatusOutcome",
+        "HttpTlsPolicy",
         "apply_default_http_headers",
         "apply_http_content_length",
         "apply_http_content_type",
@@ -49,11 +52,13 @@ def test_http_system_transport_exports_request_field_mapping() -> None:
         "read_bounded_http_response_body",
         "read_bounded_http_response_releasing_connection",
         "summarize_http_response_headers",
+        "system_http_tls_policy",
     )
     assert mconet.transport.http_system.HttpBaseUrl is HttpBaseUrl
     assert mconet.transport.http_system.HttpCancellationBridge is HttpCancellationBridge
     assert mconet.transport.http_system.HttpHeaderField is HttpHeaderField
     assert mconet.transport.http_system.HttpStatusOutcome is HttpStatusOutcome
+    assert mconet.transport.http_system.HttpTlsPolicy is HttpTlsPolicy
     assert (
         mconet.transport.http_system.apply_default_http_headers
         is apply_default_http_headers
@@ -96,3 +101,4 @@ def test_http_system_transport_exports_request_field_mapping() -> None:
         mconet.transport.http_system.summarize_http_response_headers
         is summarize_http_response_headers
     )
+    assert mconet.transport.http_system.system_http_tls_policy is system_http_tls_policy
