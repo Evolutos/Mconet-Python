@@ -1876,6 +1876,10 @@
       "members": {},
       "signature": "(transport_kind: 'OpenIdentifier | None' = None, required_capabilities: 'frozenset[OpenIdentifier]' = frozenset()) -> None"
     },
+    "mconet.integration.openai_compatible.OPENAI_CHAT_COMPLETIONS_PROTOCOL_ID": {
+      "kind": "value",
+      "type": "OpenIdentifier"
+    },
     "mconet.integration.openai_compatible.OpenAIChatCompletionChoiceDTO": {
       "kind": "class",
       "members": {
@@ -1939,6 +1943,36 @@
         }
       },
       "signature": "(prompt_tokens: 'int | None' = None, completion_tokens: 'int | None' = None, total_tokens: 'int | None' = None, extensions: 'Extensions' = <factory>) -> None"
+    },
+    "mconet.integration.openai_compatible.OpenAIChatCompletionsAdapter": {
+      "kind": "class",
+      "members": {
+        "build_request": {
+          "kind": "method",
+          "signature": "(self, request: 'ModelRequest', plan: 'ProtocolExecutionPlan') -> 'ProtocolRequestPlan'"
+        },
+        "descriptor": {
+          "kind": "property",
+          "signature": null
+        },
+        "parse_error": {
+          "kind": "method",
+          "signature": "(self, error: 'ErasedRuntimeValue', metadata: 'TransportResponseMetadata') -> 'ModelInteractionError | None'"
+        },
+        "parse_response": {
+          "kind": "method",
+          "signature": "(self, response: 'ErasedRuntimeValue') -> 'ParsedTaskResponse'"
+        },
+        "prepare_plan": {
+          "kind": "method",
+          "signature": "(self, request: 'ModelRequest', access: 'ResolvedServiceAccess', mode: 'InteractionMode') -> 'ProtocolExecutionPlan'"
+        },
+        "supports": {
+          "kind": "method",
+          "signature": "(self, target: 'ModelTarget', task: 'TaskDescriptor', mode: 'InteractionMode') -> 'bool'"
+        }
+      },
+      "signature": "()"
     },
     "mconet.integration.openai_compatible.OpenAIChatMessageDTO": {
       "kind": "class",

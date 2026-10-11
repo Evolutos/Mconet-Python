@@ -18,16 +18,22 @@ from mconet.integration.openai_compatible.openai_chat_completion_response_dto im
 from mconet.integration.openai_compatible.openai_chat_completion_usage_dto import (
     OpenAIChatCompletionUsageDTO,
 )
+from mconet.integration.openai_compatible.openai_chat_completions_adapter import (
+    OPENAI_CHAT_COMPLETIONS_PROTOCOL_ID,
+    OpenAIChatCompletionsAdapter,
+)
 from mconet.integration.openai_compatible.openai_chat_message_dto import (
     OpenAIChatMessageDTO,
 )
 
 __all__: tuple[str, ...] = (
+    "OPENAI_CHAT_COMPLETIONS_PROTOCOL_ID",
     "OpenAIChatCompletionChoiceDTO",
     "OpenAIChatCompletionErrorDTO",
     "OpenAIChatCompletionErrorResponseDTO",
     "OpenAIChatCompletionRequestDTO",
     "OpenAIChatCompletionResponseDTO",
     "OpenAIChatCompletionUsageDTO",
+    "OpenAIChatCompletionsAdapter",
     "OpenAIChatMessageDTO",
 )

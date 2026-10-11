@@ -31,9 +31,11 @@ from mconet.core.spi import (
     ProtocolExecutionPlan,
     ProtocolRequestPlan,
     TransportRequestPlan,
+    TransportResponseMetadata,
     TransportSelection,
 )
 from mconet.integration.openai_compatible._conversation import conversation_input
+from mconet.integration.openai_compatible._errors import service_error
 from mconet.integration.openai_compatible._messages import wire_messages
 from mconet.integration.openai_compatible._parameters import wire_parameters
 from mconet.integration.openai_compatible._response import (
@@ -42,6 +44,9 @@ from mconet.integration.openai_compatible._response import (
     resolved_model,
     single_choice,
     token_usage,
+)
+from mconet.integration.openai_compatible.openai_chat_completion_error_response_dto import (
+    OpenAIChatCompletionErrorResponseDTO,
 )
 from mconet.integration.openai_compatible.openai_chat_completion_request_dto import (
     OpenAIChatCompletionRequestDTO,
@@ -257,6 +262,32 @@ class OpenAIChatCompletionsAdapter:
             usage=token_usage(body.usage),
             extensions=extensions,
         )
+
+    def parse_error(
+        self,
+        error: ErasedRuntimeValue,
+        metadata: TransportResponseMetadata,
+    ) -> ModelInteractionError | None:
+        """Return the normalized error for one decoded failure body.
+
+        Args:
+            error: Decoded ``json.value`` failure payload.
+            metadata: Transport facts of the failed response.
+
+        Returns:
+            The mapped error, or ``None`` when the payload is not an
+            ``{"error": {...}}`` body, so the runtime builds its fallback
+            error from the transport facts.
+        """
+        try:
+            body = OpenAIChatCompletionErrorResponseDTO.from_json(
+                cast(JsonValue, error.value)
+            )
+        except ModelInteractionError:
+            # Gateways and proxies often answer with their own JSON. That is
+            # an unrecognized shape, not a second failure to report.
+            return None
+        return service_error(body, metadata)
 
 
 def _profile_endpoint(endpoint: UriValue | None) -> UriValue:
