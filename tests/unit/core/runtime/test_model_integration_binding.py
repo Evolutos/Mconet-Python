@@ -19,9 +19,13 @@ from mconet.core.domain import (
     TaskDescriptor,
     UriValue,
 )
-from mconet.core.runtime._model_integration_binding import ModelIntegrationBinding
+from mconet.core.runtime._model_integration_binding import (
+    ModelIntegrationBinding,
+    match_binding,
+)
 from mconet.core.spi import (
     ComponentDescriptor,
+    ModelIntegrationMatch,
     ModelTargetMatch,
     RuntimeComponent,
     TaskMatch,
@@ -552,4 +556,125 @@ def test_model_integration_binding_requires_named_extension_mapping() -> None:
             cast(Mapping[str, object], {1: "invalid"}),
         ),
         "extensions keys must be strings",
+    )
+
+
+class _RecordingTargetMatcher:
+    """Target matcher recording its calls and returning a configured value."""
+
+    def __init__(self, result: object, calls: list[str]) -> None:
+        """Store the returned value and the shared call log."""
+        self._result = result
+        self._calls = calls
+
+    def match(self, target: ModelTarget) -> ModelTargetMatch | None:
+        """Record the call and return the configured value unchecked."""
+        del target
+        self._calls.append("target")
+        return cast(ModelTargetMatch | None, self._result)
+
+
+class _RecordingTaskMatcher:
+    """Task matcher recording its calls and returning a configured value."""
+
+    def __init__(self, result: object, calls: list[str]) -> None:
+        """Store the returned value and the shared call log."""
+        self._result = result
+        self._calls = calls
+
+    def match(self, task: TaskDescriptor, mode: InteractionMode) -> TaskMatch | None:
+        """Record the call and return the configured value unchecked."""
+        del task, mode
+        self._calls.append("task")
+        return cast(TaskMatch | None, self._result)
+
+
+def _matching_binding(
+    target_result: object, task_result: object, calls: list[str]
+) -> ModelIntegrationBinding:
+    """Build a binding whose matchers return the given values."""
+    return ModelIntegrationBinding(
+        id="fixture",
+        version="1.0.0",
+        target_matcher=_RecordingTargetMatcher(target_result, calls),
+        task_matcher=_RecordingTaskMatcher(task_result, calls),
+        task_protocol_adapter=_component("task-adapter"),
+        authorization_handlers=(),
+        default_service_access=None,
+        payload_encoders=(),
+        payload_decoders=(),
+        transports=(),
+    )
+
+
+def _match_inputs() -> tuple[_Target, _Task, _Mode]:
+    """Return one complete target, task, and mode."""
+    return (
+        _Target(
+            OpenIdentifier("service.vendor"),
+            OpenIdentifier("vendor.protocol"),
+            NamedModel("fixture-model"),
+        ),
+        _Task(OpenIdentifier("conversation.generate")),
+        _Mode(OpenIdentifier("unary")),
+    )
+
+
+def test_match_binding_combines_both_successful_results_exactly() -> None:
+    """Verify the match keeps both result objects and checks target first."""
+    calls: list[str] = []
+    target_match = ModelTargetMatch(True, 3)
+    task_match = TaskMatch(True, 2)
+    target, task, mode = _match_inputs()
+
+    match = match_binding(
+        _matching_binding(target_match, task_match, calls), target, task, mode
+    )
+
+    assert match == ModelIntegrationMatch(target_match, task_match)
+    assert match is not None
+    assert match.target is target_match
+    assert match.task is task_match
+    assert calls == ["target", "task"]
+
+
+def test_match_binding_rejects_without_consulting_the_task_after_a_target_miss() -> (
+    None
+):
+    """Verify None and matched=False targets both stop evaluation."""
+    target, task, mode = _match_inputs()
+    for target_result in (None, ModelTargetMatch(False, 9)):
+        calls: list[str] = []
+        binding = _matching_binding(target_result, TaskMatch(True, 1), calls)
+
+        assert match_binding(binding, target, task, mode) is None
+        assert calls == ["target"]
+
+
+def test_match_binding_rejects_a_task_miss() -> None:
+    """Verify None and matched=False task results both reject the binding."""
+    target, task, mode = _match_inputs()
+    for task_result in (None, TaskMatch(False, 9)):
+        calls: list[str] = []
+        binding = _matching_binding(ModelTargetMatch(True, 1), task_result, calls)
+
+        assert match_binding(binding, target, task, mode) is None
+        assert calls == ["target", "task"]
+
+
+def test_match_binding_rejects_matcher_results_of_another_type() -> None:
+    """Verify a matcher cannot return an arbitrary truthy value."""
+    target, task, mode = _match_inputs()
+    target_binding = _matching_binding(True, TaskMatch(True, 1), [])
+    task_binding = _matching_binding(ModelTargetMatch(True, 1), "yes", [])
+
+    _assert_raises(
+        TypeError,
+        lambda: match_binding(target_binding, target, task, mode),
+        "target_matcher must return ModelTargetMatch or None",
+    )
+    _assert_raises(
+        TypeError,
+        lambda: match_binding(task_binding, target, task, mode),
+        "task_matcher must return TaskMatch or None",
     )

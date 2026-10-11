@@ -15,6 +15,7 @@ from mconet.core.domain import (
 )
 from mconet.core.spi import (
     ComponentDescriptor,
+    ModelIntegrationMatch,
     ModelTargetMatch,
     RuntimeComponent,
     TaskMatch,
@@ -150,6 +151,55 @@ class ModelIntegrationBinding:
         # Detach top-level internal extension membership from SDK/plugin assembly
         # dictionaries before the binding can be shared across client interactions.
         object.__setattr__(self, "extensions", _snapshot_extensions(self.extensions))
+
+
+def match_binding(
+    binding: ModelIntegrationBinding,
+    target: ModelTarget,
+    task: TaskDescriptor,
+    mode: InteractionMode,
+) -> ModelIntegrationMatch | None:
+    """Return the combined match facts when a binding applies to a request.
+
+    The target matcher runs first; the task matcher runs only after the target
+    matched, so evaluation order is fixed and a rejected target never consults
+    the task matcher. ``None`` and a result with ``matched=False`` both mean
+    the binding does not apply.
+
+    Args:
+        binding: Binding whose two matchers are evaluated.
+        target: Model target being resolved.
+        task: Task descriptor being resolved.
+        mode: Interaction mode being resolved.
+
+    Returns:
+        Both successful results, or ``None`` when either matcher rejects.
+
+    Raises:
+        TypeError: If a matcher returns a value other than its match type or
+            ``None``.
+    """
+    target_match = cast(object, binding.target_matcher.match(target))
+    if target_match is None:
+        return None
+    if not isinstance(target_match, ModelTargetMatch):
+        raise TypeError(
+            "ModelIntegrationBinding target_matcher must return ModelTargetMatch "
+            "or None."
+        )
+    if not target_match.matched:
+        return None
+
+    task_match = cast(object, binding.task_matcher.match(task, mode))
+    if task_match is None:
+        return None
+    if not isinstance(task_match, TaskMatch):
+        raise TypeError(
+            "ModelIntegrationBinding task_matcher must return TaskMatch or None."
+        )
+    if not task_match.matched:
+        return None
+    return ModelIntegrationMatch(target_match, task_match)
 
 
 def _validate_component(value: object, field_name: str) -> None:
