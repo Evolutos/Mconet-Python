@@ -6,6 +6,7 @@ from mconet.transport.http_system import (
     HttpHeaderField,
     apply_default_http_headers,
     apply_http_content_length,
+    apply_http_content_type,
     map_http_body,
     map_http_headers,
     map_http_method,
@@ -16,12 +17,13 @@ from mconet.transport.http_system import (
 
 def test_http_system_transport_exports_request_field_mapping() -> None:
     """Verify the system HTTP module publishes field mapping and defaults."""
-    # Content-Type, response reading, and the client remain later work.
+    # Response reading and the client remain later work.
     assert mconet.transport.http_system.__all__ == (
         "HttpBaseUrl",
         "HttpHeaderField",
         "apply_default_http_headers",
         "apply_http_content_length",
+        "apply_http_content_type",
         "map_http_body",
         "map_http_headers",
         "map_http_method",
@@ -38,6 +40,9 @@ def test_http_system_transport_exports_request_field_mapping() -> None:
     assert (
         mconet.transport.http_system.apply_http_content_length
         is apply_http_content_length
+    )
+    assert (
+        mconet.transport.http_system.apply_http_content_type is apply_http_content_type
     )
     assert mconet.transport.http_system.map_http_headers is map_http_headers
     assert mconet.transport.http_system.map_http_method is map_http_method
