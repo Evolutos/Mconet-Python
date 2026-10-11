@@ -69,6 +69,18 @@ def require_string(document: dict[str, JsonValue], name: str, path: str) -> str:
     return value
 
 
+def require_count(document: dict[str, JsonValue], name: str, path: str) -> int:
+    """Return one required, non-null, non-negative integer member."""
+    # bool is an int subclass but a different JSON kind, so exact type checks
+    # keep true and false from passing as a count or index.
+    value = document.get(name)
+    if type(value) is not int or value < 0:
+        raise invalid_protocol_response(
+            child_path(path, name), "must be a non-negative integer"
+        )
+    return value
+
+
 def unknown_members(
     document: dict[str, JsonValue],
     known: frozenset[str],

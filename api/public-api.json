@@ -1876,6 +1876,16 @@
       "members": {},
       "signature": "(transport_kind: 'OpenIdentifier | None' = None, required_capabilities: 'frozenset[OpenIdentifier]' = frozenset()) -> None"
     },
+    "mconet.integration.openai_compatible.OpenAIChatCompletionChoiceDTO": {
+      "kind": "class",
+      "members": {
+        "from_json": {
+          "kind": "method",
+          "signature": "(value: 'JsonValue', path: 'str' = '') -> 'OpenAIChatCompletionChoiceDTO'"
+        }
+      },
+      "signature": "(index: 'int', message: 'OpenAIChatMessageDTO', finish_reason: 'str', extensions: 'Extensions' = <factory>) -> None"
+    },
     "mconet.integration.openai_compatible.OpenAIChatCompletionRequestDTO": {
       "kind": "class",
       "members": {
