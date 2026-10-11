@@ -25,10 +25,9 @@ def _connects(producer: ComponentTypePort, consumer: ComponentTypePort) -> bool:
 
 
 def test_json_payload_encoder_type_contract_connects_adapter_payload() -> None:
-    """Verify an adapter JSON payload port connects through to transport bytes."""
+    """Verify an adapter JSON payload port connects to the encoder input."""
     contract = JSON_PAYLOAD_ENCODER_TYPE_CONTRACT
     encoder_input = contract.inputs[0]
-    encoder_output = contract.outputs[0]
     json_media_type = MediaType("application", "json")
     adapter_output = ComponentTypePort(
         "output",
@@ -36,23 +35,15 @@ def test_json_payload_encoder_type_contract_connects_adapter_payload() -> None:
         "schema://adapter/request",
         json_media_type,
     )
-    transport_input = ComponentTypePort(
-        "input",
-        OpenIdentifier("transport.body"),
-        None,
-        json_media_type,
-    )
 
-    # The encoder accepts any JSON schema and emits a JSON transport body.
+    # The encoder accepts any JSON schema. Bytes are the encode result, so the
+    # contract does not invent a second JSON or transport-body port.
     assert encoder_input.name == "input"
     assert encoder_input.type_id == OpenIdentifier("json.value")
     assert encoder_input.schema_id is None
     assert encoder_input.media_type == json_media_type
-    assert encoder_output.name == "output"
-    assert encoder_output.type_id == OpenIdentifier("transport.body")
-    assert encoder_output.media_type == json_media_type
+    assert contract.outputs == ()
     assert _connects(adapter_output, encoder_input)
-    assert _connects(encoder_output, transport_input)
     assert JSON_PAYLOAD_ENCODER_DESCRIPTOR.type_contract is contract
 
 

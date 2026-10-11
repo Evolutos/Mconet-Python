@@ -27,6 +27,6 @@ JSON_PAYLOAD_ENCODER_DESCRIPTOR = ComponentDescriptor(
 
 Name, version, and source are stable labels for diagnostics and monitoring.
 They are not component identifiers and are not selection keys. The type
-contract declares how a JSON payload connects to a transport body. The
+contract is the JSON input port that an adapter payload connects to. The
 capability set contains only ``codec.json.encode``.
 """
