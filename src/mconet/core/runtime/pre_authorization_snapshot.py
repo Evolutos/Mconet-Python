@@ -43,7 +43,7 @@ def snapshot_pre_authorization_request(
     if not isinstance(authorization_value, Authorization):
         raise TypeError("authorization must implement Authorization.")
 
-    omitted = _omitted_header_names(authorization_value)
+    omitted = omitted_authorization_header_names(authorization_value)
     retained = tuple(
         field
         for field in request_value.headers.values
@@ -58,7 +58,7 @@ def snapshot_pre_authorization_request(
     )
 
 
-def _omitted_header_names(authorization: Authorization) -> frozenset[str]:
+def omitted_authorization_header_names(authorization: Authorization) -> frozenset[str]:
     """Return header names that would carry a credential for this decision."""
     names = {_AUTHORIZATION_HEADER_NAME}
     # Read the configured name only. Resolving the decision would pull a
