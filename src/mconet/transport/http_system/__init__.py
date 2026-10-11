@@ -3,9 +3,9 @@
 The HTTP request mappers, response media-type extraction, response header
 summary, caller-cancellation bridge, deadline gate, network-timeout
 normalization, bounded response reading, connection release on an
-oversized body, redirect header policy, and TLS verification rules are
-the public surface of this module until later work adds proxy rules and the
-transport implementation.
+oversized body, redirect header policy, TLS verification rules, and proxy selection are
+the public surface of this module until later work adds the certificate
+guard and the transport implementation.
 """
 
 from mconet.transport.http_system.http_body import map_http_body
@@ -18,6 +18,13 @@ from mconet.transport.http_system.http_header import HttpHeaderField, map_http_h
 from mconet.transport.http_system.http_method import map_http_method
 from mconet.transport.http_system.http_network_timeout import (
     normalize_http_network_timeout,
+)
+from mconet.transport.http_system.http_proxy import (
+    HttpProxyEndpoint,
+    HttpProxyOverride,
+    HttpProxySelection,
+    map_http_proxy_endpoint,
+    select_http_proxy,
 )
 from mconet.transport.http_system.http_query import map_http_query
 from mconet.transport.http_system.http_redirect import headers_for_http_redirect
@@ -41,6 +48,9 @@ __all__: tuple[str, ...] = (
     "HttpBaseUrl",
     "HttpCancellationBridge",
     "HttpHeaderField",
+    "HttpProxyEndpoint",
+    "HttpProxyOverride",
+    "HttpProxySelection",
     "HttpStatusOutcome",
     "HttpTlsPolicy",
     "apply_default_http_headers",
@@ -52,12 +62,14 @@ __all__: tuple[str, ...] = (
     "map_http_body",
     "map_http_headers",
     "map_http_method",
+    "map_http_proxy_endpoint",
     "map_http_query",
     "map_http_status",
     "map_http_url",
     "normalize_http_network_timeout",
     "read_bounded_http_response_body",
     "read_bounded_http_response_releasing_connection",
+    "select_http_proxy",
     "summarize_http_response_headers",
     "system_http_tls_policy",
 )
