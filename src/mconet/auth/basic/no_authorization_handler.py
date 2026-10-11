@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import cast
 
+from mconet.auth.basic.body_signing_guard import reject_unsupported_body_signing
 from mconet.auth.basic.no_authorization import NoAuthorization
 from mconet.core.domain.authorization import Authorization
 from mconet.core.domain.error_category import ErrorCategory
@@ -19,14 +20,11 @@ from mconet.core.spi.component_descriptor import ComponentDescriptor
 from mconet.core.spi.mutable_transport_request import MutableTransportRequest
 
 _AUTHENTICATION_CATEGORY = ErrorCategory(OpenIdentifier("authentication"))
-_UNSUPPORTED_FEATURE_CATEGORY = ErrorCategory(OpenIdentifier("unsupported_feature"))
 _AUTHENTICATION_PHASE = InteractionPhase(OpenIdentifier("authentication"))
 _UNSUPPORTED_AUTHORIZATION_CODE = "unsupported_authorization"
 _UNSUPPORTED_AUTHORIZATION_MESSAGE = (
     "Authorization is not the explicit no-authorization decision."
 )
-_UNSUPPORTED_BODY_SIGNING_CODE = "unsupported_body_signing"
-_UNSUPPORTED_BODY_SIGNING_MESSAGE = "No-authorization cannot apply a body-signing mode."
 _HANDLER_NAME = "no-authorization-handler"
 _HANDLER_VERSION = "1.0.0"
 
@@ -112,8 +110,7 @@ class NoAuthorizationHandler:
         # consulted. The request stays unchanged for the caller to observe.
         if type(authorization) is not NoAuthorization:
             raise _unsupported_authorization_error()
-        if context_value.body_signing_mode != "none":
-            raise _unsupported_body_signing_error()
+        reject_unsupported_body_signing(context_value.body_signing_mode)
         del request_value
 
 
@@ -124,16 +121,4 @@ def _unsupported_authorization_error() -> ModelInteractionError:
         phase=_AUTHENTICATION_PHASE,
         code=_UNSUPPORTED_AUTHORIZATION_CODE,
         message=_UNSUPPORTED_AUTHORIZATION_MESSAGE,
-    )
-
-
-def _unsupported_body_signing_error() -> ModelInteractionError:
-    """Create the failure for a signing mode no-authorization cannot apply."""
-    # The selected mode is a closed vocabulary and is not copied into the
-    # message, matching the other authentication failures.
-    return ModelInteractionError(
-        category=_UNSUPPORTED_FEATURE_CATEGORY,
-        phase=_AUTHENTICATION_PHASE,
-        code=_UNSUPPORTED_BODY_SIGNING_CODE,
-        message=_UNSUPPORTED_BODY_SIGNING_MESSAGE,
     )

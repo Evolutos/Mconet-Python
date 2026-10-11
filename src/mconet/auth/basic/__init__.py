@@ -16,6 +16,7 @@ from mconet.auth.basic.bearer_authorization import (
     BearerAuthorization,
 )
 from mconet.auth.basic.bearer_authorization_handler import BearerAuthorizationHandler
+from mconet.auth.basic.body_signing_guard import reject_unsupported_body_signing
 from mconet.auth.basic.dynamic_credential_source import DynamicCredentialSource
 from mconet.auth.basic.fixed_credential_source import FixedCredentialSource
 from mconet.auth.basic.no_authorization import (
@@ -36,6 +37,7 @@ __all__: tuple[str, ...] = (
     "FixedCredentialSource",
     "NoAuthorization",
     "NoAuthorizationHandler",
+    "reject_unsupported_body_signing",
     "validate_authorization_header_name",
     "validate_authorization_header_value",
 )

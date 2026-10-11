@@ -8,6 +8,7 @@ from mconet.auth.basic.authorization_header_validation import (
     validate_authorization_header_value,
 )
 from mconet.auth.basic.bearer_authorization import BearerAuthorization
+from mconet.auth.basic.body_signing_guard import reject_unsupported_body_signing
 from mconet.core.domain.authorization import Authorization
 from mconet.core.domain.error_category import ErrorCategory
 from mconet.core.domain.header_field import HeaderField
@@ -26,12 +27,9 @@ from mconet.core.spi.credential_value import CredentialValue
 from mconet.core.spi.mutable_transport_request import MutableTransportRequest
 
 _AUTHENTICATION_CATEGORY = ErrorCategory(OpenIdentifier("authentication"))
-_UNSUPPORTED_FEATURE_CATEGORY = ErrorCategory(OpenIdentifier("unsupported_feature"))
 _AUTHENTICATION_PHASE = InteractionPhase(OpenIdentifier("authentication"))
 _UNSUPPORTED_AUTHORIZATION_CODE = "unsupported_authorization"
 _UNSUPPORTED_AUTHORIZATION_MESSAGE = "Authorization is not a bearer decision."
-_UNSUPPORTED_BODY_SIGNING_CODE = "unsupported_body_signing"
-_UNSUPPORTED_BODY_SIGNING_MESSAGE = "Bearer authorization cannot sign a body."
 _CREDENTIAL_TYPE_MESSAGE = "Bearer credential must be text."
 _BEARER_HEADER_NAME = "Authorization"
 _BEARER_PREFIX = "Bearer "
@@ -119,8 +117,7 @@ class BearerAuthorizationHandler(AuthorizedSecretConsumer):
             raise TypeError("request must be a MutableTransportRequest.")
         if type(authorization) is not BearerAuthorization:
             raise _unsupported_authorization_error()
-        if context_value.body_signing_mode != "none":
-            raise _unsupported_body_signing_error()
+        reject_unsupported_body_signing(context_value.body_signing_mode)
 
         credential = await authorization.credential_source.resolve(context_value)
         token = _token(self, credential)
@@ -155,14 +152,4 @@ def _unsupported_authorization_error() -> ModelInteractionError:
         phase=_AUTHENTICATION_PHASE,
         code=_UNSUPPORTED_AUTHORIZATION_CODE,
         message=_UNSUPPORTED_AUTHORIZATION_MESSAGE,
-    )
-
-
-def _unsupported_body_signing_error() -> ModelInteractionError:
-    """Create the failure for a signing mode this handler cannot apply."""
-    return ModelInteractionError(
-        category=_UNSUPPORTED_FEATURE_CATEGORY,
-        phase=_AUTHENTICATION_PHASE,
-        code=_UNSUPPORTED_BODY_SIGNING_CODE,
-        message=_UNSUPPORTED_BODY_SIGNING_MESSAGE,
     )
