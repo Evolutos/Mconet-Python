@@ -1,6 +1,10 @@
 """Stability tests for the JSON payload encoder descriptor."""
 
-from mconet.codec.json import JSON_PAYLOAD_ENCODER_DESCRIPTOR, JsonPayloadEncoder
+from mconet.codec.json import (
+    JSON_PAYLOAD_ENCODER_CAPABILITY,
+    JSON_PAYLOAD_ENCODER_DESCRIPTOR,
+    JsonPayloadEncoder,
+)
 from mconet.core.domain import OpenIdentifier
 from mconet.core.runtime._component_source_merge import ComponentSourceLayers
 from mconet.core.runtime._single_component_selection import select_single_component
@@ -24,12 +28,14 @@ def test_json_payload_encoder_descriptor_is_stable_diagnostic_metadata() -> None
     first = JsonPayloadEncoder()
     second = JsonPayloadEncoder()
 
-    # Labels are diagnostic. The type contract and capabilities are not part of
-    # this metadata item, and every encoder publishes the same object.
+    # Labels are diagnostic. Every encoder publishes the same object, including
+    # the encode capability, and selection does not read that capability.
     assert JSON_PAYLOAD_ENCODER_DESCRIPTOR.name == "json-payload-encoder"
     assert JSON_PAYLOAD_ENCODER_DESCRIPTOR.version == "1.0.0"
     assert JSON_PAYLOAD_ENCODER_DESCRIPTOR.source == "builtin"
-    assert JSON_PAYLOAD_ENCODER_DESCRIPTOR.capabilities == frozenset()
+    assert JSON_PAYLOAD_ENCODER_DESCRIPTOR.capabilities == frozenset(
+        (JSON_PAYLOAD_ENCODER_CAPABILITY,)
+    )
     assert first.descriptor is JSON_PAYLOAD_ENCODER_DESCRIPTOR
     assert second.descriptor is first.descriptor
 

@@ -37,8 +37,7 @@ class JsonPayloadEncoder:
     metadata and are not written into the body. The encoder does not read
     tasks, service access, credentials, or authorization, and it does not
     choose another component. Its descriptor carries diagnostic name, version,
-    and source plus the JSON type contract. The capability declaration remains
-    a separate metadata work item.
+    and source, the JSON type contract, and the ``codec.json.encode`` capability.
 
     Non-finite numbers, negative zero, surrogate code points, cycles, and values
     that are not JSON fail before any body is returned. Object member order is

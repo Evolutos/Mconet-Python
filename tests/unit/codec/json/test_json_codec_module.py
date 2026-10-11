@@ -2,6 +2,7 @@
 
 import mconet.codec.json
 from mconet.codec.json import (
+    JSON_PAYLOAD_ENCODER_CAPABILITY,
     JSON_PAYLOAD_ENCODER_DESCRIPTOR,
     JSON_PAYLOAD_ENCODER_TYPE_CONTRACT,
     JsonErrorPayloadDecoder,
@@ -19,6 +20,7 @@ def test_json_codec_exports_payload_codecs_and_encoder_metadata() -> None:
     # Encoding, decoding, collection, and media-type matching stay available.
     # Decoder contracts and capabilities remain later work.
     assert mconet.codec.json.__all__ == (
+        "JSON_PAYLOAD_ENCODER_CAPABILITY",
         "JSON_PAYLOAD_ENCODER_DESCRIPTOR",
         "JSON_PAYLOAD_ENCODER_TYPE_CONTRACT",
         "JsonErrorPayloadDecoder",
@@ -31,6 +33,10 @@ def test_json_codec_exports_payload_codecs_and_encoder_metadata() -> None:
     )
     assert mconet.codec.json.JsonErrorPayloadDecoder is JsonErrorPayloadDecoder
     assert mconet.codec.json.JsonPayload is JsonPayload
+    assert (
+        mconet.codec.json.JSON_PAYLOAD_ENCODER_CAPABILITY
+        is JSON_PAYLOAD_ENCODER_CAPABILITY
+    )
     assert (
         mconet.codec.json.JSON_PAYLOAD_ENCODER_DESCRIPTOR
         is JSON_PAYLOAD_ENCODER_DESCRIPTOR

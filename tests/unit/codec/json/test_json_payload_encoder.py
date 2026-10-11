@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import cast
 
 from mconet.codec.json import (
+    JSON_PAYLOAD_ENCODER_CAPABILITY,
     JSON_PAYLOAD_ENCODER_TYPE_CONTRACT,
     JsonPayloadEncoder,
 )
@@ -80,7 +81,9 @@ def test_json_payload_encoder_writes_only_the_json_value() -> None:
     assert encoder.descriptor.version == "1.0.0"
     assert encoder.descriptor.source == "builtin"
     assert encoder.descriptor.type_contract is JSON_PAYLOAD_ENCODER_TYPE_CONTRACT
-    assert encoder.descriptor.capabilities == frozenset()
+    assert encoder.descriptor.capabilities == frozenset(
+        (JSON_PAYLOAD_ENCODER_CAPABILITY,)
+    )
 
 
 def test_json_payload_encoder_encodes_each_json_category() -> None:
