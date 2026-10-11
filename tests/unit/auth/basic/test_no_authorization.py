@@ -91,7 +91,7 @@ def test_no_authorization_rejects_a_substituted_kind() -> None:
     _assert_raises(
         TypeError,
         lambda: construct(OpenIdentifier("authorization.other")),
-            "takes no arguments",
+        "takes no arguments",
     )
 
 
