@@ -1876,6 +1876,20 @@
       "members": {},
       "signature": "(transport_kind: 'OpenIdentifier | None' = None, required_capabilities: 'frozenset[OpenIdentifier]' = frozenset()) -> None"
     },
+    "mconet.integration.openai_compatible.OpenAIChatCompletionRequestDTO": {
+      "kind": "class",
+      "members": {
+        "stream": {
+          "kind": "property",
+          "signature": null
+        },
+        "to_json": {
+          "kind": "method",
+          "signature": "(self) -> 'dict[str, JsonValue]'"
+        }
+      },
+      "signature": "(model: 'str', messages: 'tuple[OpenAIChatMessageDTO, ...]', temperature: 'float | None' = None, top_p: 'float | None' = None, max_tokens: 'int | None' = None, stop: 'tuple[str, ...] | None' = None, seed: 'int | None' = None) -> None"
+    },
     "mconet.integration.openai_compatible.OpenAIChatMessageDTO": {
       "kind": "class",
       "members": {
