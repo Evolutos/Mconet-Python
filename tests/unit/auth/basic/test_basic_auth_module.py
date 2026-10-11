@@ -7,6 +7,7 @@ from mconet.auth.basic import (
     NO_AUTHORIZATION_KIND,
     ApiKeyHeaderAuthorization,
     BearerAuthorization,
+    DynamicCredentialSource,
     FixedCredentialSource,
     NoAuthorization,
 )
@@ -20,6 +21,7 @@ def test_basic_auth_exports_defined_authorization_decisions() -> None:
         "NO_AUTHORIZATION_KIND",
         "ApiKeyHeaderAuthorization",
         "BearerAuthorization",
+        "DynamicCredentialSource",
         "FixedCredentialSource",
         "NoAuthorization",
     )
@@ -31,5 +33,6 @@ def test_basic_auth_exports_defined_authorization_decisions() -> None:
         is API_KEY_HEADER_AUTHORIZATION_KIND
     )
     assert mconet.auth.basic.BearerAuthorization is BearerAuthorization
+    assert mconet.auth.basic.DynamicCredentialSource is DynamicCredentialSource
     assert mconet.auth.basic.BEARER_AUTHORIZATION_KIND is BEARER_AUTHORIZATION_KIND
     assert mconet.auth.basic.FixedCredentialSource is FixedCredentialSource
