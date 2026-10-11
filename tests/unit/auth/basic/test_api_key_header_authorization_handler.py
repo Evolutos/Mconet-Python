@@ -8,6 +8,7 @@ from mconet.auth.basic.api_key_header_authorization import ApiKeyHeaderAuthoriza
 from mconet.auth.basic.api_key_header_authorization_handler import (
     ApiKeyHeaderAuthorizationHandler,
 )
+from mconet.auth.basic.dynamic_credential_source import DynamicCredentialSource
 from mconet.auth.basic.fixed_credential_source import FixedCredentialSource
 from mconet.auth.basic.no_authorization import NoAuthorization
 from mconet.core.domain import (
@@ -17,6 +18,7 @@ from mconet.core.domain import (
     Headers,
     MediaType,
     ModelDescriptor,
+    ModelInteractionError,
     ModelTarget,
     NamedModel,
     OpenIdentifier,
@@ -151,3 +153,38 @@ def test_api_key_handler_rejects_a_non_text_credential_without_copying_it() -> N
 
     assert request.body is body
     assert request.headers.values == (HeaderField("X-Trace", "trace-value"),)
+
+
+def test_api_key_handler_rejects_an_illegal_header_name_before_credentials() -> None:
+    """Verify a colon in the name fails without reading the key."""
+    calls: list[str] = []
+
+    async def provider(_context: AuthorizationContext) -> SecretValue:
+        calls.append("resolved")
+        return SecretValue(_PLACEHOLDER)
+
+    authorization = ApiKeyHeaderAuthorization(
+        "X:Api-Key",
+        "",
+        DynamicCredentialSource(provider),
+    )
+    request = _request()
+    headers = request.headers
+
+    async def apply() -> None:
+        await ApiKeyHeaderAuthorizationHandler().apply(
+            authorization,
+            _context(),
+            request,
+        )
+
+    try:
+        asyncio.run(apply())
+    except ModelInteractionError as error:
+        assert error.code == "invalid_authorization_header_name"
+        assert "X:Api-Key" not in str(error)
+    else:
+        raise AssertionError("Expected an illegal header name to fail.")
+
+    assert calls == []
+    assert request.headers is headers

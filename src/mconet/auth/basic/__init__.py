@@ -7,6 +7,9 @@ from mconet.auth.basic.api_key_header_authorization import (
 from mconet.auth.basic.api_key_header_authorization_handler import (
     ApiKeyHeaderAuthorizationHandler,
 )
+from mconet.auth.basic.authorization_header_validation import (
+    validate_authorization_header_name,
+)
 from mconet.auth.basic.bearer_authorization import (
     BEARER_AUTHORIZATION_KIND,
     BearerAuthorization,
@@ -32,4 +35,5 @@ __all__: tuple[str, ...] = (
     "FixedCredentialSource",
     "NoAuthorization",
     "NoAuthorizationHandler",
+    "validate_authorization_header_name",
 )
