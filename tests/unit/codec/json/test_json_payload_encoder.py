@@ -5,7 +5,10 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import cast
 
-from mconet.codec.json import JsonPayloadEncoder
+from mconet.codec.json import (
+    JSON_PAYLOAD_ENCODER_TYPE_CONTRACT,
+    JsonPayloadEncoder,
+)
 from mconet.codec.json.json_payload_encoder import JsonPayloadEncoder as EncoderClass
 from mconet.core.domain import JsonValue, ModelInteractionError, OpenIdentifier
 from mconet.core.spi import ErasedRuntimeValue, PayloadEncoder
@@ -76,7 +79,7 @@ def test_json_payload_encoder_writes_only_the_json_value() -> None:
     assert encoder.descriptor.name == "json-payload-encoder"
     assert encoder.descriptor.version == "1.0.0"
     assert encoder.descriptor.source == "builtin"
-    assert encoder.descriptor.type_contract is None
+    assert encoder.descriptor.type_contract is JSON_PAYLOAD_ENCODER_TYPE_CONTRACT
     assert encoder.descriptor.capabilities == frozenset()
 
 

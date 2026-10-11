@@ -29,7 +29,6 @@ def test_json_payload_encoder_descriptor_is_stable_diagnostic_metadata() -> None
     assert JSON_PAYLOAD_ENCODER_DESCRIPTOR.name == "json-payload-encoder"
     assert JSON_PAYLOAD_ENCODER_DESCRIPTOR.version == "1.0.0"
     assert JSON_PAYLOAD_ENCODER_DESCRIPTOR.source == "builtin"
-    assert JSON_PAYLOAD_ENCODER_DESCRIPTOR.type_contract is None
     assert JSON_PAYLOAD_ENCODER_DESCRIPTOR.capabilities == frozenset()
     assert first.descriptor is JSON_PAYLOAD_ENCODER_DESCRIPTOR
     assert second.descriptor is first.descriptor

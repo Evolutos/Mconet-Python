@@ -36,9 +36,9 @@ class JsonPayloadEncoder:
     Only the JSON value is serialized. The type id and schema id stay port
     metadata and are not written into the body. The encoder does not read
     tasks, service access, credentials, or authorization, and it does not
-    choose another component. Its descriptor currently carries diagnostic
-    name, version, and source only; the type contract and capability declaration
-    are separate component-metadata work.
+    choose another component. Its descriptor carries diagnostic name, version,
+    and source plus the JSON type contract. The capability declaration remains
+    a separate metadata work item.
 
     Non-finite numbers, negative zero, surrogate code points, cycles, and values
     that are not JSON fail before any body is returned. Object member order is
