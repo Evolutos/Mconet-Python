@@ -14,6 +14,7 @@ from mconet.auth.basic.no_authorization import (
     NO_AUTHORIZATION_KIND,
     NoAuthorization,
 )
+from mconet.auth.basic.no_authorization_handler import NoAuthorizationHandler
 
 __all__: tuple[str, ...] = (
     "API_KEY_HEADER_AUTHORIZATION_KIND",
@@ -24,4 +25,5 @@ __all__: tuple[str, ...] = (
     "DynamicCredentialSource",
     "FixedCredentialSource",
     "NoAuthorization",
+    "NoAuthorizationHandler",
 )
