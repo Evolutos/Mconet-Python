@@ -1,11 +1,13 @@
 """Tests for the bearer authorization handler."""
 
 import asyncio
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import cast
 
 from mconet.auth.basic.bearer_authorization import BearerAuthorization
 from mconet.auth.basic.bearer_authorization_handler import BearerAuthorizationHandler
+from mconet.auth.basic.dynamic_credential_source import DynamicCredentialSource
 from mconet.auth.basic.fixed_credential_source import FixedCredentialSource
 from mconet.auth.basic.no_authorization import NoAuthorization
 from mconet.core.domain import (
@@ -34,6 +36,7 @@ from mconet.core.spi import (
 from mconet.testing import AuthorizationHandlerContractSuite
 
 _PLACEHOLDER = "mconet-test-bearer-token-not-secret"
+_SECOND_VALUE = "mconet-test-signing-secret-not-secret"
 
 
 def _empty_extensions() -> Extensions:
@@ -174,3 +177,71 @@ def test_bearer_handler_rejects_a_control_in_the_token_without_copying_it() -> N
         raise AssertionError("Expected a control character in the token to fail.")
 
     assert request.headers is headers
+
+
+def _expect_bearer_header(
+    token: str,
+) -> Callable[[MutableTransportRequest], None]:
+    """Return a contract assertion for one freshly resolved bearer token."""
+
+    def assert_request(actual: MutableTransportRequest) -> None:
+        """Require the trace header and this resolution's bearer header."""
+        assert actual.headers.values == (
+            HeaderField("X-Trace", "trace-value"),
+            HeaderField("Authorization", f"Bearer {token}"),
+        )
+        assert actual.is_frozen is False
+
+    return assert_request
+
+
+def test_bearer_contract_reads_fixed_and_dynamic_tokens_and_redacts_failures() -> None:
+    """Verify each token is read again and a bad token is not copied into the error."""
+    fixed = BearerAuthorization(FixedCredentialSource(SecretValue(_PLACEHOLDER)))
+    suite = AuthorizationHandlerContractSuite(BearerAuthorizationHandler())
+    assert _PLACEHOLDER not in repr(fixed)
+    asyncio.run(
+        suite.assert_apply(
+            fixed,
+            _context(),
+            _request(),
+            assertion=_expect_bearer_header(_PLACEHOLDER),
+        )
+    )
+
+    secrets = [SecretValue(_PLACEHOLDER), SecretValue(_SECOND_VALUE)]
+    calls: list[str] = []
+
+    async def provider(_context: AuthorizationContext) -> SecretValue:
+        calls.append("resolved")
+        return secrets.pop(0)
+
+    dynamic = BearerAuthorization(DynamicCredentialSource(provider))
+    assert _SECOND_VALUE not in repr(dynamic)
+    for token in (_PLACEHOLDER, _SECOND_VALUE):
+        asyncio.run(
+            suite.assert_apply(
+                dynamic,
+                _context(),
+                _request(),
+                assertion=_expect_bearer_header(token),
+            )
+        )
+    assert calls == ["resolved", "resolved"]
+
+    def assert_failure(error: BaseException) -> None:
+        """Require the stable value failure without the token."""
+        assert isinstance(error, ModelInteractionError)
+        assert error.code == "invalid_authorization_header_value"
+        assert _PLACEHOLDER not in str(error)
+
+    asyncio.run(
+        suite.assert_apply_failure(
+            BearerAuthorization(
+                FixedCredentialSource(SecretValue(f"{_PLACEHOLDER}\r\n"))
+            ),
+            _context(),
+            _request(),
+            assertion=assert_failure,
+        )
+    )
