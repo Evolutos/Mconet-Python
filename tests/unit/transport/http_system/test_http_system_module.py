@@ -2,6 +2,7 @@
 
 import mconet.transport.http_system
 from mconet.transport.http_system import (
+    DefaultSystemHttpTransport,
     HttpBaseUrl,
     HttpCancellationBridge,
     HttpHeaderField,
@@ -35,8 +36,9 @@ from mconet.transport.http_system import (
 
 def test_http_system_transport_exports_request_field_mapping() -> None:
     """Verify the system HTTP module publishes field mapping and defaults."""
-    # The transport client remains later work.
+    # Connection ownership remains later work.
     assert mconet.transport.http_system.__all__ == (
+        "DefaultSystemHttpTransport",
         "HttpBaseUrl",
         "HttpCancellationBridge",
         "HttpHeaderField",
@@ -65,6 +67,10 @@ def test_http_system_transport_exports_request_field_mapping() -> None:
         "select_http_proxy",
         "summarize_http_response_headers",
         "system_http_tls_policy",
+    )
+    assert (
+        mconet.transport.http_system.DefaultSystemHttpTransport
+        is DefaultSystemHttpTransport
     )
     assert mconet.transport.http_system.HttpBaseUrl is HttpBaseUrl
     assert mconet.transport.http_system.HttpCancellationBridge is HttpCancellationBridge

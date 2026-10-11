@@ -4,9 +4,9 @@ The HTTP request mappers, response media-type extraction, response header
 summary, caller-cancellation bridge, deadline gate, network-timeout
 normalization, bounded response reading, connection release on an
 oversized body, redirect header policy, TLS verification rules, proxy
-selection, and the guard that rejects disabled certificate checks are the
-public surface of this module until later work adds the transport
-implementation.
+selection, the guard that rejects disabled certificate checks, and the
+unary system transport are the public surface of this module until later
+work adds connection ownership.
 """
 
 from mconet.transport.http_system.http_body import map_http_body
@@ -48,8 +48,12 @@ from mconet.transport.http_system.http_tls import (
     system_http_tls_policy,
 )
 from mconet.transport.http_system.http_url import HttpBaseUrl, map_http_url
+from mconet.transport.http_system.system_http_transport import (
+    DefaultSystemHttpTransport,
+)
 
 __all__: tuple[str, ...] = (
+    "DefaultSystemHttpTransport",
     "HttpBaseUrl",
     "HttpCancellationBridge",
     "HttpHeaderField",
