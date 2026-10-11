@@ -298,6 +298,27 @@ def test_schema_validator_rejects_invalid_schema_definitions() -> None:
         )
 
 
+def test_schema_validator_checks_values_of_undeclared_object_members() -> None:
+    """Verify an object additionalProperties schema validates extra members."""
+    schema_id = OpenIdentifier("schema.additional")
+    schema: JsonValue = {
+        "type": "object",
+        "properties": {"name": {"type": "string"}},
+        "additionalProperties": {"type": "integer", "minimum": 0},
+    }
+    adapter = SchemaValidatorAdapter(SchemaLoader({schema_id: schema}))
+
+    # Declared members keep their own schema. Undeclared members use the
+    # additional schema instead of being ignored or rejected as a boolean flag.
+    assert adapter.validate(schema_id, {"name": "item", "count": 2}) == ()
+    assert adapter.validate(schema_id, {"count": -1}) == (
+        SchemaValidationIssue("/count", "minimum", "Number is below minimum."),
+    )
+    assert adapter.validate(schema_id, {"name": 1}) == (
+        SchemaValidationIssue("/name", "type", "Value has an unexpected JSON type."),
+    )
+
+
 def test_schema_validator_requires_loader_and_valid_fixture() -> None:
     """Verify adapter and fixture boundaries cannot be bypassed dynamically."""
     _assert_raises(

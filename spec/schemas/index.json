@@ -6,6 +6,7 @@
     "artifact-catalog.json",
     "artifact.json",
     "foundation-values.json",
+    "json-payload.json",
     "message-document.json",
     "model-descriptor.json",
     "model-output.json",

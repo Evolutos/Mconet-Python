@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "schema.json_payload",
+  "title": "R1 JSON payload",
+  "description": "Serializable form of the frozen JSON payload port. typeId and optional schemaId are the erased runtime port facts, and value is one portable JSON value. The schema does not encode bytes, match a media type, select a component, or carry task, access, or authorization state.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["typeId", "value"],
+  "properties": {
+    "typeId": {
+      "$ref": "#/$defs/openIdentifier",
+      "description": "Semantic type identity preserved from the erased runtime port. Text must satisfy the portable open-identifier grammar."
+    },
+    "schemaId": {
+      "type": "string",
+      "description": "Optional schema identity preserved beside the JSON value. Any string is retained, including the empty string. The member is not an open identifier and must be omitted rather than set to null."
+    },
+    "value": {
+      "$ref": "#/$defs/jsonValue",
+      "description": "Portable JSON value carried by the erased payload port."
+    }
+  },
+  "$defs": {
+    "openIdentifier": {
+      "description": "Lowercase portable open identifier of 1 to 128 characters.",
+      "type": "string",
+      "maxLength": 128,
+      "pattern": "^[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?)*$"
+    },
+    "jsonValue": {
+      "description": "Recursive JSON value whose integers stay inside the inclusive interoperable range -(2**53 - 1) through 2**53 - 1. Non-finite numbers are not JSON numbers.",
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        {
+          "type": "number",
+          "not": {
+            "type": "integer"
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/jsonValue"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/jsonValue"
+          }
+        }
+      ]
+    }
+  }
+}

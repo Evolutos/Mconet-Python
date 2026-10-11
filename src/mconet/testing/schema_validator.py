@@ -35,9 +35,11 @@ class SchemaValidatorAdapter:
     The adapter implements the assertion keywords used by committed schemas:
     local references, type, const, enum, oneOf/not composition, numeric and
     string bounds, object required/properties/additionalProperties, and array
-    items/minItems/maxItems. Unsupported annotation keywords remain inert as
-    required by JSON Schema vocabulary extensibility; malformed supported
-    keywords raise schema definition errors.
+    items/minItems/maxItems. ``additionalProperties`` may be a boolean or an
+    object schema, so recursive JSON values can constrain every object member.
+    Unsupported annotation keywords remain inert as required by JSON Schema
+    vocabulary extensibility; malformed supported keywords raise schema
+    definition errors.
     """
 
     __slots__ = ("_loader",)
@@ -456,10 +458,27 @@ def _validate_object(
             )
 
     additional = schema.get("additionalProperties", True)
+    extra_names = sorted(value.keys() - properties.keys())
+    if isinstance(additional, dict):
+        # A schema applies to every undeclared member. Recursive JSON objects
+        # need this form; a boolean cannot describe their nested value contract.
+        additional_schema = cast(dict[str, JsonValue], additional)
+        for name in extra_names:
+            _validate_node(
+                additional_schema,
+                value[name],
+                _child_path(path, name),
+                issues,
+                root_schema,
+            )
+        return
     if type(additional) is not bool:
-        raise ValueError(f"Schema additionalProperties must be a boolean at {path!r}.")
+        raise ValueError(
+            "Schema additionalProperties must be a boolean or an object schema "
+            f"at {path!r}."
+        )
     if not additional:
-        for name in sorted(value.keys() - properties.keys()):
+        for name in extra_names:
             issues.append(
                 SchemaValidationIssue(
                     _child_path(path, name),
