@@ -3,9 +3,10 @@
 The HTTP request mappers, response media-type extraction, response header
 summary, caller-cancellation bridge, deadline gate, network-timeout
 normalization, bounded response reading, connection release on an
-oversized body, redirect header policy, TLS verification rules, and proxy selection are
-the public surface of this module until later work adds the certificate
-guard and the transport implementation.
+oversized body, redirect header policy, TLS verification rules, proxy
+selection, and the guard that rejects disabled certificate checks are the
+public surface of this module until later work adds the transport
+implementation.
 """
 
 from mconet.transport.http_system.http_body import map_http_body
@@ -41,7 +42,11 @@ from mconet.transport.http_system.http_response_media_type import (
     extract_http_response_media_type,
 )
 from mconet.transport.http_system.http_status import HttpStatusOutcome, map_http_status
-from mconet.transport.http_system.http_tls import HttpTlsPolicy, system_http_tls_policy
+from mconet.transport.http_system.http_tls import (
+    HttpTlsPolicy,
+    ensure_secure_http_tls,
+    system_http_tls_policy,
+)
 from mconet.transport.http_system.http_url import HttpBaseUrl, map_http_url
 
 __all__: tuple[str, ...] = (
@@ -57,6 +62,7 @@ __all__: tuple[str, ...] = (
     "apply_http_content_length",
     "apply_http_content_type",
     "ensure_http_deadline",
+    "ensure_secure_http_tls",
     "extract_http_response_media_type",
     "headers_for_http_redirect",
     "map_http_body",

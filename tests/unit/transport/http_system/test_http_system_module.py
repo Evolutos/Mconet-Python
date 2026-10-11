@@ -14,6 +14,7 @@ from mconet.transport.http_system import (
     apply_http_content_length,
     apply_http_content_type,
     ensure_http_deadline,
+    ensure_secure_http_tls,
     extract_http_response_media_type,
     headers_for_http_redirect,
     map_http_body,
@@ -34,7 +35,7 @@ from mconet.transport.http_system import (
 
 def test_http_system_transport_exports_request_field_mapping() -> None:
     """Verify the system HTTP module publishes field mapping and defaults."""
-    # The certificate guard and the client remain later work.
+    # The transport client remains later work.
     assert mconet.transport.http_system.__all__ == (
         "HttpBaseUrl",
         "HttpCancellationBridge",
@@ -48,6 +49,7 @@ def test_http_system_transport_exports_request_field_mapping() -> None:
         "apply_http_content_length",
         "apply_http_content_type",
         "ensure_http_deadline",
+        "ensure_secure_http_tls",
         "extract_http_response_media_type",
         "headers_for_http_redirect",
         "map_http_body",
@@ -85,6 +87,7 @@ def test_http_system_transport_exports_request_field_mapping() -> None:
         mconet.transport.http_system.apply_http_content_type is apply_http_content_type
     )
     assert mconet.transport.http_system.ensure_http_deadline is ensure_http_deadline
+    assert mconet.transport.http_system.ensure_secure_http_tls is ensure_secure_http_tls
     assert (
         mconet.transport.http_system.extract_http_response_media_type
         is extract_http_response_media_type
