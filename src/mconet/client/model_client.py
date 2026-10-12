@@ -39,10 +39,11 @@ class ModelClient:
     those steps have their own lifecycle packages.
 
     The client is reusable: many interactions share this object, while each
-    interaction keeps its own options and runtime state.
+    interaction keeps its own options and runtime state. The client starts
+    accepting requests. Concurrent interactions stay on this same object.
     """
 
-    __slots__ = ("_configuration",)
+    __slots__ = ("_accepting_requests", "_configuration")
 
     def __init__(self, configuration: ModelClientConfiguration) -> None:
         """Retain one client configuration after its injected components pass.
@@ -67,6 +68,9 @@ class ModelClient:
             validate_runtime_components_type_contracts(components)
             validate_runtime_components_lifecycle(components, _APPLICATION_OWNER)
         self._configuration = candidate
+        # Open is the only state this construction establishes. Closing the
+        # client, and refusing later requests, are separate lifecycle steps.
+        self._accepting_requests = True
 
     @property
     def configuration(self) -> ModelClientConfiguration:
@@ -97,8 +101,10 @@ class ModelClient:
             raise TypeError("request must be a ModelRequest.")
         if not isinstance(options_value, InteractionOptions):
             raise TypeError("options must be an InteractionOptions.")
-        # One call is the whole execution path. Encoding, authorization, and
-        # transport stay inside that runtime and are not repeated here.
+        # An open client does not serialize interactions. Each call enters the
+        # same runtime with its own request and options.
+        if not self._accepting_requests:
+            raise RuntimeError("The client is not accepting requests.")
         return await execute_interaction(
             request_value,
             options_value,

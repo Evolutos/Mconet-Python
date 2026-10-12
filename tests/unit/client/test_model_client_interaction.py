@@ -25,6 +25,7 @@ from mconet.core.domain import (
     MessageGroup,
     MessageRole,
     ModelDescriptor,
+    ModelOutput,
     ModelRequest,
     ModelRequestBuilder,
     ModelTarget,
@@ -376,7 +377,7 @@ class _Transport:
         )
 
 
-def _request() -> ModelRequest:
+def _request(service_id: str = "service.vendor") -> ModelRequest:
     """Build one valid unary conversation request with explicit access."""
     role: MessageRole = _Role(OpenIdentifier("message.user"))
     kind: MessageElementKind = _MessageKind(
@@ -404,7 +405,7 @@ def _request() -> ModelRequest:
     )
     task = ConversationTaskBuilder(document).build()
     target: ModelTarget = _Target(
-        OpenIdentifier("service.vendor"),
+        OpenIdentifier(service_id),
         OpenIdentifier("protocol.vendor"),
         NamedModel("vendor-model"),
     )
@@ -465,3 +466,24 @@ def test_interact_delegates_to_the_single_runtime() -> None:
     assert direct.target is output.target
     assert direct.status is output.status
     assert direct.result is output.result
+
+
+def test_open_client_accepts_concurrent_interactions() -> None:
+    """Verify one open client can run two interactions at the same time."""
+    pipeline = _Pipeline()
+    client, configuration = _client(pipeline)
+    first = _request("service.one")
+    second = _request("service.two")
+
+    async def _run_both() -> tuple[ModelOutput, ModelOutput]:
+        return await asyncio.gather(
+            client.interact(first, InteractionOptions()),
+            client.interact(second, InteractionOptions()),
+        )
+
+    first_output, second_output = asyncio.run(_run_both())
+    assert first_output.target is first.target
+    assert second_output.target is second.target
+    assert client.configuration is configuration
+    later = asyncio.run(client.interact(first, InteractionOptions()))
+    assert later.target is first.target
