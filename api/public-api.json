@@ -186,6 +186,10 @@
       },
       "signature": "(configuration: 'ModelClientConfiguration') -> 'None'"
     },
+    "mconet.client.model_request_from_text": {
+      "kind": "function",
+      "signature": "(target: 'ModelTarget', text: 'str', service_access: 'ServiceAccess | None' = None) -> 'ModelRequest'"
+    },
     "mconet.codec.json.JSON_ERROR_PAYLOAD_DECODER_DESCRIPTOR": {
       "kind": "value",
       "type": "ComponentDescriptor"
