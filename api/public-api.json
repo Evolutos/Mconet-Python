@@ -1650,6 +1650,11 @@
       "members": {},
       "signature": "(id: 'str', type: 'OpenIdentifier', interaction_id: 'str', trace_id: 'str | None', timestamp: 'Timestamp', payload: 'JsonValue', metadata: 'Extensions') -> None"
     },
+    "mconet.core.spi.MonitoringOptions": {
+      "kind": "class",
+      "members": {},
+      "signature": "(monitors: 'tuple[InteractionMonitor, ...]' = (), merge_mode: 'MonitoringMergeMode' = MonitoringMergeMode(mode=OpenIdentifier(value='append')), capture_request_body: 'bool' = False, capture_response_body: 'bool' = False, max_captured_body_bytes: 'int | None' = None) -> None"
+    },
     "mconet.core.spi.MutableTransportRequest": {
       "kind": "class",
       "members": {

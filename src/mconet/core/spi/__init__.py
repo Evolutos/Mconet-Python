@@ -39,6 +39,7 @@ from mconet.core.spi.model_integration_plan import ModelIntegrationPlan
 from mconet.core.spi.model_integration_resolver import ModelIntegrationResolver
 from mconet.core.spi.model_target_match import ModelTargetMatch
 from mconet.core.spi.monitoring_event import MonitoringEvent
+from mconet.core.spi.monitoring_options import MonitoringOptions
 from mconet.core.spi.mutable_transport_request import MutableTransportRequest
 from mconet.core.spi.payload_decoder import PayloadDecoder
 from mconet.core.spi.payload_encoder import PayloadEncoder
@@ -97,6 +98,7 @@ __all__ = (
     "ModelIntegrationResolver",
     "ModelTargetMatch",
     "MonitoringEvent",
+    "MonitoringOptions",
     "MutableTransportRequest",
     "PayloadDecoder",
     "PayloadEncoder",
