@@ -190,6 +190,10 @@
         "make_default": {
           "kind": "method",
           "signature": "() -> 'ModelClient'"
+        },
+        "make_openai_compatible": {
+          "kind": "method",
+          "signature": "(target: 'ModelTarget', service_access: 'ServiceAccess', *, max_response_body_bytes: 'int' = 16777216) -> 'ModelClient'"
         }
       },
       "signature": "(configuration: 'ModelClientConfiguration') -> 'None'"
@@ -197,6 +201,10 @@
     "mconet.client.make_default": {
       "kind": "function",
       "signature": "() -> mconet.client.model_client.ModelClient"
+    },
+    "mconet.client.make_openai_compatible": {
+      "kind": "function",
+      "signature": "(target: mconet.core.domain.model_target.ModelTarget, service_access: mconet.core.domain.service_access.ServiceAccess, *, max_response_body_bytes: int = 16777216) -> mconet.client.model_client.ModelClient"
     },
     "mconet.client.model_request_from_text": {
       "kind": "function",

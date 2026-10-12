@@ -13,6 +13,7 @@ def test_client_api_exports_the_reusable_client() -> None:
         "ConversationRequestBuilder",
         "ModelClient",
         "make_default",
+        "make_openai_compatible",
         "model_request_from_text",
     )
     assert mconet.client.ModelClient is ModelClient

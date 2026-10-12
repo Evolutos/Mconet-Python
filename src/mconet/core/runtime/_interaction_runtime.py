@@ -314,6 +314,7 @@ async def execute_interaction(
                 candidate_options,
                 candidate_configuration,
                 candidate_defaults,
+                plan,
             ),
             requirements=(),
         )
@@ -432,12 +433,20 @@ def _authorization_handlers(
     options: InteractionOptions,
     configuration: ModelClientConfiguration,
     sdk_defaults: RuntimeComponents,
+    plan: ModelIntegrationPlan,
 ) -> tuple[AuthorizationHandler, ...]:
-    """Return handlers from interaction, then client, then SDK defaults."""
+    """Return handlers from interaction, client, the binding, then SDK defaults."""
     for components in (options.components, configuration.components):
         if components is None or not components.authorization_handlers:
             continue
         return components.authorization_handlers
+    binding_handlers = tuple(
+        handler
+        for handler in plan.authorization_handlers
+        if isinstance(handler, AuthorizationHandler)
+    )
+    if binding_handlers:
+        return binding_handlers
     return sdk_defaults.authorization_handlers
 
 

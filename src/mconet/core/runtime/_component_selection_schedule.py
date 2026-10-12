@@ -86,12 +86,12 @@ def select_execution_components(
         ),
         select_required_component(
             _SUCCESS_DECODER_ROLE,
-            sources.success_payload_decoder,
+            _prefer_named_decoder(sources.success_payload_decoder, "success"),
             _is_decoder,
         ),
         select_required_component(
             _ERROR_DECODER_ROLE,
-            sources.error_payload_decoder,
+            _prefer_named_decoder(sources.error_payload_decoder, "error"),
             _is_decoder,
         ),
         select_required_component(
@@ -111,6 +111,47 @@ def _is_adapter(component: RuntimeComponent) -> bool:
 def _is_encoder(component: RuntimeComponent) -> bool:
     """Return whether the candidate implements the payload encoder."""
     return isinstance(component, PayloadEncoder)
+
+
+def _prefer_named_decoder(
+    layers: tuple[
+        tuple[RuntimeComponent, ...],
+        tuple[RuntimeComponent, ...],
+        tuple[RuntimeComponent, ...],
+        tuple[RuntimeComponent, ...],
+    ],
+    name_token: str,
+) -> tuple[
+    tuple[RuntimeComponent, ...],
+    tuple[RuntimeComponent, ...],
+    tuple[RuntimeComponent, ...],
+    tuple[RuntimeComponent, ...],
+]:
+    """Keep one named decoder when a binding publishes both paths together.
+
+    A single decoder stays in place, so an injected decoder keeps its role
+    without a special name. Several decoders in one layer keep the decoder
+    whose diagnostic name identifies this path. Any other count is left for
+    the selector's missing or ambiguous result.
+    """
+    preferred: list[tuple[RuntimeComponent, ...]] = []
+    for layer in layers:
+        decoders = [
+            component for component in layer if isinstance(component, PayloadDecoder)
+        ]
+        if len(decoders) <= 1:
+            preferred.append(layer)
+            continue
+        named = tuple(
+            component
+            for component in decoders
+            if name_token in component.descriptor.name
+        )
+        if len(named) == 1:
+            preferred.append(named)
+            continue
+        preferred.append(layer)
+    return (preferred[0], preferred[1], preferred[2], preferred[3])
 
 
 def _is_decoder(component: RuntimeComponent) -> bool:

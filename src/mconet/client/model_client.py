@@ -12,6 +12,10 @@ from mconet.auth.basic import (
 from mconet.client._builtin_component_release import (
     release_builtin_client_components,
 )
+from mconet.client._openai_compatible_binding import (
+    OPENAI_COMPATIBLE_TYPE_KEY,
+    openai_compatible_binding,
+)
 from mconet.client.text_request import model_request_from_text
 from mconet.codec.json import (
     JsonErrorPayloadDecoder,
@@ -26,6 +30,10 @@ from mconet.core.domain.model_request import ModelRequest
 from mconet.core.domain.model_target import ModelTarget
 from mconet.core.domain.open_identifier import OpenIdentifier
 from mconet.core.domain.service_access import ServiceAccess
+from mconet.core.runtime._integration_responsibility_chain import (
+    IntegrationResponsibilityChain,
+)
+from mconet.core.runtime._integration_type_table import IntegrationTypeTable
 from mconet.core.runtime._interaction_runtime import execute_interaction
 from mconet.core.runtime._runtime_components_lifecycle_validation import (
     validate_runtime_components_lifecycle,
@@ -36,10 +44,14 @@ from mconet.core.runtime._runtime_components_spi_validation import (
 from mconet.core.runtime._runtime_components_type_contract_validation import (
     validate_runtime_components_type_contracts,
 )
+from mconet.core.runtime.default_model_integration_resolver import (
+    DefaultModelIntegrationResolver,
+)
 from mconet.core.spi.component_ownership import ComponentOwnership
 from mconet.core.spi.interaction_options import InteractionOptions
 from mconet.core.spi.model_client_configuration import ModelClientConfiguration
 from mconet.core.spi.runtime_components import RuntimeComponents
+from mconet.core.spi.transport import Transport
 from mconet.transport.http_system import DefaultSystemHttpTransport
 
 _APPLICATION_OWNER = ComponentOwnership(OpenIdentifier("application"))
@@ -207,6 +219,65 @@ class ModelClient:
         # Direct injection would mark these objects application-owned, so they
         # stay on the SDK carrier that close releases.
         client._sdk_defaults = _builtin_components()
+        return client
+
+    @classmethod
+    def make_openai_compatible(
+        cls,
+        target: ModelTarget,
+        service_access: ServiceAccess,
+        *,
+        max_response_body_bytes: int = _DEFAULT_MAX_RESPONSE_BODY_BYTES,
+    ) -> ModelClient:
+        """Return a client whose defaults are one OpenAI-compatible binding.
+
+        The binding supplies the adapter, JSON codec, system HTTP transport,
+        and basic authorization handlers. This factory adds the caller's
+        target and service access. It does not build a second component set.
+
+        Args:
+            target: Default model target stored on the client.
+            service_access: Default access stored on the client. The binding
+                has no universal endpoint, so this access supplies it.
+            max_response_body_bytes: Body limit passed to the binding's
+                JSON decoders.
+
+        Returns:
+            A client that resolves chat completions through that binding.
+
+        Raises:
+            TypeError: If a target, access value, or body limit has the wrong type.
+        """
+        candidate_target = cast(object, target)
+        candidate_access = cast(object, service_access)
+        candidate_limit = cast(object, max_response_body_bytes)
+        if not isinstance(candidate_target, ModelTarget):
+            raise TypeError("target must be a ModelTarget.")
+        if not isinstance(candidate_access, ServiceAccess):
+            raise TypeError("service_access must be a ServiceAccess.")
+        if type(candidate_limit) is not int:
+            raise TypeError("max_response_body_bytes must be an integer.")
+        binding = openai_compatible_binding(
+            max_response_body_bytes=candidate_limit,
+        )
+        resolver = DefaultModelIntegrationResolver(
+            IntegrationTypeTable(((OPENAI_COMPATIBLE_TYPE_KEY, binding),)),
+            IntegrationResponsibilityChain(()),
+        )
+        client = cls(
+            ModelClientConfiguration(
+                default_target=candidate_target,
+                default_service_access=candidate_access,
+                components=RuntimeComponents(
+                    model_integration_resolver=resolver,
+                ),
+            )
+        )
+        # The binding transport is SDK-owned so close can release it. Selection
+        # still uses the same instance through the resolved binding.
+        transport = binding.transports[0] if binding.transports else None
+        if isinstance(transport, Transport):
+            client._sdk_defaults = RuntimeComponents(transport=transport)
         return client
 
 
