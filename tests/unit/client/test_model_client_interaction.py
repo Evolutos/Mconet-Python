@@ -17,6 +17,7 @@ from mconet.core.domain import (
     ConversationInputNode,
     ConversationTaskBuilder,
     Extensions,
+    HeaderField,
     Headers,
     InteractionResourceLimits,
     MediaType,
@@ -26,11 +27,13 @@ from mconet.core.domain import (
     MessageGroup,
     MessageRole,
     ModelDescriptor,
+    ModelInteractionError,
     ModelOutput,
     ModelRequest,
     ModelRequestBuilder,
     ModelTarget,
     ModelTaskResult,
+    MonitoringMergeMode,
     NamedModel,
     OpenIdentifier,
     OutputStatus,
@@ -58,6 +61,7 @@ from mconet.core.spi import (
     ErasedRuntimeValue,
     InteractionOptions,
     ModelClientConfiguration,
+    MonitoringOptions,
     MutableTransportRequest,
     PayloadDecoder,
     PayloadEncoder,
@@ -183,6 +187,8 @@ class _Pipeline:
     def __init__(self) -> None:
         """Start with an empty call list and one shared parsed result."""
         self.calls: list[str] = []
+        self.response_headers = Headers()
+        self.sent_response: TransportResponse | None = None
         self.result = _Result()
         self.status = OutputStatus(OpenIdentifier("completed"))
         self.parsed = ParsedTaskResponse(
@@ -375,14 +381,16 @@ class _Transport:
         """Record the send and return one successful JSON response."""
         del request, context
         self._pipeline.calls.append("send")
-        return TransportResponse(
+        response = TransportResponse(
             TransportResponseMetadata(
                 TransportOutcome(OpenIdentifier("success")),
-                Headers(),
+                self._pipeline.response_headers,
                 media_type=MediaType("application", "json"),
             ),
             Bytes(b"{}"),
         )
+        self._pipeline.sent_response = response
+        return response
 
 
 def _request(service_id: str = "service.vendor") -> ModelRequest:
@@ -424,7 +432,26 @@ def _request(service_id: str = "service.vendor") -> ModelRequest:
     return ModelRequestBuilder(target, task).with_service_access(access).build()
 
 
-def _client(pipeline: _Pipeline) -> tuple[ModelClient, ModelClientConfiguration]:
+class _OrderMonitor:
+    """Monitor that records its name when an event is published."""
+
+    def __init__(self, name: str, order: list[str]) -> None:
+        """Store the name, shared order list, and an empty descriptor."""
+        self.descriptor = ComponentDescriptor(name, "1.0.0", "application")
+        self.observed_events = None
+        self._name = name
+        self._order = order
+
+    async def on_event(self, event: object) -> None:
+        """Append this monitor's name without reading the event body."""
+        del event
+        self._order.append(self._name)
+
+
+def _client(
+    pipeline: _Pipeline,
+    monitoring_defaults: MonitoringOptions | None = None,
+) -> tuple[ModelClient, ModelClientConfiguration]:
     """Build a client whose injected components can complete one interaction."""
     endpoint = UriValue("https://example.test/v1", True)
     components = RuntimeComponents(
@@ -440,7 +467,10 @@ def _client(pipeline: _Pipeline) -> tuple[ModelClient, ModelClientConfiguration]
             cast(AuthorizationHandler, _RecordedHandler(pipeline)),
         ),
     )
-    configuration = ModelClientConfiguration(components=components)
+    configuration = ModelClientConfiguration(
+        components=components,
+        monitoring_defaults=monitoring_defaults,
+    )
     return ModelClient(configuration), configuration
 
 
@@ -516,6 +546,120 @@ def test_over_limit_raw_response_keeps_metadata_without_the_body() -> None:
     assert raw_response.body_omitted is True
     assert raw_response.metadata.outcome.id.value == "success"
     assert pipeline.calls.count("decode") == 1
+
+
+def test_raw_response_snapshot_drops_credential_headers() -> None:
+    """Verify credential headers stay on the transport response only."""
+    pipeline = _Pipeline()
+    pipeline.response_headers = Headers(
+        (
+            HeaderField("Content-Type", "application/json"),
+            HeaderField("Authorization", "mconet-test-bearer-token-not-secret"),
+            HeaderField("Cookie", "session=1"),
+            HeaderField("X-Secret-Value", "mconet-test-signing-secret-not-secret"),
+        )
+    )
+    client, _configuration = _client(pipeline)
+    captured = asyncio.run(
+        client.interact(
+            _request(),
+            InteractionOptions(include_raw_response=True),
+        )
+    )
+    raw_response = cast(_CapturedOutput, captured).raw_response
+    names = tuple(header.name for header in raw_response.metadata.headers.values)
+    assert names == ("Content-Type",)
+    sent = pipeline.sent_response
+    assert sent is not None
+    sent_names = tuple(header.name for header in sent.response_metadata.headers.values)
+    assert sent_names == (
+        "Content-Type",
+        "Authorization",
+        "Cookie",
+        "X-Secret-Value",
+    )
+
+
+def _monitoring(name: str, order: list[str], mode: str) -> MonitoringOptions:
+    """Return one monitor and an explicit merge mode."""
+    return MonitoringOptions(
+        monitors=(_OrderMonitor(name, order),),
+        merge_mode=MonitoringMergeMode(OpenIdentifier(mode)),
+    )
+
+
+def test_append_publishes_client_monitors_before_interaction_monitors() -> None:
+    """Verify append keeps the client monitor ahead of the interaction monitor."""
+    order: list[str] = []
+    pipeline = _Pipeline()
+    client, _configuration = _client(pipeline, _monitoring("client", order, "append"))
+    asyncio.run(
+        client.interact(
+            _request(),
+            InteractionOptions(
+                monitoring_options=_monitoring("interaction", order, "append")
+            ),
+        )
+    )
+    assert order[:2] == ["client", "interaction"]
+    assert order == ["client", "interaction"] * (len(order) // 2)
+
+
+def test_prepend_publishes_interaction_monitors_first() -> None:
+    """Verify prepend keeps the interaction monitor ahead of the client monitor."""
+    order: list[str] = []
+    pipeline = _Pipeline()
+    client, _configuration = _client(pipeline, _monitoring("client", order, "append"))
+    asyncio.run(
+        client.interact(
+            _request(),
+            InteractionOptions(
+                monitoring_options=_monitoring("interaction", order, "prepend")
+            ),
+        )
+    )
+    assert order[:2] == ["interaction", "client"]
+    assert order == ["interaction", "client"] * (len(order) // 2)
+
+
+def test_replace_uses_only_interaction_monitors() -> None:
+    """Verify an empty replace disables the client monitors."""
+    order: list[str] = []
+    pipeline = _Pipeline()
+    client, _configuration = _client(pipeline, _monitoring("client", order, "append"))
+    asyncio.run(
+        client.interact(
+            _request(),
+            InteractionOptions(
+                monitoring_options=MonitoringOptions(
+                    monitors=(),
+                    merge_mode=MonitoringMergeMode(OpenIdentifier("replace")),
+                )
+            ),
+        )
+    )
+    assert order == []
+
+
+def test_unknown_monitoring_merge_mode_fails() -> None:
+    """Verify an unknown merge mode is not treated as append."""
+    pipeline = _Pipeline()
+    client, _configuration = _client(pipeline)
+    try:
+        asyncio.run(
+            client.interact(
+                _request(),
+                InteractionOptions(
+                    monitoring_options=MonitoringOptions(
+                        merge_mode=MonitoringMergeMode(OpenIdentifier("shuffle")),
+                    )
+                ),
+            )
+        )
+    except ModelInteractionError as error:
+        assert error.code == "invalid_monitoring_merge_mode"
+    else:
+        raise AssertionError("Expected an unknown merge mode to fail.")
 
 
 def test_open_client_accepts_concurrent_interactions() -> None:

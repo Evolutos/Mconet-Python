@@ -8,8 +8,11 @@ from typing import cast
 
 from mconet.core.domain.bytes_value import Bytes
 from mconet.core.domain.compatibility_policy import CompatibilityPolicy
+from mconet.core.domain.error_category import ErrorCategory
 from mconet.core.domain.header_field import HeaderField
 from mconet.core.domain.headers import Headers
+from mconet.core.domain.interaction_phase import InteractionPhase
+from mconet.core.domain.model_interaction_error import ModelInteractionError
 from mconet.core.domain.model_output import ModelOutput
 from mconet.core.domain.model_request import ModelRequest
 from mconet.core.domain.open_identifier import OpenIdentifier
@@ -61,6 +64,7 @@ from mconet.core.spi.component_role import ComponentRole
 from mconet.core.spi.component_selection_resolution import (
     ComponentSelectionResolution,
 )
+from mconet.core.spi.interaction_monitor import InteractionMonitor
 from mconet.core.spi.interaction_options import InteractionOptions
 from mconet.core.spi.model_client_configuration import ModelClientConfiguration
 from mconet.core.spi.model_integration_plan import ModelIntegrationPlan
@@ -77,6 +81,10 @@ from mconet.core.spi.transport_request import TransportRequest
 from mconet.core.spi.transport_response import TransportResponse
 from mconet.core.spi.transport_response_metadata import TransportResponseMetadata
 
+_INVALID_REQUEST = ErrorCategory(OpenIdentifier("invalid_request"))
+_MONITORING_PHASE = InteractionPhase(OpenIdentifier("monitoring"))
+_INVALID_MERGE_MODE_CODE = "invalid_monitoring_merge_mode"
+_INVALID_MERGE_MODE_MESSAGE = "The monitoring merge mode is not supported."
 _UNARY_MODE_ID = OpenIdentifier("unary")
 _HTTP_TRANSPORT_KIND = OpenIdentifier("http")
 _TRANSPORT_ROLE = ComponentRole(OpenIdentifier("transport.unary"))
@@ -363,7 +371,7 @@ async def execute_interaction(
             transport_context=transport_context,
             interaction_context=context,
             resources=resources,
-            monitors=(),
+            monitors=_merged_monitors(candidate_options, candidate_configuration),
             completed_event=completed,
             assembler=_ASSEMBLER,
             policy=resolved.compatibility_policy,
@@ -388,6 +396,41 @@ async def execute_interaction(
         if not context.released:
             context.release()
         raise
+
+
+def _merged_monitors(
+    options: InteractionOptions,
+    configuration: ModelClientConfiguration,
+) -> tuple[InteractionMonitor, ...]:
+    """Combine client and interaction monitors without reading their events.
+
+    ``append`` keeps client monitors first. ``prepend`` keeps interaction
+    monitors first. ``replace`` keeps only the interaction monitors, including
+    an empty tuple that disables the client monitors. Body capture flags are
+    not applied. An unknown mode fails before any monitor is called.
+    """
+    interaction = options.monitoring_options
+    client = configuration.monitoring_defaults
+    if interaction is None and client is None:
+        return ()
+    governing = interaction if interaction is not None else client
+    if governing is None:
+        return ()
+    mode = governing.merge_mode.mode.value
+    client_monitors = () if client is None else client.monitors
+    interaction_monitors = () if interaction is None else interaction.monitors
+    if mode == "append":
+        return client_monitors + interaction_monitors
+    if mode == "prepend":
+        return interaction_monitors + client_monitors
+    if mode == "replace":
+        return interaction_monitors
+    raise ModelInteractionError(
+        category=_INVALID_REQUEST,
+        phase=_MONITORING_PHASE,
+        code=_INVALID_MERGE_MODE_CODE,
+        message=_INVALID_MERGE_MODE_MESSAGE,
+    )
 
 
 def _integration_plan(
