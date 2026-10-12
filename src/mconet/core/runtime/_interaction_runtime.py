@@ -55,17 +55,28 @@ from mconet.core.spi.authorization_handler import AuthorizationHandler
 from mconet.core.spi.authorization_handler_resolver import (
     AuthorizationHandlerResolver,
 )
+from mconet.core.spi.component_role import ComponentRole
+from mconet.core.spi.component_selection_resolution import (
+    ComponentSelectionResolution,
+)
 from mconet.core.spi.interaction_options import InteractionOptions
 from mconet.core.spi.model_client_configuration import ModelClientConfiguration
 from mconet.core.spi.model_integration_plan import ModelIntegrationPlan
 from mconet.core.spi.model_integration_resolver import ModelIntegrationResolver
 from mconet.core.spi.monitoring_event import MonitoringEvent
+from mconet.core.spi.raw_response_snapshot import RawResponseSnapshot
 from mconet.core.spi.runtime_components import RuntimeComponents
+from mconet.core.spi.selected_component import SelectedComponent
 from mconet.core.spi.service_access_resolver import ServiceAccessResolver
 from mconet.core.spi.task_protocol_adapter import TaskProtocolAdapter
+from mconet.core.spi.transport import Transport
+from mconet.core.spi.transport_context import TransportContext
+from mconet.core.spi.transport_request import TransportRequest
+from mconet.core.spi.transport_response import TransportResponse
 
 _UNARY_MODE_ID = OpenIdentifier("unary")
 _HTTP_TRANSPORT_KIND = OpenIdentifier("http")
+_TRANSPORT_ROLE = ComponentRole(OpenIdentifier("transport.unary"))
 _NANOSECONDS_PER_SECOND = 1_000_000_000
 _SDK_LIMITS = ResolvedInteractionResourceLimits(
     16_777_216,
@@ -89,6 +100,92 @@ class _UnaryMode:
 
 
 _UNARY_MODE = _UnaryMode()
+
+
+class _ResponseRecorder:
+    """Observe one transport response and return that same response."""
+
+    __slots__ = ("_transport", "captured", "descriptor")
+
+    def __init__(self, transport: Transport) -> None:
+        """Retain the selected transport and its descriptor."""
+        self._transport = transport
+        self.descriptor = transport.descriptor
+        self.captured: TransportResponse | None = None
+
+    async def send(
+        self,
+        request: TransportRequest,
+        context: TransportContext,
+    ) -> TransportResponse:
+        """Send through the selected transport and remember its response."""
+        response = await self._transport.send(request, context)
+        # The first response is the one decoding will read. Returning the same
+        # object keeps the decoder on the transport's result.
+        if self.captured is None:
+            self.captured = response
+        return response
+
+
+class _OutputWithRawResponse:
+    """Expose one assembled output plus an opted-in raw response."""
+
+    __slots__ = ("_output", "raw_response")
+
+    def __init__(self, output: ModelOutput, raw_response: RawResponseSnapshot) -> None:
+        """Retain the assembled output and the snapshot beside it."""
+        self._output = output
+        self.raw_response = raw_response
+
+    @property
+    def id(self) -> str | None:
+        """Return the assembled output identity."""
+        return self._output.id
+
+    @property
+    def target(self) -> object:
+        """Return the assembled output target."""
+        return self._output.target
+
+    @property
+    def resolved_model(self) -> object:
+        """Return the assembled resolved model."""
+        return self._output.resolved_model
+
+    @property
+    def status(self) -> object:
+        """Return the assembled output status."""
+        return self._output.status
+
+    @property
+    def result(self) -> object:
+        """Return the assembled task result."""
+        return self._output.result
+
+    @property
+    def stop_reason(self) -> str | None:
+        """Return the assembled stop reason."""
+        return self._output.stop_reason
+
+    @property
+    def usage(self) -> object:
+        """Return the assembled token usage."""
+        return self._output.usage
+
+    @property
+    def diagnostics(self) -> object:
+        """Return the assembled diagnostics."""
+        return self._output.diagnostics
+
+    @property
+    def protocol_state(self) -> object:
+        """Return the assembled protocol state."""
+        return self._output.protocol_state
+
+    @property
+    def extensions(self) -> object:
+        """Return the assembled extensions."""
+        return self._output.extensions
 
 
 async def execute_interaction(
@@ -186,6 +283,12 @@ async def execute_interaction(
             client_components=candidate_configuration.components,
             sdk_defaults=_SDK_COMPONENTS,
         )
+        recorder: _ResponseRecorder | None = None
+        # Default capture stays off. The selected transport is used directly,
+        # so decoding still receives that transport's response object.
+        if candidate_options.include_raw_response:
+            recorder = _response_recorder(selection)
+            selection = _selection_with_transport(selection, recorder)
         components = freeze_interaction_execution_components(
             integration_plan=plan,
             component_selection=selection,
@@ -238,7 +341,7 @@ async def execute_interaction(
             {"status": "completed"},
             {},
         )
-        return await run_mock_transport_success(
+        output = await run_mock_transport_success(
             request=candidate_request,
             components=components,
             execution_plan=execution_plan,
@@ -251,6 +354,16 @@ async def execute_interaction(
             assembler=_ASSEMBLER,
             policy=resolved.compatibility_policy,
             output_id=interaction_id,
+        )
+        if recorder is None or recorder.captured is None:
+            return output
+        captured = recorder.captured
+        return cast(
+            ModelOutput,
+            _OutputWithRawResponse(
+                output,
+                RawResponseSnapshot(captured.body, captured.response_metadata),
+            ),
         )
     except BaseException:
         # The success chain releases the context on both return and failure.
@@ -324,6 +437,34 @@ def _component(
         if value is not None:
             return value
     return None
+
+
+def _response_recorder(selection: ComponentSelectionResolution) -> _ResponseRecorder:
+    """Wrap the selected transport so capture can see its response."""
+    for selected in selection.components:
+        if selected.role != _TRANSPORT_ROLE:
+            continue
+        transport = selected.component
+        if not isinstance(transport, Transport):
+            raise TypeError("transport must implement Transport.")
+        return _ResponseRecorder(transport)
+    raise TypeError("transport must implement Transport.")
+
+
+def _selection_with_transport(
+    selection: ComponentSelectionResolution,
+    recorder: _ResponseRecorder,
+) -> ComponentSelectionResolution:
+    """Return the selection with the recorder in the transport role."""
+    replaced: list[SelectedComponent] = []
+    for selected in selection.components:
+        if selected.role == _TRANSPORT_ROLE:
+            replaced.append(
+                SelectedComponent(selected.role, recorder, recorder.descriptor)
+            )
+            continue
+        replaced.append(selected)
+    return ComponentSelectionResolution(tuple(replaced))
 
 
 def _now() -> Timestamp:

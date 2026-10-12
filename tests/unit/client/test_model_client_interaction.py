@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 from dataclasses import dataclass, field
 from types import MappingProxyType
-from typing import Literal, cast
+from typing import Literal, Protocol, cast
 
 from mconet.auth.basic.no_authorization import NoAuthorization
 from mconet.auth.basic.no_authorization_handler import NoAuthorizationHandler
@@ -62,6 +62,7 @@ from mconet.core.spi import (
     PayloadEncoder,
     ProtocolExecutionPlan,
     ProtocolRequestPlan,
+    RawResponseSnapshot,
     RuntimeComponents,
     TaskProtocolAdapter,
     Transport,
@@ -74,6 +75,12 @@ from mconet.core.spi import (
     TransportResponseMetadata,
     TransportSelection,
 )
+
+
+class _CapturedOutput(Protocol):
+    """Assembled output that also carries an opted-in raw response."""
+
+    raw_response: RawResponseSnapshot
 
 
 def _empty_extensions() -> Extensions:
@@ -466,6 +473,26 @@ def test_interact_delegates_to_the_single_runtime() -> None:
     assert direct.target is output.target
     assert direct.status is output.status
     assert direct.result is output.result
+
+
+def test_raw_response_is_captured_only_when_requested() -> None:
+    """Verify capture is off by default and does not add a decode step."""
+    pipeline = _Pipeline()
+    client, _configuration = _client(pipeline)
+    request = _request()
+    plain = asyncio.run(client.interact(request, InteractionOptions()))
+    assert not hasattr(plain, "raw_response")
+    captured = asyncio.run(
+        client.interact(
+            request,
+            InteractionOptions(include_raw_response=True),
+        )
+    )
+    raw_response = cast(_CapturedOutput, captured).raw_response
+    assert raw_response.body == b"{}"
+    assert raw_response.metadata.outcome.id.value == "success"
+    assert pipeline.calls.count("decode") == 2
+    assert pipeline.calls.count("send") == 2
 
 
 def test_open_client_accepts_concurrent_interactions() -> None:
