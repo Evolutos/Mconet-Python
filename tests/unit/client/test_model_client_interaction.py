@@ -80,6 +80,7 @@ from mconet.core.spi import (
     TransportResponseMetadata,
     TransportSelection,
 )
+from mconet.testing import SecretScanner
 
 
 class _CapturedOutput(Protocol):
@@ -549,13 +550,16 @@ def test_over_limit_raw_response_keeps_metadata_without_the_body() -> None:
 
 
 def test_raw_response_snapshot_drops_credential_headers() -> None:
-    """Verify credential headers stay on the transport response only."""
+    """Verify credential headers and secret names stay off the snapshot."""
     pipeline = _Pipeline()
     pipeline.response_headers = Headers(
         (
             HeaderField("Content-Type", "application/json"),
             HeaderField("Authorization", "mconet-test-bearer-token-not-secret"),
+            HeaderField("Proxy-Authorization", "mconet-test-bearer-token-not-secret"),
             HeaderField("Cookie", "session=1"),
+            HeaderField("Set-Cookie", "a=b"),
+            HeaderField("X-Api-Key", "mconet-test-api-key-not-secret"),
             HeaderField("X-Secret-Value", "mconet-test-signing-secret-not-secret"),
         )
     )
@@ -569,13 +573,20 @@ def test_raw_response_snapshot_drops_credential_headers() -> None:
     raw_response = cast(_CapturedOutput, captured).raw_response
     names = tuple(header.name for header in raw_response.metadata.headers.values)
     assert names == ("Content-Type",)
+    scanner = SecretScanner()
+    scanner.assert_absent("mconet-test-bearer-token-not-secret", raw_response)
+    scanner.assert_absent("mconet-test-api-key-not-secret", raw_response)
+    scanner.assert_absent("mconet-test-signing-secret-not-secret", raw_response)
     sent = pipeline.sent_response
     assert sent is not None
     sent_names = tuple(header.name for header in sent.response_metadata.headers.values)
     assert sent_names == (
         "Content-Type",
         "Authorization",
+        "Proxy-Authorization",
         "Cookie",
+        "Set-Cookie",
+        "X-Api-Key",
         "X-Secret-Value",
     )
 
@@ -639,6 +650,16 @@ def test_replace_uses_only_interaction_monitors() -> None:
         )
     )
     assert order == []
+
+
+def test_client_monitors_run_when_the_call_sets_no_merge_mode() -> None:
+    """Verify a client replace mode does not erase monitors for an ordinary call."""
+    order: list[str] = []
+    pipeline = _Pipeline()
+    client, _configuration = _client(pipeline, _monitoring("client", order, "replace"))
+    asyncio.run(client.interact(_request(), InteractionOptions()))
+    assert order
+    assert set(order) == {"client"}
 
 
 def test_unknown_monitoring_merge_mode_fails() -> None:

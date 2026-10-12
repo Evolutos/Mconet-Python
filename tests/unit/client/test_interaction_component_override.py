@@ -20,13 +20,19 @@ from mconet.core.domain import (
     Extensions,
     HeaderField,
     Headers,
+    InteractionMode,
     MediaType,
     ModelDescriptor,
+    ModelInteractionError,
+    ModelRequest,
     ModelTarget,
     NamedModel,
     OpenIdentifier,
+    ParsedTaskResponse,
     QueryParameters,
+    ResolvedServiceAccess,
     ServiceAccess,
+    TaskDescriptor,
     UriValue,
 )
 from mconet.core.runtime._integration_responsibility_chain import (
@@ -43,9 +49,17 @@ from mconet.core.spi import (
     ErasedRuntimeValue,
     InteractionOptions,
     ModelClientConfiguration,
+    ProtocolExecutionPlan,
+    ProtocolRequestPlan,
     RuntimeComponents,
     TransportBody,
+    TransportContext,
+    TransportOutcome,
+    TransportRequest,
+    TransportResponse,
+    TransportResponseMetadata,
 )
+from mconet.integration.openai_compatible import OpenAIChatCompletionsAdapter
 from mconet.testing import MockHttpResponseScript, MockHttpServer
 
 
@@ -161,3 +175,173 @@ def test_interaction_encoder_overrides_the_client_without_writing_back() -> None
     stored = client.configuration.components
     assert stored is not None
     assert stored.payload_encoder is client_encoder
+
+
+class _RecordingTransport:
+    """Transport that records sends and returns one chat JSON body."""
+
+    def __init__(self, name: str) -> None:
+        """Store the instance name, an empty contract, and a send count."""
+        self.name = name
+        self.sends = 0
+        self.descriptor = ComponentDescriptor(
+            name,
+            "1.0.0",
+            "application",
+            ComponentTypeContract(),
+        )
+
+    async def send(
+        self,
+        request: TransportRequest,
+        context: TransportContext,
+    ) -> TransportResponse:
+        """Record the send and return a successful chat-completions payload."""
+        del request, context
+        self.sends += 1
+        payload = {
+            "choices": [
+                {
+                    "index": 0,
+                    "message": {"role": "assistant", "content": "Hi"},
+                    "finish_reason": "stop",
+                }
+            ]
+        }
+        return TransportResponse(
+            TransportResponseMetadata(
+                TransportOutcome(OpenIdentifier("success")),
+                Headers((HeaderField("Content-Type", "application/json"),)),
+                media_type=MediaType("application", "json"),
+            ),
+            Bytes(json.dumps(payload).encode("utf-8")),
+        )
+
+
+class _CountingAdapter:
+    """Adapter that counts prepare calls and delegates the OpenAI mapping."""
+
+    def __init__(self) -> None:
+        """Store the OpenAI adapter, its descriptor, and a prepare count."""
+        inner = OpenAIChatCompletionsAdapter()
+        self.descriptor = inner.descriptor
+        self._inner = inner
+        self.prepares = 0
+
+    def supports(
+        self,
+        target: ModelTarget,
+        task: TaskDescriptor,
+        mode: InteractionMode,
+    ) -> bool:
+        """Return the inner adapter's applicability."""
+        return self._inner.supports(target, task, mode)
+
+    def prepare_plan(
+        self,
+        request: ModelRequest,
+        access: ResolvedServiceAccess,
+        mode: InteractionMode,
+    ) -> ProtocolExecutionPlan:
+        """Record the call and return the inner plan."""
+        self.prepares += 1
+        return self._inner.prepare_plan(request, access, mode)
+
+    def build_request(
+        self,
+        request: ModelRequest,
+        plan: ProtocolExecutionPlan,
+    ) -> ProtocolRequestPlan:
+        """Return the inner request plan."""
+        return self._inner.build_request(request, plan)
+
+    def parse_response(self, response: ErasedRuntimeValue) -> ParsedTaskResponse:
+        """Return the inner parsed success."""
+        return self._inner.parse_response(response)
+
+    def parse_error(
+        self,
+        error: ErasedRuntimeValue,
+        metadata: TransportResponseMetadata,
+    ) -> ModelInteractionError | None:
+        """Return the inner parsed error."""
+        return self._inner.parse_error(error, metadata)
+
+
+def test_interaction_transport_overrides_the_client_without_writing_back() -> None:
+    """Verify one call uses another transport and leaves the client transport."""
+    target: ModelTarget = _Target(
+        OpenIdentifier("service.vendor"),
+        OpenIdentifier("openai.chat-completions"),
+        NamedModel("vendor-model"),
+    )
+    client_transport = _RecordingTransport("client")
+    call_transport = _RecordingTransport("call")
+    access: ServiceAccess = _Access(
+        UriValue("https://example.test/v1", True),
+        NoAuthorization(),
+    )
+    configuration = ModelClientConfiguration(
+        default_service_access=access,
+        components=RuntimeComponents(
+            task_protocol_adapter=OpenAIChatCompletionsAdapter(),
+            transport=client_transport,
+        ),
+    )
+    client = ModelClient(configuration)
+    request = model_request_from_text(target, "Hello")
+    asyncio.run(
+        client.interact(
+            request,
+            InteractionOptions(
+                components=RuntimeComponents(transport=call_transport),
+            ),
+        )
+    )
+    assert call_transport.sends == 1
+    assert client_transport.sends == 0
+    assert client.configuration is configuration
+    stored = configuration.components
+    assert stored is not None
+    assert stored.transport is client_transport
+    asyncio.run(client.interact(request, InteractionOptions()))
+    assert client_transport.sends == 1
+    assert call_transport.sends == 1
+
+
+def test_interaction_adapter_prepares_the_plan_without_writing_back() -> None:
+    """Verify the call adapter plans the request and the client adapter stays idle."""
+    target: ModelTarget = _Target(
+        OpenIdentifier("service.vendor"),
+        OpenIdentifier("openai.chat-completions"),
+        NamedModel("vendor-model"),
+    )
+    client_adapter = _CountingAdapter()
+    call_adapter = _CountingAdapter()
+    transport = _RecordingTransport("client")
+    access: ServiceAccess = _Access(
+        UriValue("https://example.test/v1", True),
+        NoAuthorization(),
+    )
+    configuration = ModelClientConfiguration(
+        default_service_access=access,
+        components=RuntimeComponents(
+            task_protocol_adapter=client_adapter,
+            transport=transport,
+        ),
+    )
+    client = ModelClient(configuration)
+    asyncio.run(
+        client.interact(
+            model_request_from_text(target, "Hello"),
+            InteractionOptions(
+                components=RuntimeComponents(task_protocol_adapter=call_adapter),
+            ),
+        )
+    )
+    assert call_adapter.prepares == 1
+    assert client_adapter.prepares == 0
+    assert client.configuration is configuration
+    stored = configuration.components
+    assert stored is not None
+    assert stored.task_protocol_adapter is client_adapter

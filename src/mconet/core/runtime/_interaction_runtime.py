@@ -4,14 +4,18 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
+from types import MappingProxyType
 from typing import cast
 
+from mconet.core.domain.authorization import Authorization
 from mconet.core.domain.bytes_value import Bytes
 from mconet.core.domain.compatibility_policy import CompatibilityPolicy
 from mconet.core.domain.error_category import ErrorCategory
+from mconet.core.domain.extensions import Extensions
 from mconet.core.domain.header_field import HeaderField
 from mconet.core.domain.headers import Headers
 from mconet.core.domain.interaction_phase import InteractionPhase
+from mconet.core.domain.json_value import JsonValue
 from mconet.core.domain.model_interaction_error import ModelInteractionError
 from mconet.core.domain.model_output import ModelOutput
 from mconet.core.domain.model_request import ModelRequest
@@ -55,6 +59,9 @@ from mconet.core.runtime.interaction_configuration_layer import (
     InteractionConfigurationLayer,
 )
 from mconet.core.runtime.model_output_assembler import ModelOutputAssembler
+from mconet.core.runtime.pre_authorization_snapshot import (
+    omitted_authorization_header_names,
+)
 from mconet.core.spi.authorization_context import AuthorizationContext
 from mconet.core.spi.authorization_handler import AuthorizationHandler
 from mconet.core.spi.authorization_handler_resolver import (
@@ -96,6 +103,16 @@ _SDK_LIMITS = ResolvedInteractionResourceLimits(
 )
 _SDK_COMPONENTS = RuntimeComponents()
 _SERVICE_ACCESS_RESOLVER = DefaultServiceAccessResolver()
+# Response snapshots use the same credential header names as the HTTP summary.
+# Runtime cannot import transport, so the names are duplicated here.
+_RESPONSE_CREDENTIAL_HEADER_NAMES = frozenset(
+    {
+        "authorization",
+        "proxy-authorization",
+        "cookie",
+        "set-cookie",
+    }
+)
 _AUTHORIZATION_HANDLER_RESOLVER = DefaultAuthorizationHandlerResolver()
 _ASSEMBLER = ModelOutputAssembler()
 
@@ -387,6 +404,7 @@ async def execute_interaction(
                 _raw_snapshot(
                     captured,
                     resolved.resource_limits.max_response_body_bytes,
+                    access.authorization,
                 ),
             ),
         )
@@ -404,21 +422,22 @@ def _merged_monitors(
 ) -> tuple[InteractionMonitor, ...]:
     """Combine client and interaction monitors without reading their events.
 
-    ``append`` keeps client monitors first. ``prepend`` keeps interaction
-    monitors first. ``replace`` keeps only the interaction monitors, including
-    an empty tuple that disables the client monitors. Body capture flags are
-    not applied. An unknown mode fails before any monitor is called.
+    A call that supplies no monitoring options uses the client monitors as
+    stored. A call that supplies options uses that call's merge mode:
+    ``append`` keeps client monitors first, ``prepend`` keeps interaction
+    monitors first, and ``replace`` keeps only the interaction monitors,
+    including an empty tuple that disables the client monitors. Body capture
+    flags are not applied. An unknown mode fails before any monitor is called.
     """
     interaction = options.monitoring_options
     client = configuration.monitoring_defaults
-    if interaction is None and client is None:
-        return ()
-    governing = interaction if interaction is not None else client
-    if governing is None:
-        return ()
-    mode = governing.merge_mode.mode.value
+    if interaction is None:
+        if client is None:
+            return ()
+        return client.monitors
+    mode = interaction.merge_mode.mode.value
     client_monitors = () if client is None else client.monitors
-    interaction_monitors = () if interaction is None else interaction.monitors
+    interaction_monitors = interaction.monitors
     if mode == "append":
         return client_monitors + interaction_monitors
     if mode == "prepend":
@@ -511,14 +530,16 @@ def _component(
 def _raw_snapshot(
     response: TransportResponse,
     max_response_body_bytes: int,
+    authorization: Authorization,
 ) -> RawResponseSnapshot:
     """Retain metadata and withhold a body that exceeds the response limit.
 
-    The length check does not allocate a prefix of the body. An over-limit
+    Credential header names are removed before the snapshot is stored. The
+    length check does not allocate a prefix of the body. An over-limit
     snapshot stores an empty body and records that the octets were omitted.
     """
     body = response.body
-    metadata = _redacted_metadata(response.response_metadata)
+    metadata = _redacted_metadata(response.response_metadata, authorization)
     if len(body) > max_response_body_bytes:
         return RawResponseSnapshot(Bytes(b""), metadata, body_omitted=True)
     return RawResponseSnapshot(body, metadata)
@@ -526,35 +547,67 @@ def _raw_snapshot(
 
 def _redacted_metadata(
     metadata: TransportResponseMetadata,
+    authorization: Authorization,
 ) -> TransportResponseMetadata:
-    """Copy response metadata without authorization, cookie, or secret headers.
+    """Copy response metadata without credential headers or secret names.
 
-    The original metadata object is left unchanged for decoding. Only the
-    snapshot receives the filtered header and trailer collections.
+    Authorization, proxy authorization, cookies, API-key header names, and
+    secret-named fields are omitted from headers, trailers, and extensions.
+    A decision that names its own header, such as a header API key, omits
+    that name too. The original metadata object is left unchanged for decoding.
     """
+    omitted = _credential_header_names(authorization)
     return TransportResponseMetadata(
         metadata.outcome,
-        _redacted_headers(metadata.headers),
+        _redacted_headers(metadata.headers, omitted),
         status_code=metadata.status_code,
         protocol_status_code=metadata.protocol_status_code,
         trailers=None
         if metadata.trailers is None
-        else _redacted_headers(metadata.trailers),
+        else _redacted_headers(metadata.trailers, omitted),
         media_type=metadata.media_type,
         request_id=metadata.request_id,
-        extensions=metadata.extensions,
+        extensions=_redacted_extensions(metadata.extensions, omitted),
     )
 
 
-def _redacted_headers(headers: Headers) -> Headers:
+def _credential_header_names(authorization: Authorization) -> frozenset[str]:
+    """Return the header names that must not enter a raw response snapshot."""
+    names = set(omitted_authorization_header_names(authorization))
+    names.update(_RESPONSE_CREDENTIAL_HEADER_NAMES)
+    return frozenset(names)
+
+
+def _redacted_headers(headers: Headers, omitted: frozenset[str]) -> Headers:
     """Drop header fields whose names carry credentials or secrets."""
     retained: list[HeaderField] = []
     for header in headers.values:
-        name = header.name.casefold()
-        if name in {"authorization", "cookie"} or "secret" in name:
+        if _is_credential_name(header.name, omitted):
             continue
         retained.append(header)
     return Headers(tuple(retained))
+
+
+def _redacted_extensions(
+    extensions: Extensions,
+    omitted: frozenset[str],
+) -> Extensions:
+    """Drop extension entries whose keys name credentials or secrets."""
+    retained: dict[str, JsonValue] = {}
+    for key, value in extensions.items():
+        if _is_credential_name(key, omitted):
+            continue
+        retained[key] = value
+    return MappingProxyType(retained)
+
+
+def _is_credential_name(name: str, omitted: frozenset[str]) -> bool:
+    """Return whether a field name would disclose a credential or a secret."""
+    folded = name.casefold()
+    if folded in omitted or "secret" in folded:
+        return True
+    compact = folded.replace("-", "").replace("_", "")
+    return "apikey" in compact or "cookie" in folded or "authorization" in folded
 
 
 def _response_recorder(selection: ComponentSelectionResolution) -> _ResponseRecorder:

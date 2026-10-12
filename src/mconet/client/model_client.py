@@ -106,9 +106,10 @@ class ModelClient:
             validate_runtime_components_type_contracts(components)
             validate_runtime_components_lifecycle(components, _APPLICATION_OWNER)
         self._configuration = candidate
-        # SDK-created components are tracked apart from injected components.
-        # Direct injection stays application-owned and is not released here.
-        self._sdk_defaults = RuntimeComponents()
+        # Layer 4 stays present when the caller injects only some roles.
+        # Those SDK objects are not stored on the configuration, so close can
+        # release them while application-owned components stay open.
+        self._sdk_defaults = _builtin_components()
         self._accepting_requests = True
 
     @property
@@ -209,17 +210,14 @@ class ModelClient:
 
         Unset encoder, decoder, transport, and authorization roles use the
         JSON codec, the system HTTP transport, and the basic authorization
-        handlers. Those objects are SDK-owned. ``close`` releases them. The
-        returned configuration does not list them as injected components.
+        handlers. Construction installs those SDK-owned objects. ``close``
+        releases them. The returned configuration does not list them as
+        injected components.
 
         Returns:
             A client that is accepting requests and owns the builtin components.
         """
-        client = cls(ModelClientConfiguration())
-        # Direct injection would mark these objects application-owned, so they
-        # stay on the SDK carrier that close releases.
-        client._sdk_defaults = _builtin_components()
-        return client
+        return cls(ModelClientConfiguration())
 
     @classmethod
     def make_openai_compatible(
@@ -273,11 +271,19 @@ class ModelClient:
                 ),
             )
         )
-        # The binding transport is SDK-owned so close can release it. Selection
-        # still uses the same instance through the resolved binding.
+        # The binding transport replaces the unused system transport so close
+        # releases the instance selection will send with. JSON codecs and the
+        # basic authorization handlers remain the SDK fallback under the binding.
+        builtin = client._sdk_defaults
         transport = binding.transports[0] if binding.transports else None
         if isinstance(transport, Transport):
-            client._sdk_defaults = RuntimeComponents(transport=transport)
+            client._sdk_defaults = RuntimeComponents(
+                payload_encoder=builtin.payload_encoder,
+                success_payload_decoder=builtin.success_payload_decoder,
+                error_payload_decoder=builtin.error_payload_decoder,
+                transport=transport,
+                authorization_handlers=builtin.authorization_handlers,
+            )
         return client
 
 
