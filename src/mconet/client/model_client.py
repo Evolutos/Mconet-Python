@@ -4,6 +4,9 @@ from __future__ import annotations
 
 from typing import cast
 
+from mconet.core.domain.error_category import ErrorCategory
+from mconet.core.domain.interaction_phase import InteractionPhase
+from mconet.core.domain.model_interaction_error import ModelInteractionError
 from mconet.core.domain.model_output import ModelOutput
 from mconet.core.domain.model_request import ModelRequest
 from mconet.core.domain.open_identifier import OpenIdentifier
@@ -22,6 +25,10 @@ from mconet.core.spi.interaction_options import InteractionOptions
 from mconet.core.spi.model_client_configuration import ModelClientConfiguration
 
 _APPLICATION_OWNER = ComponentOwnership(OpenIdentifier("application"))
+_INVALID_REQUEST = ErrorCategory(OpenIdentifier("invalid_request"))
+_VALIDATION = InteractionPhase(OpenIdentifier("validation"))
+_CLIENT_CLOSED_CODE = "client_closed"
+_CLIENT_CLOSED_MESSAGE = "The client is closed."
 
 
 class ModelClient:
@@ -93,14 +100,16 @@ class ModelClient:
 
         Raises:
             TypeError: If an argument has an invalid nominal type.
-            ModelInteractionError: If the single runtime rejects the interaction.
+            ModelInteractionError: If the client is closed, or the single
+                runtime rejects the interaction. A closed client uses code
+                ``client_closed``.
         """
         request_value = cast(object, request)
         options_value = cast(object, options)
         # Close has already stopped this client. Argument checks and the
         # runtime stay unused so a late call cannot start another interaction.
         if not self._accepting_requests:
-            raise RuntimeError("The client is not accepting requests.")
+            raise _client_closed_error()
         if not isinstance(request_value, ModelRequest):
             raise TypeError("request must be a ModelRequest.")
         if not isinstance(options_value, InteractionOptions):
@@ -121,3 +130,15 @@ class ModelClient:
         # The flag is the whole transition. Component release is selected by
         # ownership in a later step and must not run for every close.
         self._accepting_requests = False
+
+
+def _client_closed_error() -> ModelInteractionError:
+    """Create the stable failure for a request that arrives after close."""
+    # The message names the client state only. It does not include request
+    # contents, component names, or resource identifiers.
+    return ModelInteractionError(
+        category=_INVALID_REQUEST,
+        phase=_VALIDATION,
+        code=_CLIENT_CLOSED_CODE,
+        message=_CLIENT_CLOSED_MESSAGE,
+    )

@@ -122,8 +122,11 @@ def test_close_is_idempotent_and_stops_new_requests() -> None:
                 InteractionOptions(),
             )
         )
-    except RuntimeError as error:
-        assert "not accepting" in str(error)
+    except ModelInteractionError as error:
+        assert error.code == "client_closed"
+        assert error.category.id.value == "invalid_request"
+        assert error.phase.id.value == "validation"
+        assert error.message == "The client is closed."
     else:
         raise AssertionError("Expected a closed client to reject a new request.")
 
