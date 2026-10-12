@@ -1616,6 +1616,11 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.spi.ModelClientConfiguration": {
+      "kind": "class",
+      "members": {},
+      "signature": "(default_target: 'ModelTarget | None' = None, default_service_access: 'ServiceAccess | None' = None, default_compatibility_policy: 'CompatibilityPolicy | None' = None, default_resource_limits: 'InteractionResourceLimits | None' = None, components: 'RuntimeComponents | None' = None, monitoring_defaults: 'MonitoringOptions | None' = None) -> None"
+    },
     "mconet.core.spi.ModelIntegrationMatch": {
       "kind": "class",
       "members": {},

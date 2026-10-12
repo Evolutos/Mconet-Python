@@ -34,6 +34,7 @@ from mconet.core.spi.interaction_monitor import InteractionMonitor
 from mconet.core.spi.message_mapping_result import MessageMappingResult
 from mconet.core.spi.message_request_mapper import MessageRequestMapper
 from mconet.core.spi.message_response_mapper import MessageResponseMapper
+from mconet.core.spi.model_client_configuration import ModelClientConfiguration
 from mconet.core.spi.model_integration_match import ModelIntegrationMatch
 from mconet.core.spi.model_integration_plan import ModelIntegrationPlan
 from mconet.core.spi.model_integration_resolver import ModelIntegrationResolver
@@ -93,6 +94,7 @@ __all__ = (
     "MessageMappingResult",
     "MessageRequestMapper",
     "MessageResponseMapper",
+    "ModelClientConfiguration",
     "ModelIntegrationMatch",
     "ModelIntegrationPlan",
     "ModelIntegrationResolver",
