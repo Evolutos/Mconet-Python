@@ -40,3 +40,15 @@ def test_builtin_component_is_closed_with_the_client_release() -> None:
     asyncio.run(release_builtin_client_components(defaults, None))
 
     assert resource.calls == ["close", "close"]
+
+
+def test_injected_instance_is_kept_when_it_is_also_an_sdk_default() -> None:
+    """Verify application ownership wins for one shared component instance."""
+    resource = _BuiltinResource()
+    shared = cast(Transport, resource)
+    defaults = RuntimeComponents(transport=shared)
+    injected = RuntimeComponents(transport=shared)
+
+    asyncio.run(release_builtin_client_components(defaults, injected))
+
+    assert resource.calls == []
