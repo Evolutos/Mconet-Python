@@ -146,6 +146,28 @@
       "kind": "function",
       "signature": "(value: 'str') -> 'None'"
     },
+    "mconet.client.ConversationRequestBuilder": {
+      "kind": "class",
+      "members": {
+        "build": {
+          "kind": "method",
+          "signature": "(self) -> 'ModelRequest'"
+        },
+        "with_extensions": {
+          "kind": "method",
+          "signature": "(self, extensions: 'Extensions') -> 'Self'"
+        },
+        "with_metadata": {
+          "kind": "method",
+          "signature": "(self, metadata: 'Extensions') -> 'Self'"
+        },
+        "with_service_access": {
+          "kind": "method",
+          "signature": "(self, service_access: 'ServiceAccess | None') -> 'Self'"
+        }
+      },
+      "signature": "(target: 'ModelTarget', task: 'ConversationTaskRequest') -> 'None'"
+    },
     "mconet.client.ModelClient": {
       "kind": "class",
       "members": {
