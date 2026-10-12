@@ -1583,6 +1583,11 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.spi.InteractionOptions": {
+      "kind": "class",
+      "members": {},
+      "signature": "(components: 'RuntimeComponents | None' = None, service_access_override: 'ServiceAccess | None' = None, compatibility_policy: 'CompatibilityPolicy | None' = None, resource_limits: 'InteractionResourceLimits | None' = None, monitoring_options: 'MonitoringOptions | None' = None, cancellation_signal: 'CancellationSignal | None' = None, include_raw_response: 'bool' = False) -> None"
+    },
     "mconet.core.spi.MessageMappingResult": {
       "kind": "class",
       "members": {},

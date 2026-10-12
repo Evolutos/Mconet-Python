@@ -31,6 +31,7 @@ from mconet.core.spi.interaction_execution_components import (
     InteractionExecutionComponents,
 )
 from mconet.core.spi.interaction_monitor import InteractionMonitor
+from mconet.core.spi.interaction_options import InteractionOptions
 from mconet.core.spi.message_mapping_result import MessageMappingResult
 from mconet.core.spi.message_request_mapper import MessageRequestMapper
 from mconet.core.spi.message_response_mapper import MessageResponseMapper
@@ -91,6 +92,7 @@ __all__ = (
     "InteractionCapability",
     "InteractionExecutionComponents",
     "InteractionMonitor",
+    "InteractionOptions",
     "MessageMappingResult",
     "MessageRequestMapper",
     "MessageResponseMapper",
