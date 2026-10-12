@@ -39,6 +39,7 @@ from mconet.core.spi.model_client_configuration import ModelClientConfiguration
 from mconet.core.spi.model_integration_match import ModelIntegrationMatch
 from mconet.core.spi.model_integration_plan import ModelIntegrationPlan
 from mconet.core.spi.model_integration_resolver import ModelIntegrationResolver
+from mconet.core.spi.model_interactor import ModelInteractor
 from mconet.core.spi.model_target_match import ModelTargetMatch
 from mconet.core.spi.monitoring_event import MonitoringEvent
 from mconet.core.spi.monitoring_options import MonitoringOptions
@@ -100,6 +101,7 @@ __all__ = (
     "ModelIntegrationMatch",
     "ModelIntegrationPlan",
     "ModelIntegrationResolver",
+    "ModelInteractor",
     "ModelTargetMatch",
     "MonitoringEvent",
     "MonitoringOptions",

@@ -1650,6 +1650,16 @@
       },
       "signature": "(*args, **kwargs)"
     },
+    "mconet.core.spi.ModelInteractor": {
+      "kind": "class",
+      "members": {
+        "interact": {
+          "kind": "method",
+          "signature": "(self, request: 'ModelRequest', options: 'InteractionOptions') -> 'ModelOutput'"
+        }
+      },
+      "signature": "(*args, **kwargs)"
+    },
     "mconet.core.spi.ModelTargetMatch": {
       "kind": "class",
       "members": {},
