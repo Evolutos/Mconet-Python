@@ -182,6 +182,10 @@
         "interact": {
           "kind": "method",
           "signature": "(self, request: 'ModelRequest', options: 'InteractionOptions') -> 'ModelOutput'"
+        },
+        "interact_text": {
+          "kind": "method",
+          "signature": "(self, target: 'ModelTarget', text: 'str', options: 'InteractionOptions | None' = None, service_access: 'ServiceAccess | None' = None) -> 'ModelOutput'"
         }
       },
       "signature": "(configuration: 'ModelClientConfiguration') -> 'None'"

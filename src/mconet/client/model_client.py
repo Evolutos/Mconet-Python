@@ -7,12 +7,15 @@ from typing import cast
 from mconet.client._builtin_component_release import (
     release_builtin_client_components,
 )
+from mconet.client.text_request import model_request_from_text
 from mconet.core.domain.error_category import ErrorCategory
 from mconet.core.domain.interaction_phase import InteractionPhase
 from mconet.core.domain.model_interaction_error import ModelInteractionError
 from mconet.core.domain.model_output import ModelOutput
 from mconet.core.domain.model_request import ModelRequest
+from mconet.core.domain.model_target import ModelTarget
 from mconet.core.domain.open_identifier import OpenIdentifier
+from mconet.core.domain.service_access import ServiceAccess
 from mconet.core.runtime._interaction_runtime import execute_interaction
 from mconet.core.runtime._runtime_components_lifecycle_validation import (
     validate_runtime_components_lifecycle,
@@ -124,6 +127,41 @@ class ModelClient:
             options_value,
             self._configuration,
         )
+
+    async def interact_text(
+        self,
+        target: ModelTarget,
+        text: str,
+        options: InteractionOptions | None = None,
+        service_access: ServiceAccess | None = None,
+    ) -> ModelOutput:
+        """Run one text prompt through the same unary interaction entry.
+
+        The prompt becomes one conversation model request. Execution is the
+        existing :meth:`interact` call. This method does not encode, authorize,
+        or send on its own.
+
+        Args:
+            target: Routing target for the generated request.
+            text: Exact user text.
+            options: Interaction overrides. None uses an empty options value.
+            service_access: Optional access stored on the generated request.
+
+        Returns:
+            The model output returned by :meth:`interact`.
+
+        Raises:
+            TypeError: If an argument has an invalid nominal type.
+            ModelInteractionError: If the client is closed or the runtime
+                rejects the generated request.
+        """
+        request = model_request_from_text(target, text, service_access)
+        candidate_options = cast(object, options)
+        if candidate_options is None:
+            candidate_options = InteractionOptions()
+        if not isinstance(candidate_options, InteractionOptions):
+            raise TypeError("options must be an InteractionOptions or None.")
+        return await self.interact(request, candidate_options)
 
     async def close(self) -> None:
         """Stop this client from accepting later interactions.
