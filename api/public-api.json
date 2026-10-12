@@ -146,6 +146,24 @@
       "kind": "function",
       "signature": "(value: 'str') -> 'None'"
     },
+    "mconet.client.ModelClient": {
+      "kind": "class",
+      "members": {
+        "close": {
+          "kind": "method",
+          "signature": "(self) -> 'None'"
+        },
+        "configuration": {
+          "kind": "property",
+          "signature": null
+        },
+        "interact": {
+          "kind": "method",
+          "signature": "(self, request: 'ModelRequest', options: 'InteractionOptions') -> 'ModelOutput'"
+        }
+      },
+      "signature": "(configuration: 'ModelClientConfiguration') -> 'None'"
+    },
     "mconet.codec.json.JSON_ERROR_PAYLOAD_DECODER_DESCRIPTOR": {
       "kind": "value",
       "type": "ComponentDescriptor"
