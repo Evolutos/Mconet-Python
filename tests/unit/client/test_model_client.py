@@ -92,7 +92,11 @@ def test_client_unifies_interactor_and_close_without_interaction_state() -> None
     assert isinstance(client, ModelInteractor)
     assert inspect.iscoroutinefunction(ModelClient.interact)
     assert inspect.iscoroutinefunction(ModelClient.close)
-    assert ModelClient.__slots__ == ("_accepting_requests", "_configuration")
+    assert ModelClient.__slots__ == (
+        "_accepting_requests",
+        "_configuration",
+        "_sdk_defaults",
+    )
     for name in ("stream", "send_stream", "open_session", "submit"):
         assert not hasattr(client, name)
 

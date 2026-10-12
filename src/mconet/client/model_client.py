@@ -4,6 +4,9 @@ from __future__ import annotations
 
 from typing import cast
 
+from mconet.client._builtin_component_release import (
+    release_builtin_client_components,
+)
 from mconet.core.domain.error_category import ErrorCategory
 from mconet.core.domain.interaction_phase import InteractionPhase
 from mconet.core.domain.model_interaction_error import ModelInteractionError
@@ -23,6 +26,7 @@ from mconet.core.runtime._runtime_components_type_contract_validation import (
 from mconet.core.spi.component_ownership import ComponentOwnership
 from mconet.core.spi.interaction_options import InteractionOptions
 from mconet.core.spi.model_client_configuration import ModelClientConfiguration
+from mconet.core.spi.runtime_components import RuntimeComponents
 
 _APPLICATION_OWNER = ComponentOwnership(OpenIdentifier("application"))
 _INVALID_REQUEST = ErrorCategory(OpenIdentifier("invalid_request"))
@@ -50,7 +54,7 @@ class ModelClient:
     accepting requests. Concurrent interactions stay on this same object.
     """
 
-    __slots__ = ("_accepting_requests", "_configuration")
+    __slots__ = ("_accepting_requests", "_configuration", "_sdk_defaults")
 
     def __init__(self, configuration: ModelClientConfiguration) -> None:
         """Retain one client configuration after its injected components pass.
@@ -75,8 +79,9 @@ class ModelClient:
             validate_runtime_components_type_contracts(components)
             validate_runtime_components_lifecycle(components, _APPLICATION_OWNER)
         self._configuration = candidate
-        # Open is the only state this construction establishes. Closing the
-        # client, and refusing later requests, are separate lifecycle steps.
+        # SDK-created components are tracked apart from injected components.
+        # Direct injection stays application-owned and is not released here.
+        self._sdk_defaults = RuntimeComponents()
         self._accepting_requests = True
 
     @property
@@ -127,9 +132,13 @@ class ModelClient:
         components stay open, and an interaction that already entered the
         runtime is not cancelled here.
         """
-        # The flag is the whole transition. Component release is selected by
-        # ownership in a later step and must not run for every close.
+        # The acceptance flag is the whole transition. Builtin components are
+        # released after the client has stopped accepting new requests.
         self._accepting_requests = False
+        await release_builtin_client_components(
+            self._sdk_defaults,
+            self._configuration.components,
+        )
 
 
 def _client_closed_error() -> ModelInteractionError:
