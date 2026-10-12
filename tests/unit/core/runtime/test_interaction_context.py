@@ -16,6 +16,7 @@ from mconet.core.domain import (
     CompatibilityPolicy,
     Extensions,
     ModelDescriptor,
+    ModelInteractionError,
     ModelRequest,
     ModelTarget,
     ModelTaskRequest,
@@ -158,8 +159,10 @@ def test_context_binds_only_request_and_configuration() -> None:
     # A later client must keep its own fields and never receive this object.
     assert tuple(parameters) == ("request", "configuration")
     assert InteractionContext.__slots__ == (
+        "_callbacks",
         "_configuration",
         "_identity",
+        "_released",
         "_request",
     )
     assert "InteractionContext" not in mconet.core.runtime.__all__
@@ -224,3 +227,36 @@ def test_context_rejects_a_non_request_and_a_non_configuration() -> None:
     assert "ModelRequest" in str(request_error)
     assert isinstance(configuration_error, TypeError)
     assert "ResolvedInteractionConfiguration" in str(configuration_error)
+
+
+def test_release_drops_callbacks_and_one_shot_references() -> None:
+    """Verify termination removes listeners, the request, and the configuration."""
+    request = _request()
+    configuration = _configuration(request.target)
+    context = InteractionContext(request, configuration)
+    identity = context.identity
+    calls: list[str] = []
+
+    def _callback() -> None:
+        calls.append("called")
+
+    context.add_callback(_callback)
+    assert context.callback_count == 1
+
+    context.release()
+    context.release()
+
+    request_error = _capture(lambda: context.request)
+    configuration_error = _capture(lambda: context.configuration)
+    callback_error = _capture(lambda: context.add_callback(_callback))
+
+    assert context.released is True
+    assert context.callback_count == 0
+    assert calls == []
+    assert context.identity == identity
+    assert isinstance(request_error, ModelInteractionError)
+    assert isinstance(configuration_error, ModelInteractionError)
+    assert isinstance(callback_error, ModelInteractionError)
+    assert request_error.code == "interaction_context_released"
+    assert configuration_error.code == "interaction_context_released"
+    assert callback_error.code == "interaction_context_released"
