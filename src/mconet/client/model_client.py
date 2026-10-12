@@ -7,6 +7,7 @@ from typing import cast
 from mconet.core.domain.model_output import ModelOutput
 from mconet.core.domain.model_request import ModelRequest
 from mconet.core.domain.open_identifier import OpenIdentifier
+from mconet.core.runtime._interaction_runtime import execute_interaction
 from mconet.core.runtime._runtime_components_lifecycle_validation import (
     validate_runtime_components_lifecycle,
 )
@@ -88,7 +89,7 @@ class ModelClient:
 
         Raises:
             TypeError: If an argument has an invalid nominal type.
-            NotImplementedError: Until interaction execution is delegated.
+            ModelInteractionError: If the single runtime rejects the interaction.
         """
         request_value = cast(object, request)
         options_value = cast(object, options)
@@ -96,9 +97,13 @@ class ModelClient:
             raise TypeError("request must be a ModelRequest.")
         if not isinstance(options_value, InteractionOptions):
             raise TypeError("options must be an InteractionOptions.")
-        # Execution is one later delegation. This method does not build a
-        # second pipeline or store the request on the client.
-        raise NotImplementedError
+        # One call is the whole execution path. Encoding, authorization, and
+        # transport stay inside that runtime and are not repeated here.
+        return await execute_interaction(
+            request_value,
+            options_value,
+            self._configuration,
+        )
 
     async def close(self) -> None:
         """Expose the client close entry on this same interactor.
