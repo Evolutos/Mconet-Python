@@ -97,14 +97,14 @@ class ModelClient:
         """
         request_value = cast(object, request)
         options_value = cast(object, options)
+        # Close has already stopped this client. Argument checks and the
+        # runtime stay unused so a late call cannot start another interaction.
+        if not self._accepting_requests:
+            raise RuntimeError("The client is not accepting requests.")
         if not isinstance(request_value, ModelRequest):
             raise TypeError("request must be a ModelRequest.")
         if not isinstance(options_value, InteractionOptions):
             raise TypeError("options must be an InteractionOptions.")
-        # An open client does not serialize interactions. Each call enters the
-        # same runtime with its own request and options.
-        if not self._accepting_requests:
-            raise RuntimeError("The client is not accepting requests.")
         return await execute_interaction(
             request_value,
             options_value,
@@ -112,11 +112,12 @@ class ModelClient:
         )
 
     async def close(self) -> None:
-        """Expose the client close entry on this same interactor.
+        """Stop this client from accepting later interactions.
 
-        Resource release and refusal of later requests are separate lifecycle
-        steps. This entry does not close injected components.
+        A second call leaves the client stopped and does not raise. Injected
+        components stay open, and an interaction that already entered the
+        runtime is not cancelled here.
         """
-        # The method is intentionally free of component iteration so a close
-        # contract can exist before ownership-based release is applied.
-        return None
+        # The flag is the whole transition. Component release is selected by
+        # ownership in a later step and must not run for every close.
+        self._accepting_requests = False

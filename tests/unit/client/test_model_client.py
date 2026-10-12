@@ -110,6 +110,24 @@ def test_close_does_not_release_an_injected_resource() -> None:
     assert client.configuration is configuration
 
 
+def test_close_is_idempotent_and_stops_new_requests() -> None:
+    """Verify a repeated close stops a later interaction before the runtime."""
+    client = ModelClient(ModelClientConfiguration())
+    asyncio.run(client.close())
+    asyncio.run(client.close())
+    try:
+        asyncio.run(
+            client.interact(
+                cast(ModelRequest, object()),
+                InteractionOptions(),
+            )
+        )
+    except RuntimeError as error:
+        assert "not accepting" in str(error)
+    else:
+        raise AssertionError("Expected a closed client to reject a new request.")
+
+
 def test_injected_components_fail_during_construction() -> None:
     """Verify an illegal injected component aborts client construction."""
     metadata = RuntimeComponents(payload_encoder=cast(PayloadEncoder, _Metadata()))
