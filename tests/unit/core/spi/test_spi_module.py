@@ -49,6 +49,7 @@ def test_core_spi_exports_only_implemented_contracts() -> None:
         "PlannedComponentSelection",
         "ProtocolExecutionPlan",
         "ProtocolRequestPlan",
+        "RawResponseSnapshot",
         "ResolvedAuthorizationHandler",
         "RuntimeComponent",
         "RuntimeComponents",

@@ -49,6 +49,7 @@ from mconet.core.spi.payload_encoder import PayloadEncoder
 from mconet.core.spi.planned_component_selection import PlannedComponentSelection
 from mconet.core.spi.protocol_execution_plan import ProtocolExecutionPlan
 from mconet.core.spi.protocol_request_plan import ProtocolRequestPlan
+from mconet.core.spi.raw_response_snapshot import RawResponseSnapshot
 from mconet.core.spi.resolved_authorization_handler import (
     ResolvedAuthorizationHandler,
 )
@@ -111,6 +112,7 @@ __all__ = (
     "PlannedComponentSelection",
     "ProtocolExecutionPlan",
     "ProtocolRequestPlan",
+    "RawResponseSnapshot",
     "ResolvedAuthorizationHandler",
     "RuntimeComponent",
     "RuntimeComponents",
