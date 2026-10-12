@@ -186,9 +186,17 @@
         "interact_text": {
           "kind": "method",
           "signature": "(self, target: 'ModelTarget', text: 'str', options: 'InteractionOptions | None' = None, service_access: 'ServiceAccess | None' = None) -> 'ModelOutput'"
+        },
+        "make_default": {
+          "kind": "method",
+          "signature": "() -> 'ModelClient'"
         }
       },
       "signature": "(configuration: 'ModelClientConfiguration') -> 'None'"
+    },
+    "mconet.client.make_default": {
+      "kind": "function",
+      "signature": "() -> mconet.client.model_client.ModelClient"
     },
     "mconet.client.model_request_from_text": {
       "kind": "function",

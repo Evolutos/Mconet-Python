@@ -23,6 +23,7 @@ from mconet.core.domain.model_interaction_error import ModelInteractionError
 from mconet.core.domain.open_identifier import OpenIdentifier
 from mconet.core.domain.timestamp import Timestamp
 from mconet.core.spi.component_descriptor import ComponentDescriptor
+from mconet.core.spi.component_type_contract import ComponentTypeContract
 from mconet.core.spi.transport_context import TransportContext
 from mconet.core.spi.transport_request import TransportRequest
 from mconet.core.spi.transport_response import TransportResponse
@@ -72,6 +73,9 @@ _DESCRIPTOR = ComponentDescriptor(
     name="default-system-http-transport",
     version="1",
     source="builtin",
+    # The snapshot factory requires a contract object. This transport has no
+    # JSON data port, so the contract stays empty.
+    type_contract=ComponentTypeContract(),
 )
 
 

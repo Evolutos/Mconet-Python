@@ -8,6 +8,8 @@ from typing import cast
 
 from mconet.core.domain.bytes_value import Bytes
 from mconet.core.domain.compatibility_policy import CompatibilityPolicy
+from mconet.core.domain.header_field import HeaderField
+from mconet.core.domain.headers import Headers
 from mconet.core.domain.model_output import ModelOutput
 from mconet.core.domain.model_request import ModelRequest
 from mconet.core.domain.open_identifier import OpenIdentifier
@@ -73,6 +75,7 @@ from mconet.core.spi.transport import Transport
 from mconet.core.spi.transport_context import TransportContext
 from mconet.core.spi.transport_request import TransportRequest
 from mconet.core.spi.transport_response import TransportResponse
+from mconet.core.spi.transport_response_metadata import TransportResponseMetadata
 
 _UNARY_MODE_ID = OpenIdentifier("unary")
 _HTTP_TRANSPORT_KIND = OpenIdentifier("http")
@@ -192,6 +195,7 @@ async def execute_interaction(
     request: ModelRequest,
     options: InteractionOptions,
     configuration: ModelClientConfiguration,
+    sdk_defaults: RuntimeComponents | None = None,
 ) -> ModelOutput:
     """Run one unary interaction through the existing success pipeline.
 
@@ -200,15 +204,18 @@ async def execute_interaction(
     precedence stays in the existing selection schedule. After the snapshot is
     frozen, execution continues only through ``run_mock_transport_success``.
 
-    Monitor merging and raw-response capture are not applied here. An absent
-    service-access or authorization-handler resolver uses the builtin field
-    merger or handler selector. An absent adapter and resolver fails with the
-    existing unsupported-integration error.
+    Monitor merging is not applied here. Raw-response capture runs only when
+    the interaction options request it. An absent service-access or
+    authorization-handler resolver uses the builtin field merger or handler
+    selector. Encoder, decoder, transport, and authorization handlers fall
+    through to ``sdk_defaults`` when no higher layer supplies them. An absent
+    adapter and resolver fails with the existing unsupported-integration error.
 
     Args:
         request: Complete model request for this interaction.
         options: Overrides that apply only to this interaction.
         configuration: Reusable client defaults. This object is not modified.
+        sdk_defaults: SDK-owned components. None uses an empty carrier.
 
     Returns:
         The assembled model output.
@@ -227,6 +234,11 @@ async def execute_interaction(
         raise TypeError("options must be an InteractionOptions.")
     if not isinstance(candidate_configuration, ModelClientConfiguration):
         raise TypeError("configuration must be a ModelClientConfiguration.")
+    candidate_defaults = cast(object, sdk_defaults)
+    if candidate_defaults is None:
+        candidate_defaults = _SDK_COMPONENTS
+    elif not isinstance(candidate_defaults, RuntimeComponents):
+        raise TypeError("sdk_defaults must be RuntimeComponents or None.")
 
     interaction_layer = InteractionConfigurationLayer(
         service_access=candidate_options.service_access_override,
@@ -281,7 +293,7 @@ async def execute_interaction(
             plan,
             interaction_components=candidate_options.components,
             client_components=candidate_configuration.components,
-            sdk_defaults=_SDK_COMPONENTS,
+            sdk_defaults=candidate_defaults,
         )
         recorder: _ResponseRecorder | None = None
         # Default capture stays off. The selected transport is used directly,
@@ -301,6 +313,7 @@ async def execute_interaction(
             authorization_handlers=_authorization_handlers(
                 candidate_options,
                 candidate_configuration,
+                candidate_defaults,
             ),
             requirements=(),
         )
@@ -418,13 +431,14 @@ def _authorization_resolver(
 def _authorization_handlers(
     options: InteractionOptions,
     configuration: ModelClientConfiguration,
+    sdk_defaults: RuntimeComponents,
 ) -> tuple[AuthorizationHandler, ...]:
-    """Return the first non-empty handler tuple from interaction, then client."""
+    """Return handlers from interaction, then client, then SDK defaults."""
     for components in (options.components, configuration.components):
         if components is None or not components.authorization_handlers:
             continue
         return components.authorization_handlers
-    return ()
+    return sdk_defaults.authorization_handlers
 
 
 def _component(
@@ -452,13 +466,43 @@ def _raw_snapshot(
     snapshot stores an empty body and records that the octets were omitted.
     """
     body = response.body
+    metadata = _redacted_metadata(response.response_metadata)
     if len(body) > max_response_body_bytes:
-        return RawResponseSnapshot(
-            Bytes(b""),
-            response.response_metadata,
-            body_omitted=True,
-        )
-    return RawResponseSnapshot(body, response.response_metadata)
+        return RawResponseSnapshot(Bytes(b""), metadata, body_omitted=True)
+    return RawResponseSnapshot(body, metadata)
+
+
+def _redacted_metadata(
+    metadata: TransportResponseMetadata,
+) -> TransportResponseMetadata:
+    """Copy response metadata without authorization, cookie, or secret headers.
+
+    The original metadata object is left unchanged for decoding. Only the
+    snapshot receives the filtered header and trailer collections.
+    """
+    return TransportResponseMetadata(
+        metadata.outcome,
+        _redacted_headers(metadata.headers),
+        status_code=metadata.status_code,
+        protocol_status_code=metadata.protocol_status_code,
+        trailers=None
+        if metadata.trailers is None
+        else _redacted_headers(metadata.trailers),
+        media_type=metadata.media_type,
+        request_id=metadata.request_id,
+        extensions=metadata.extensions,
+    )
+
+
+def _redacted_headers(headers: Headers) -> Headers:
+    """Drop header fields whose names carry credentials or secrets."""
+    retained: list[HeaderField] = []
+    for header in headers.values:
+        name = header.name.casefold()
+        if name in {"authorization", "cookie"} or "secret" in name:
+            continue
+        retained.append(header)
+    return Headers(tuple(retained))
 
 
 def _response_recorder(selection: ComponentSelectionResolution) -> _ResponseRecorder:

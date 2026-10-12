@@ -4,10 +4,20 @@ from __future__ import annotations
 
 from typing import cast
 
+from mconet.auth.basic import (
+    ApiKeyHeaderAuthorizationHandler,
+    BearerAuthorizationHandler,
+    NoAuthorizationHandler,
+)
 from mconet.client._builtin_component_release import (
     release_builtin_client_components,
 )
 from mconet.client.text_request import model_request_from_text
+from mconet.codec.json import (
+    JsonErrorPayloadDecoder,
+    JsonPayloadEncoder,
+    JsonSuccessPayloadDecoder,
+)
 from mconet.core.domain.error_category import ErrorCategory
 from mconet.core.domain.interaction_phase import InteractionPhase
 from mconet.core.domain.model_interaction_error import ModelInteractionError
@@ -30,8 +40,10 @@ from mconet.core.spi.component_ownership import ComponentOwnership
 from mconet.core.spi.interaction_options import InteractionOptions
 from mconet.core.spi.model_client_configuration import ModelClientConfiguration
 from mconet.core.spi.runtime_components import RuntimeComponents
+from mconet.transport.http_system import DefaultSystemHttpTransport
 
 _APPLICATION_OWNER = ComponentOwnership(OpenIdentifier("application"))
+_DEFAULT_MAX_RESPONSE_BODY_BYTES = 16_777_216
 _INVALID_REQUEST = ErrorCategory(OpenIdentifier("invalid_request"))
 _VALIDATION = InteractionPhase(OpenIdentifier("validation"))
 _CLIENT_CLOSED_CODE = "client_closed"
@@ -126,6 +138,7 @@ class ModelClient:
             request_value,
             options_value,
             self._configuration,
+            self._sdk_defaults,
         )
 
     async def interact_text(
@@ -177,6 +190,43 @@ class ModelClient:
             self._sdk_defaults,
             self._configuration.components,
         )
+
+    @classmethod
+    def make_default(cls) -> ModelClient:
+        """Return a client that injects no application components.
+
+        Unset encoder, decoder, transport, and authorization roles use the
+        JSON codec, the system HTTP transport, and the basic authorization
+        handlers. Those objects are SDK-owned. ``close`` releases them. The
+        returned configuration does not list them as injected components.
+
+        Returns:
+            A client that is accepting requests and owns the builtin components.
+        """
+        client = cls(ModelClientConfiguration())
+        # Direct injection would mark these objects application-owned, so they
+        # stay on the SDK carrier that close releases.
+        client._sdk_defaults = _builtin_components()
+        return client
+
+
+def _builtin_components() -> RuntimeComponents:
+    """Build the JSON, system HTTP, and basic-authorization defaults."""
+    # One shared limit matches the runtime's default response-body budget.
+    # The transport ignores process proxy variables.
+    return RuntimeComponents(
+        payload_encoder=JsonPayloadEncoder(),
+        success_payload_decoder=JsonSuccessPayloadDecoder(
+            _DEFAULT_MAX_RESPONSE_BODY_BYTES
+        ),
+        error_payload_decoder=JsonErrorPayloadDecoder(_DEFAULT_MAX_RESPONSE_BODY_BYTES),
+        transport=DefaultSystemHttpTransport(proxy_environment={}),
+        authorization_handlers=(
+            NoAuthorizationHandler(),
+            BearerAuthorizationHandler(),
+            ApiKeyHeaderAuthorizationHandler(),
+        ),
+    )
 
 
 def _client_closed_error() -> ModelInteractionError:
