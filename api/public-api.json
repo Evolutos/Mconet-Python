@@ -1819,7 +1819,7 @@
     "mconet.core.spi.RawResponseSnapshot": {
       "kind": "class",
       "members": {},
-      "signature": "(body: 'Bytes', metadata: 'TransportResponseMetadata') -> None"
+      "signature": "(body: 'Bytes', metadata: 'TransportResponseMetadata', body_omitted: 'bool' = False) -> None"
     },
     "mconet.core.spi.ResolvedAuthorizationHandler": {
       "kind": "class",

@@ -25,7 +25,7 @@ def test_snapshot_retains_body_and_metadata_without_mutation() -> None:
     assert snapshot.body == b"{}"
     assert snapshot.metadata is metadata
     try:
-        setattr(snapshot, "body", Bytes(b"changed"))
+        setattr(snapshot, "body", Bytes(b"changed"))  # noqa: B010
     except FrozenInstanceError:
         pass
     else:

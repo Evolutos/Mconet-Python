@@ -18,6 +18,7 @@ from mconet.core.domain import (
     ConversationTaskBuilder,
     Extensions,
     Headers,
+    InteractionResourceLimits,
     MediaType,
     MessageDocument,
     MessageElementKind,
@@ -493,6 +494,28 @@ def test_raw_response_is_captured_only_when_requested() -> None:
     assert raw_response.metadata.outcome.id.value == "success"
     assert pipeline.calls.count("decode") == 2
     assert pipeline.calls.count("send") == 2
+
+
+def test_over_limit_raw_response_keeps_metadata_without_the_body() -> None:
+    """Verify an over-limit snapshot does not retain the response octets."""
+    pipeline = _Pipeline()
+    client, _configuration = _client(pipeline)
+    captured = asyncio.run(
+        client.interact(
+            _request(),
+            InteractionOptions(
+                include_raw_response=True,
+                resource_limits=InteractionResourceLimits(
+                    max_response_body_bytes=1,
+                ),
+            ),
+        )
+    )
+    raw_response = cast(_CapturedOutput, captured).raw_response
+    assert raw_response.body == b""
+    assert raw_response.body_omitted is True
+    assert raw_response.metadata.outcome.id.value == "success"
+    assert pipeline.calls.count("decode") == 1
 
 
 def test_open_client_accepts_concurrent_interactions() -> None:

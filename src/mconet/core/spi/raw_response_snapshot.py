@@ -19,22 +19,29 @@ class RawResponseSnapshot:
 
     The body is the exact byte sequence supplied by the caller. Metadata is
     the transport observation supplied by the caller. This value does not
-    trim, redact, or enforce a size cap.
+    trim or redact headers. A caller that refuses an over-limit body supplies
+    an empty body and sets ``body_omitted`` instead of copying a prefix.
     """
 
     body: Bytes
-    """Complete response octets retained for this opted-in snapshot."""
+    """Response octets retained for this snapshot, or empty when omitted."""
 
     metadata: TransportResponseMetadata
     """Response classification and headers retained with the body."""
 
+    body_omitted: bool = False
+    """True when the body was withheld because it exceeded the response limit."""
+
     def __post_init__(self) -> None:
-        """Require immutable body bytes and nominal response metadata."""
+        """Require immutable body bytes, metadata, and an exact omitted flag."""
         body = cast(object, self.body)
         metadata = cast(object, self.metadata)
+        body_omitted = cast(object, self.body_omitted)
         if not isinstance(body, bytes):
             raise TypeError("RawResponseSnapshot body must be a Bytes value.")
         if not isinstance(metadata, TransportResponseMetadata):
             raise TypeError(
                 "RawResponseSnapshot metadata must be a TransportResponseMetadata."
             )
+        if type(body_omitted) is not bool:
+            raise TypeError("RawResponseSnapshot body_omitted must be a bool.")

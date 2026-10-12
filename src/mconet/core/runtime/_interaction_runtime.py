@@ -362,7 +362,10 @@ async def execute_interaction(
             ModelOutput,
             _OutputWithRawResponse(
                 output,
-                RawResponseSnapshot(captured.body, captured.response_metadata),
+                _raw_snapshot(
+                    captured,
+                    resolved.resource_limits.max_response_body_bytes,
+                ),
             ),
         )
     except BaseException:
@@ -437,6 +440,25 @@ def _component(
         if value is not None:
             return value
     return None
+
+
+def _raw_snapshot(
+    response: TransportResponse,
+    max_response_body_bytes: int,
+) -> RawResponseSnapshot:
+    """Retain metadata and withhold a body that exceeds the response limit.
+
+    The length check does not allocate a prefix of the body. An over-limit
+    snapshot stores an empty body and records that the octets were omitted.
+    """
+    body = response.body
+    if len(body) > max_response_body_bytes:
+        return RawResponseSnapshot(
+            Bytes(b""),
+            response.response_metadata,
+            body_omitted=True,
+        )
+    return RawResponseSnapshot(body, response.response_metadata)
 
 
 def _response_recorder(selection: ComponentSelectionResolution) -> _ResponseRecorder:
