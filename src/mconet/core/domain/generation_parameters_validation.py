@@ -5,7 +5,11 @@ from __future__ import annotations
 import math
 from typing import cast
 
+from mconet.core.domain.function_tool import FunctionTool, function_tool_parameters_json
 from mconet.core.domain.generation_parameters import GenerationParameters
+from mconet.core.domain.json_value import JsonValue, validate_json_value_numbers
+
+_STANDARD_TOOL_CHOICES = frozenset(("auto", "none", "required"))
 
 _MIN_SAFE_INTEGER = -(2**53 - 1)
 _MAX_SAFE_INTEGER = 2**53 - 1
@@ -17,8 +21,9 @@ def validate_generation_parameters(
     """Validate every present text generation control without normalizing it.
 
     Protocol-neutral validation establishes finite sampling values, probability
-    semantics, JSON-safe integers, positive output limits, and usable stop
-    sequences. Provider-specific maxima and unsupported-field policy remain the
+    semantics, JSON-safe integers, positive output limits, usable stop
+    sequences, distinct tool names, and a tool choice that names a declared
+    tool. Provider-specific maxima and unsupported-field policy remain the
     responsibility of the selected protocol adapter and compatibility policy.
 
     Args:
@@ -75,6 +80,7 @@ def validate_generation_parameters(
         # JSON number implementations used by every supported SDK language.
         _require_safe_integer(seed, "seed")
 
+    _validate_tools(cast(object, candidate.tools), candidate.tool_choice)
     return candidate
 
 
@@ -129,3 +135,71 @@ def _validate_stop(value: object) -> None:
                 f"GenerationParameters stop sequence at index {index} "
                 "must not be empty."
             )
+
+
+def _validate_tools(value: object, tool_choice: object) -> None:
+    """Require distinct function tools and a choice that names one of them.
+
+    Args:
+        value: The ``tools`` tuple stored on the generation parameters.
+        tool_choice: The ``tool_choice`` string, or ``None`` when omitted.
+
+    Raises:
+        TypeError: If a tool or the choice has an invalid runtime type.
+        ValueError: If a name is blank or duplicated, a schema number is not
+            portable, or the choice does not name a declared tool.
+    """
+    # Tuple storage keeps declaration order. A list would let a caller change
+    # the tools after validation and before the adapter encodes them.
+    if not isinstance(value, tuple):
+        raise TypeError("GenerationParameters tools must be a tuple.")
+    names: set[str] = set()
+    for tool in cast(tuple[object, ...], value):
+        # Recheck the element type because a low-level assignment can bypass
+        # the frozen constructor that first required FunctionTool values.
+        if not isinstance(tool, FunctionTool):
+            raise TypeError(
+                "GenerationParameters tools must contain FunctionTool values."
+            )
+        name = tool.name
+        # A blank name cannot be cited by a tool call or by tool_choice.
+        if not name or name.isspace():
+            raise ValueError("FunctionTool name must not be empty or whitespace.")
+        # Two tools with one name would make a named tool_choice ambiguous.
+        if name in names:
+            raise ValueError("GenerationParameters tools must use distinct names.")
+        names.add(name)
+        # The stored schema is read-only. The thawed copy is the JSON object
+        # the number walk accepts, and editing it cannot change the tool.
+        parameters = function_tool_parameters_json(tool)
+        if parameters is not None:
+            if not isinstance(parameters, dict):
+                raise TypeError(
+                    "FunctionTool parameters must be a JSON object or None."
+                )
+            # Schema numbers must round-trip through every supported SDK
+            # language before the adapter copies them onto the request.
+            validate_json_value_numbers(cast(JsonValue, parameters))
+
+    if tool_choice is None:
+        # Omitting the choice leaves the service default. It does not require
+        # the request to declare any tools.
+        return
+    if not isinstance(tool_choice, str):
+        raise TypeError("GenerationParameters tool_choice must be a string or None.")
+    # A blank choice cannot select a mode or a function.
+    if not tool_choice or tool_choice.isspace():
+        raise ValueError(
+            "GenerationParameters tool_choice must not be empty or whitespace."
+        )
+    # A choice without a declared tool has nothing to select. Modes included:
+    # auto, none, and required are not meaningful until a tool exists.
+    if not names:
+        raise ValueError("GenerationParameters tool_choice requires a declared tool.")
+    # auto, none, and required are modes. Every other string selects one tool
+    # by the exact name declared above.
+    if tool_choice not in _STANDARD_TOOL_CHOICES and tool_choice not in names:
+        raise ValueError(
+            "GenerationParameters tool_choice must be auto, none, required, "
+            "or the name of a declared tool."
+        )

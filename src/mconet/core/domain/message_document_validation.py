@@ -16,6 +16,12 @@ from mconet.core.domain.message_group import MessageGroup
 from mconet.core.domain.message_group_validation import validate_message_group
 from mconet.core.domain.message_relation import MessageRelation
 from mconet.core.domain.open_identifier import OpenIdentifier, validate_open_identifier
+from mconet.core.domain.tool_call_element import ToolCallElement
+from mconet.core.domain.tool_call_element_validation import validate_tool_call_element
+from mconet.core.domain.tool_result_element import ToolResultElement
+from mconet.core.domain.tool_result_element_validation import (
+    validate_tool_result_element,
+)
 
 _DOCUMENT_PURPOSES = frozenset(("input", "output", "context", "custom"))
 
@@ -71,6 +77,9 @@ def validate_message_document(document: MessageDocument) -> MessageDocument:
     # element declared later in preorder without depending on traversal order.
     for relation in relations:
         _validate_relation(relation, element_ids)
+    # Placement uses the same leaf order an adapter reads. A call that does
+    # not follow an assistant entry cannot be folded into a message.
+    _validate_tool_call_placement(root)
 
     _validate_json_mapping(cast(object, candidate.metadata), "metadata")
     _validate_json_mapping(cast(object, candidate.extensions), "extensions")
@@ -134,7 +143,48 @@ def _validate_element(
     if isinstance(element, MessageGroup):
         validate_message_group(element)
         return element.sub_elements, element.relations
+    if isinstance(element, ToolCallElement):
+        validate_tool_call_element(element)
+        return element.sub_elements, element.relations
+    if isinstance(element, ToolResultElement):
+        validate_tool_result_element(element)
+        return element.sub_elements, element.relations
     return _validate_open_element(element)
+
+
+def _validate_tool_call_placement(root: MessageGroup) -> None:
+    """Require every tool call to follow an assistant entry in leaf order."""
+    pending: list[MessageElement] = [root]
+    leaves: list[MessageElement] = []
+    # Children are pushed in reverse so the leaves are read left to right.
+    # Containers only order those leaves; they are not themselves messages.
+    while pending:
+        element = pending.pop()
+        if element.kind.composition == "container":
+            pending.extend(reversed(tuple(element.sub_elements)))
+            continue
+        leaves.append(element)
+
+    assistant_run = False
+    for element in leaves:
+        if isinstance(element, MessageEntry):
+            role_id = cast(object, element.role.id)
+            # Only the standard assistant role opens a run. Another role, even
+            # one with assistant text in its raw spelling, does not.
+            assistant_run = (
+                isinstance(role_id, OpenIdentifier)
+                and role_id.value == "message.assistant"
+            )
+            continue
+        if isinstance(element, ToolCallElement):
+            # Consecutive calls stay in the same run. A call with no assistant
+            # entry before it has no message to carry it.
+            if not assistant_run:
+                raise ValueError("A tool call must follow an assistant message entry.")
+            continue
+        # A tool result or any other leaf ends the run. The next call needs
+        # its own assistant entry.
+        assistant_run = False
 
 
 def _validate_open_element(

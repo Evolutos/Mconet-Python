@@ -42,6 +42,7 @@ from mconet.core.domain.diagnostic import Diagnostic
 from mconet.core.domain.duration import Duration, validate_duration
 from mconet.core.domain.error_category import ErrorCategory
 from mconet.core.domain.extensions import Extensions
+from mconet.core.domain.function_tool import FunctionTool
 from mconet.core.domain.generation_parameters import GenerationParameters
 from mconet.core.domain.generation_parameters_node import GenerationParametersNode
 from mconet.core.domain.generation_parameters_node_validation import (
@@ -133,6 +134,12 @@ from mconet.core.domain.text_message_content_validation import (
 )
 from mconet.core.domain.timestamp import Timestamp, parse_timestamp, serialize_timestamp
 from mconet.core.domain.token_usage import TokenUsage
+from mconet.core.domain.tool_call_element import ToolCallElement
+from mconet.core.domain.tool_call_element_validation import validate_tool_call_element
+from mconet.core.domain.tool_result_element import ToolResultElement
+from mconet.core.domain.tool_result_element_validation import (
+    validate_tool_result_element,
+)
 from mconet.core.domain.unary_interaction_mode import (
     validate_unary_interaction_mode,
 )
@@ -164,6 +171,7 @@ __all__ = (
     "Duration",
     "ErrorCategory",
     "Extensions",
+    "FunctionTool",
     "GenerationParameters",
     "GenerationParametersNode",
     "HeaderField",
@@ -222,6 +230,8 @@ __all__ = (
     "TextMessageContent",
     "Timestamp",
     "TokenUsage",
+    "ToolCallElement",
+    "ToolResultElement",
     "UriArtifactSource",
     "UriValue",
     "default_compatibility_policy",
@@ -261,6 +271,8 @@ __all__ = (
     "validate_task_node",
     "validate_text_message_content",
     "validate_text_message_content_scope",
+    "validate_tool_call_element",
+    "validate_tool_result_element",
     "validate_unary_interaction_mode",
     "validate_uri",
 )

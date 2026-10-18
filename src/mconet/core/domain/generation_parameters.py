@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import cast
 
+from mconet.core.domain.function_tool import FunctionTool
+
 
 @dataclass(frozen=True, slots=True)
 class GenerationParameters:
@@ -16,8 +18,8 @@ class GenerationParameters:
     the active compatibility policy. Message documents never own these values.
 
     Construction enforces immutable storage shape only. Numeric ranges,
-    finiteness, portable integer bounds, and stop-sequence content belong to
-    the dedicated generation-parameter validator.
+    finiteness, portable integer bounds, stop-sequence content, tool names,
+    and tool choice belong to the dedicated generation-parameter validator.
     """
 
     temperature: float | None = None
@@ -35,8 +37,18 @@ class GenerationParameters:
     seed: int | None = None
     """Optional deterministic sampling seed when supported by the target."""
 
+    tools: tuple[FunctionTool, ...] = ()
+    """Function tools the model may call. An empty tuple sends no tools."""
+
+    tool_choice: str | None = None
+    """How the model may choose a tool.
+
+    ``None`` omits the control. ``auto``, ``none``, and ``required`` are the
+    standard modes. Any other string names one declared function.
+    """
+
     def __post_init__(self) -> None:
-        """Require exact optional number types and immutable stop storage."""
+        """Require exact optional number types and immutable stop and tool storage."""
         # Integers are valid real-number inputs for sampling controls in Python,
         # but bool must not enter as its 0/1 integer subclass. Range and finite
         # checks are deliberately deferred to the field-specific validator.
@@ -71,3 +83,24 @@ class GenerationParameters:
             # rules; construction only prevents non-text values from entering.
             if not isinstance(sequence, str):
                 raise TypeError("GenerationParameters stop must contain only strings.")
+
+        tools = cast(object, self.tools)
+        # Tuple storage keeps declaration order stable while an adapter encodes
+        # the same tools into one request body.
+        if not isinstance(tools, tuple):
+            raise TypeError("GenerationParameters tools must be a tuple.")
+        for tool in cast(tuple[object, ...], tools):
+            # Name and schema rules stay with the validator. Construction only
+            # rejects a value that is not a function tool.
+            if not isinstance(tool, FunctionTool):
+                raise TypeError(
+                    "GenerationParameters tools must contain FunctionTool values."
+                )
+
+        tool_choice = cast(object, self.tool_choice)
+        # A mode and a function name share one string. None omits the control
+        # so the service default applies.
+        if tool_choice is not None and not isinstance(tool_choice, str):
+            raise TypeError(
+                "GenerationParameters tool_choice must be a string or None."
+            )

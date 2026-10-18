@@ -140,7 +140,7 @@ Signatures include the default values recorded for that symbol.
 ### `mconet.client.ServerStreamEvent`
 
 - Kind: `class`
-- Signature: `(index: 'int', text: 'str', finish_reason: 'str | None' = None, response_id: 'str | None' = None, model: 'str | None' = None, done: 'bool' = False) -> None`
+- Signature: `(index: 'int', text: 'str', finish_reason: 'str | None' = None, response_id: 'str | None' = None, model: 'str | None' = None, tool_calls: 'tuple[ToolCallElement, ...] | None' = None, done: 'bool' = False) -> None`
 - `finished` (method): `() -> 'ServerStreamEvent'`
 
 ### `mconet.client.make_default`
@@ -362,10 +362,15 @@ Signatures include the default values recorded for that symbol.
 - Kind: `value`
 - Type: `GenericAlias`
 
+### `mconet.core.domain.FunctionTool`
+
+- Kind: `class`
+- Signature: `(name: 'str', description: 'str | None' = None, parameters: 'JsonValue | None' = None) -> None`
+
 ### `mconet.core.domain.GenerationParameters`
 
 - Kind: `class`
-- Signature: `(temperature: 'float | None' = None, top_p: 'float | None' = None, max_output_tokens: 'int | None' = None, stop: 'tuple[str, ...]' = (), seed: 'int | None' = None) -> None`
+- Signature: `(temperature: 'float | None' = None, top_p: 'float | None' = None, max_output_tokens: 'int | None' = None, stop: 'tuple[str, ...]' = (), seed: 'int | None' = None, tools: 'tuple[FunctionTool, ...]' = (), tool_choice: 'str | None' = None) -> None`
 
 ### `mconet.core.domain.GenerationParametersNode`
 
@@ -683,7 +688,7 @@ Signatures include the default values recorded for that symbol.
 ### `mconet.core.domain.ServerStreamEvent`
 
 - Kind: `class`
-- Signature: `(index: 'int', text: 'str', finish_reason: 'str | None' = None, response_id: 'str | None' = None, model: 'str | None' = None, done: 'bool' = False) -> None`
+- Signature: `(index: 'int', text: 'str', finish_reason: 'str | None' = None, response_id: 'str | None' = None, model: 'str | None' = None, tool_calls: 'tuple[ToolCallElement, ...] | None' = None, done: 'bool' = False) -> None`
 - `finished` (method): `() -> 'ServerStreamEvent'`
 
 ### `mconet.core.domain.ServiceAccess`
@@ -758,6 +763,29 @@ Signatures include the default values recorded for that symbol.
 
 - Kind: `class`
 - Signature: `(input_tokens: 'int | None' = None, output_tokens: 'int | None' = None, total_tokens: 'int | None' = None, extensions: 'Extensions' = <factory>) -> None`
+
+### `mconet.core.domain.ToolCallElement`
+
+- Kind: `class`
+- Signature: `(id: 'str', call_id: 'str', name: 'str', arguments: 'str', call_type: 'str' = 'function', extensions: 'Extensions' = <factory>) -> None`
+- `attributes` (property)
+- `kind` (property)
+- `metadata` (property)
+- `relations` (property)
+- `sub_elements` (property)
+- `value` (property)
+
+### `mconet.core.domain.ToolResultElement`
+
+- Kind: `class`
+- Signature: `(id: 'str', tool_call_id: 'str', content: 'str', name: 'str | None' = None) -> None`
+- `attributes` (property)
+- `extensions` (property)
+- `kind` (property)
+- `metadata` (property)
+- `relations` (property)
+- `sub_elements` (property)
+- `value` (property)
 
 ### `mconet.core.domain.UriArtifactSource`
 
@@ -954,6 +982,16 @@ Signatures include the default values recorded for that symbol.
 
 - Kind: `function`
 - Signature: `(document: 'MessageDocument') -> 'MessageDocument'`
+
+### `mconet.core.domain.validate_tool_call_element`
+
+- Kind: `function`
+- Signature: `(element: 'ToolCallElement') -> 'ToolCallElement'`
+
+### `mconet.core.domain.validate_tool_result_element`
+
+- Kind: `function`
+- Signature: `(element: 'ToolResultElement') -> 'ToolResultElement'`
 
 ### `mconet.core.domain.validate_unary_interaction_mode`
 

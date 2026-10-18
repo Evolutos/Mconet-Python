@@ -220,7 +220,7 @@
           "signature": "() -> 'ServerStreamEvent'"
         }
       },
-      "signature": "(index: 'int', text: 'str', finish_reason: 'str | None' = None, response_id: 'str | None' = None, model: 'str | None' = None, done: 'bool' = False) -> None"
+      "signature": "(index: 'int', text: 'str', finish_reason: 'str | None' = None, response_id: 'str | None' = None, model: 'str | None' = None, tool_calls: 'tuple[ToolCallElement, ...] | None' = None, done: 'bool' = False) -> None"
     },
     "mconet.client.make_default": {
       "kind": "function",
@@ -541,10 +541,15 @@
       "kind": "value",
       "type": "GenericAlias"
     },
+    "mconet.core.domain.FunctionTool": {
+      "kind": "class",
+      "members": {},
+      "signature": "(name: 'str', description: 'str | None' = None, parameters: 'JsonValue | None' = None) -> None"
+    },
     "mconet.core.domain.GenerationParameters": {
       "kind": "class",
       "members": {},
-      "signature": "(temperature: 'float | None' = None, top_p: 'float | None' = None, max_output_tokens: 'int | None' = None, stop: 'tuple[str, ...]' = (), seed: 'int | None' = None) -> None"
+      "signature": "(temperature: 'float | None' = None, top_p: 'float | None' = None, max_output_tokens: 'int | None' = None, stop: 'tuple[str, ...]' = (), seed: 'int | None' = None, tools: 'tuple[FunctionTool, ...]' = (), tool_choice: 'str | None' = None) -> None"
     },
     "mconet.core.domain.GenerationParametersNode": {
       "kind": "class",
@@ -1135,7 +1140,7 @@
           "signature": "() -> 'ServerStreamEvent'"
         }
       },
-      "signature": "(index: 'int', text: 'str', finish_reason: 'str | None' = None, response_id: 'str | None' = None, model: 'str | None' = None, done: 'bool' = False) -> None"
+      "signature": "(index: 'int', text: 'str', finish_reason: 'str | None' = None, response_id: 'str | None' = None, model: 'str | None' = None, tool_calls: 'tuple[ToolCallElement, ...] | None' = None, done: 'bool' = False) -> None"
     },
     "mconet.core.domain.ServiceAccess": {
       "kind": "class",
@@ -1283,6 +1288,70 @@
       "kind": "class",
       "members": {},
       "signature": "(input_tokens: 'int | None' = None, output_tokens: 'int | None' = None, total_tokens: 'int | None' = None, extensions: 'Extensions' = <factory>) -> None"
+    },
+    "mconet.core.domain.ToolCallElement": {
+      "kind": "class",
+      "members": {
+        "attributes": {
+          "kind": "property",
+          "signature": null
+        },
+        "kind": {
+          "kind": "property",
+          "signature": null
+        },
+        "metadata": {
+          "kind": "property",
+          "signature": null
+        },
+        "relations": {
+          "kind": "property",
+          "signature": null
+        },
+        "sub_elements": {
+          "kind": "property",
+          "signature": null
+        },
+        "value": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(id: 'str', call_id: 'str', name: 'str', arguments: 'str', call_type: 'str' = 'function', extensions: 'Extensions' = <factory>) -> None"
+    },
+    "mconet.core.domain.ToolResultElement": {
+      "kind": "class",
+      "members": {
+        "attributes": {
+          "kind": "property",
+          "signature": null
+        },
+        "extensions": {
+          "kind": "property",
+          "signature": null
+        },
+        "kind": {
+          "kind": "property",
+          "signature": null
+        },
+        "metadata": {
+          "kind": "property",
+          "signature": null
+        },
+        "relations": {
+          "kind": "property",
+          "signature": null
+        },
+        "sub_elements": {
+          "kind": "property",
+          "signature": null
+        },
+        "value": {
+          "kind": "property",
+          "signature": null
+        }
+      },
+      "signature": "(id: 'str', tool_call_id: 'str', content: 'str', name: 'str | None' = None) -> None"
     },
     "mconet.core.domain.UriArtifactSource": {
       "kind": "class",
@@ -1446,6 +1515,14 @@
     "mconet.core.domain.validate_text_message_content_scope": {
       "kind": "function",
       "signature": "(document: 'MessageDocument') -> 'MessageDocument'"
+    },
+    "mconet.core.domain.validate_tool_call_element": {
+      "kind": "function",
+      "signature": "(element: 'ToolCallElement') -> 'ToolCallElement'"
+    },
+    "mconet.core.domain.validate_tool_result_element": {
+      "kind": "function",
+      "signature": "(element: 'ToolResultElement') -> 'ToolResultElement'"
     },
     "mconet.core.domain.validate_unary_interaction_mode": {
       "kind": "function",
