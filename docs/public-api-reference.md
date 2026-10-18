@@ -126,9 +126,22 @@ Signatures include the default values recorded for that symbol.
 - `close` (method): `(self) -> 'None'`
 - `configuration` (property)
 - `interact` (method): `(self, request: 'ModelRequest', options: 'InteractionOptions') -> 'ModelOutput'`
+- `interact_server_stream` (method): `(self, request: 'ModelRequest', options: 'InteractionOptions') -> 'ServerStream'`
 - `interact_text` (method): `(self, target: 'ModelTarget', text: 'str', options: 'InteractionOptions | None' = None, service_access: 'ServiceAccess | None' = None) -> 'ModelOutput'`
 - `make_default` (method): `() -> 'ModelClient'`
 - `make_openai_compatible` (method): `(target: 'ModelTarget', service_access: 'ServiceAccess', *, max_response_body_bytes: 'int' = 16777216) -> 'ModelClient'`
+
+### `mconet.client.ServerStream`
+
+- Kind: `class`
+- Signature: `(events: 'AsyncIterator[ServerStreamEvent]', close: 'Callable[[], None]') -> 'None'`
+- `aclose` (method): `(self) -> 'None'`
+
+### `mconet.client.ServerStreamEvent`
+
+- Kind: `class`
+- Signature: `(index: 'int', text: 'str', finish_reason: 'str | None' = None, response_id: 'str | None' = None, model: 'str | None' = None, done: 'bool' = False) -> None`
+- `finished` (method): `() -> 'ServerStreamEvent'`
 
 ### `mconet.client.make_default`
 

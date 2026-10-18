@@ -38,11 +38,20 @@ OPENAI_COMPATIBLE_BINDING_VERSION = "1.0.0"
 
 _CONVERSATION_TASK_TYPE = OpenIdentifier("conversation.generate")
 _UNARY_MODE_ID = OpenIdentifier("unary")
+_SERVER_STREAM_MODE_ID = OpenIdentifier("server_stream")
+_ACCEPTED_MODE_IDS = frozenset((_UNARY_MODE_ID, _SERVER_STREAM_MODE_ID))
 
 OPENAI_COMPATIBLE_TYPE_KEY = IntegrationTypeKey(
     OPENAI_CHAT_COMPLETIONS_PROTOCOL_ID, _CONVERSATION_TASK_TYPE, _UNARY_MODE_ID
 )
-"""Exact type table key under which the default binding is installed."""
+"""Exact type table key for the unary chat completions binding."""
+
+OPENAI_COMPATIBLE_SERVER_STREAM_TYPE_KEY = IntegrationTypeKey(
+    OPENAI_CHAT_COMPLETIONS_PROTOCOL_ID,
+    _CONVERSATION_TASK_TYPE,
+    _SERVER_STREAM_MODE_ID,
+)
+"""Exact type table key for the server-stream chat completions binding."""
 
 # Specificity scores only describe the match in the plan snapshot; the type
 # table decides by exact key, so their values never rank candidates.
@@ -67,13 +76,15 @@ class _ProtocolTargetMatcher:
 
 
 class _ConversationUnaryMatcher:
-    """Accept only the conversation generation task in unary mode."""
+    """Accept conversation generation in unary or server-stream mode."""
 
     __slots__ = ()
 
     def match(self, task: TaskDescriptor, mode: InteractionMode) -> TaskMatch | None:
-        """Return a match only for ``conversation.generate`` and ``unary``."""
-        if task.type != _CONVERSATION_TASK_TYPE or mode.id != _UNARY_MODE_ID:
+        """Return a match for ``conversation.generate`` in an accepted mode."""
+        # One binding serves both modes. The type table still keeps a separate
+        # key for each mode so lookup stays exact.
+        if task.type != _CONVERSATION_TASK_TYPE or mode.id not in _ACCEPTED_MODE_IDS:
             return None
         return TaskMatch(True, _TASK_SPECIFICITY)
 
@@ -108,7 +119,8 @@ def openai_compatible_binding(
             new system HTTP transport with default settings.
 
     Returns:
-        A binding to install under :data:`OPENAI_COMPATIBLE_TYPE_KEY`.
+        A binding to install under :data:`OPENAI_COMPATIBLE_TYPE_KEY` and
+        :data:`OPENAI_COMPATIBLE_SERVER_STREAM_TYPE_KEY`.
 
     Raises:
         TypeError: If ``transport`` or ``compatibility_policy`` has the wrong

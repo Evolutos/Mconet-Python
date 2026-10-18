@@ -13,8 +13,10 @@ from mconet.core.spi.interaction_options import InteractionOptions
 class ModelInteractor(Protocol):
     """Perform one unary model interaction.
 
-    R1 exposes only :meth:`interact`. Streaming, client streaming, duplex, and
-    long-running operations are absent until their execution contracts exist.
+    This protocol exposes only :meth:`interact`, which is one unary call.
+    Server-stream consumption is :meth:`ModelClient.interact_server_stream`,
+    not a method of this protocol. Client streaming, duplex, and long-running
+    operations remain absent.
     The method receives one complete request and one interaction option value.
     It does not define a second pipeline, a client registry, or component
     identifiers.

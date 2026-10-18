@@ -13,6 +13,7 @@ from mconet.client._builtin_component_release import (
     release_builtin_client_components,
 )
 from mconet.client._openai_compatible_binding import (
+    OPENAI_COMPATIBLE_SERVER_STREAM_TYPE_KEY,
     OPENAI_COMPATIBLE_TYPE_KEY,
     openai_compatible_binding,
 )
@@ -29,6 +30,7 @@ from mconet.core.domain.model_output import ModelOutput
 from mconet.core.domain.model_request import ModelRequest
 from mconet.core.domain.model_target import ModelTarget
 from mconet.core.domain.open_identifier import OpenIdentifier
+from mconet.core.domain.server_stream import ServerStream
 from mconet.core.domain.service_access import ServiceAccess
 from mconet.core.runtime._integration_responsibility_chain import (
     IntegrationResponsibilityChain,
@@ -44,6 +46,7 @@ from mconet.core.runtime._runtime_components_spi_validation import (
 from mconet.core.runtime._runtime_components_type_contract_validation import (
     validate_runtime_components_type_contracts,
 )
+from mconet.core.runtime._server_stream_execution import execute_server_stream
 from mconet.core.runtime.default_model_integration_resolver import (
     DefaultModelIntegrationResolver,
 )
@@ -189,6 +192,48 @@ class ModelClient:
             raise TypeError("options must be an InteractionOptions or None.")
         return await self.interact(request, candidate_options)
 
+    async def interact_server_stream(
+        self,
+        request: ModelRequest,
+        options: InteractionOptions,
+    ) -> ServerStream:
+        """Open one server stream on this reusable client.
+
+        The request is the same conversation request used by :meth:`interact`.
+        Execution uses the server-stream runtime, which asks the service for
+        an event stream and yields one event per text or finish chunk, then a
+        terminal event. ``include_raw_response`` is not applied.
+
+        Args:
+            request: Complete model request for this interaction.
+            options: Overrides that apply only to this interaction.
+
+        Returns:
+            A single-consumption stream of server events.
+
+        Raises:
+            TypeError: If an argument has an invalid nominal type.
+            ModelInteractionError: If the client is closed, or the runtime
+                rejects the interaction. A closed client uses code
+                ``client_closed``.
+        """
+        request_value = cast(object, request)
+        options_value = cast(object, options)
+        # Close has already stopped this client. The runtime stays unused so a
+        # late call cannot open another stream.
+        if not self._accepting_requests:
+            raise _client_closed_error()
+        if not isinstance(request_value, ModelRequest):
+            raise TypeError("request must be a ModelRequest.")
+        if not isinstance(options_value, InteractionOptions):
+            raise TypeError("options must be an InteractionOptions.")
+        return await execute_server_stream(
+            request_value,
+            options_value,
+            self._configuration,
+            self._sdk_defaults,
+        )
+
     async def close(self) -> None:
         """Stop this client from accepting later interactions.
 
@@ -259,7 +304,12 @@ class ModelClient:
             max_response_body_bytes=candidate_limit,
         )
         resolver = DefaultModelIntegrationResolver(
-            IntegrationTypeTable(((OPENAI_COMPATIBLE_TYPE_KEY, binding),)),
+            IntegrationTypeTable(
+                (
+                    (OPENAI_COMPATIBLE_TYPE_KEY, binding),
+                    (OPENAI_COMPATIBLE_SERVER_STREAM_TYPE_KEY, binding),
+                )
+            ),
             IntegrationResponsibilityChain(()),
         )
         client = cls(

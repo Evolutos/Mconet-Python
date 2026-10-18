@@ -4,6 +4,8 @@ from mconet.client.conversation_request_builder import ConversationRequestBuilde
 from mconet.client.model_client import ModelClient
 from mconet.client.text_request import model_request_from_text
 from mconet.core.domain.model_target import ModelTarget
+from mconet.core.domain.server_stream import ServerStream
+from mconet.core.domain.server_stream_event import ServerStreamEvent
 from mconet.core.domain.service_access import ServiceAccess
 
 
@@ -47,6 +49,8 @@ def make_openai_compatible(
 __all__ = (
     "ConversationRequestBuilder",
     "ModelClient",
+    "ServerStream",
+    "ServerStreamEvent",
     "make_default",
     "make_openai_compatible",
     "model_request_from_text",

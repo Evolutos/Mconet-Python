@@ -183,6 +183,10 @@
           "kind": "method",
           "signature": "(self, request: 'ModelRequest', options: 'InteractionOptions') -> 'ModelOutput'"
         },
+        "interact_server_stream": {
+          "kind": "method",
+          "signature": "(self, request: 'ModelRequest', options: 'InteractionOptions') -> 'ServerStream'"
+        },
         "interact_text": {
           "kind": "method",
           "signature": "(self, target: 'ModelTarget', text: 'str', options: 'InteractionOptions | None' = None, service_access: 'ServiceAccess | None' = None) -> 'ModelOutput'"
@@ -197,6 +201,26 @@
         }
       },
       "signature": "(configuration: 'ModelClientConfiguration') -> 'None'"
+    },
+    "mconet.client.ServerStream": {
+      "kind": "class",
+      "members": {
+        "aclose": {
+          "kind": "method",
+          "signature": "(self) -> 'None'"
+        }
+      },
+      "signature": "(events: 'AsyncIterator[ServerStreamEvent]', close: 'Callable[[], None]') -> 'None'"
+    },
+    "mconet.client.ServerStreamEvent": {
+      "kind": "class",
+      "members": {
+        "finished": {
+          "kind": "method",
+          "signature": "() -> 'ServerStreamEvent'"
+        }
+      },
+      "signature": "(index: 'int', text: 'str', finish_reason: 'str | None' = None, response_id: 'str | None' = None, model: 'str | None' = None, done: 'bool' = False) -> None"
     },
     "mconet.client.make_default": {
       "kind": "function",

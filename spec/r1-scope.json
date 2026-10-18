@@ -63,7 +63,7 @@
     "message_elements": ["message.entry"],
     "message_content": ["content.text"],
     "message_roles": ["message.system", "message.user", "message.assistant"],
-    "modes": ["unary"],
+    "modes": ["unary", "server_stream"],
     "tasks": ["conversation.generate"],
     "transports": ["http", "https"],
     "wire_formats": ["application/json"]
@@ -78,7 +78,7 @@
     ],
     "message_content": ["content.json", "content.artifact", "content.unknown"],
     "message_elements": ["message.tool_call", "message.tool_result"],
-    "modes": ["server_stream", "client_stream", "duplex", "long_running"],
+    "modes": ["client_stream", "duplex", "long_running"],
     "tasks": [
       "embedding.create",
       "rerank.documents",
