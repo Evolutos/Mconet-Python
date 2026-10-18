@@ -17,10 +17,20 @@
         {"name": "error", "nullable": false, "required": true, "type": "shape:error"}
       ]
     },
+    "function_tool": {
+      "fields": [
+        {"name": "name", "nullable": false, "required": true, "type": "string"},
+        {"name": "description", "nullable": false, "required": false, "type": "string"},
+        {"name": "parameters", "nullable": false, "required": false, "type": "object"}
+      ]
+    },
     "message": {
       "fields": [
         {"name": "role", "nullable": false, "required": true, "type": "string"},
-        {"name": "content", "nullable": false, "required": true, "type": "string"}
+        {"name": "content", "nullable": true, "required": true, "type": "string"},
+        {"name": "name", "nullable": false, "required": false, "type": "string"},
+        {"name": "tool_calls", "nullable": false, "required": false, "type": "array:tool_call"},
+        {"name": "tool_call_id", "nullable": false, "required": false, "type": "string"}
       ]
     },
     "request": {
@@ -32,6 +42,8 @@
         {"name": "max_tokens", "nullable": false, "required": false, "type": "integer"},
         {"name": "stop", "nullable": false, "required": false, "type": "string-or-array:string"},
         {"name": "seed", "nullable": false, "required": false, "type": "integer"},
+        {"name": "tools", "nullable": false, "required": false, "type": "array:tool"},
+        {"name": "tool_choice", "nullable": false, "required": false, "type": "string-or-object"},
         {"const": false, "name": "stream", "nullable": false, "required": false, "type": "boolean"}
       ]
     },
@@ -48,6 +60,25 @@
         {"name": "index", "nullable": false, "required": true, "type": "integer"},
         {"name": "message", "nullable": false, "required": true, "type": "shape:message"},
         {"name": "finish_reason", "nullable": false, "required": true, "type": "string"}
+      ]
+    },
+    "tool": {
+      "fields": [
+        {"name": "type", "nullable": false, "required": true, "type": "string"},
+        {"name": "function", "nullable": false, "required": true, "type": "shape:function_tool"}
+      ]
+    },
+    "tool_call": {
+      "fields": [
+        {"name": "id", "nullable": false, "required": true, "type": "string"},
+        {"name": "type", "nullable": false, "required": true, "type": "string"},
+        {"name": "function", "nullable": false, "required": true, "type": "shape:tool_call_function"}
+      ]
+    },
+    "tool_call_function": {
+      "fields": [
+        {"name": "name", "nullable": false, "required": true, "type": "string"},
+        {"name": "arguments", "nullable": false, "required": true, "type": "string"}
       ]
     },
     "usage": {

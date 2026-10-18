@@ -112,6 +112,56 @@
     {
       "body": {
         "choices": [
+          {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "message": {
+              "content": null,
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"city\":\"Paris\"}",
+                    "name": "get_weather"
+                  },
+                  "id": "call_1",
+                  "type": "function"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "expected": {
+        "messages": [
+          {
+            "extensions": {},
+            "id": "choice-0",
+            "rawRole": "assistant",
+            "role": "message.assistant",
+            "text": ""
+          },
+          {
+            "arguments": "{\"city\":\"Paris\"}",
+            "callId": "call_1",
+            "callType": "function",
+            "id": "choice-0-tool-0",
+            "kind": "message.tool_call",
+            "name": "get_weather"
+          }
+        ],
+        "resolvedModel": null,
+        "responseExtensions": {},
+        "resultExtensions": {},
+        "status": "requires_action",
+        "stopReason": "tool_calls",
+        "usage": null
+      },
+      "name": "assistant-tool-calls"
+    },
+    {
+      "body": {
+        "choices": [
           {"index": 0, "message": {"role": "assistant", "content": "Done"}, "finish_reason": "Vendor_Halt"}
         ]
       },

@@ -242,6 +242,56 @@
       },
       "name": "conversation-without-entries",
       "policy": "compatible"
+    },
+    {
+      "entries": [
+        {"role": "message.user", "texts": ["Weather?"]},
+        {"role": "message.assistant", "texts": [""]},
+        {"toolCall": {"arguments": "{\"city\":\"Paris\"}", "id": "call_1", "name": "get_weather"}},
+        {"toolResult": {"content": "22C", "toolCallId": "call_1"}}
+      ],
+      "expectedBody": {
+        "model": "fixture-model",
+        "messages": [
+          {"role": "user", "content": "Weather?"},
+          {
+            "role": "assistant",
+            "content": null,
+            "tool_calls": [
+              {
+                "id": "call_1",
+                "type": "function",
+                "function": {"name": "get_weather", "arguments": "{\"city\":\"Paris\"}"}
+              }
+            ]
+          },
+          {"role": "tool", "content": "22C", "tool_call_id": "call_1"}
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "get_weather",
+              "description": "Look up weather",
+              "parameters": {"type": "object"}
+            }
+          }
+        ],
+        "tool_choice": {"type": "function", "function": {"name": "get_weather"}},
+        "stream": false
+      },
+      "name": "tools-tool-call-and-result",
+      "parameters": {
+        "toolChoice": "get_weather",
+        "tools": [
+          {
+            "description": "Look up weather",
+            "name": "get_weather",
+            "parameters": {"type": "object"}
+          }
+        ]
+      },
+      "policy": "strict"
     }
   ],
   "format_version": 1,

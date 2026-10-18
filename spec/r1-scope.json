@@ -60,7 +60,7 @@
   "scope_version": "r1",
   "supported": {
     "authorization": ["none", "api-key-header", "bearer"],
-    "message_elements": ["message.entry"],
+    "message_elements": ["message.entry", "message.tool_call", "message.tool_result"],
     "message_content": ["content.text"],
     "message_roles": ["message.system", "message.user", "message.assistant"],
     "modes": ["unary", "server_stream"],
@@ -77,7 +77,7 @@
       "artifact.file"
     ],
     "message_content": ["content.json", "content.artifact", "content.unknown"],
-    "message_elements": ["message.tool_call", "message.tool_result"],
+    "message_elements": [],
     "modes": ["client_stream", "duplex", "long_running"],
     "tasks": [
       "embedding.create",
