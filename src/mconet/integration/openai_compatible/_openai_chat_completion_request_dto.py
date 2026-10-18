@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Literal, cast
+from typing import cast
 
 from mconet.core.domain import JsonValue, validate_json_value_numbers
 from mconet.integration.openai_compatible._openai_chat_message_dto import (
@@ -16,9 +16,9 @@ class OpenAIChatCompletionRequestDTO:
     """Hold the complete request body before payload encoding.
 
     Optional members are ``None`` when the request does not send them, so the
-    service default applies. ``stream`` is not a field: this release sends only
-    unary requests and always writes ``"stream": false``. The value carries no
-    other member, because the request profile forbids unknown members.
+    service default applies. ``stream`` is ``False`` for a unary request and
+    ``True`` for a server stream. The value carries no other member, because
+    the request profile forbids unknown members.
     """
 
     model: str
@@ -41,6 +41,9 @@ class OpenAIChatCompletionRequestDTO:
 
     seed: int | None = None
     """Deterministic sampling seed, or ``None`` to omit the member."""
+
+    stream: bool = False
+    """Whether the service should reply with a server-sent event stream."""
 
     def __post_init__(self) -> None:
         """Require wire-representable members before any payload is built."""
@@ -103,23 +106,21 @@ class OpenAIChatCompletionRequestDTO:
                     "OpenAIChatCompletionRequestDTO stop must contain only strings."
                 )
 
+        if type(cast(object, self.stream)) is not bool:
+            raise TypeError("OpenAIChatCompletionRequestDTO stream must be a bool.")
+
         # Non-finite floats and integers outside the interoperable range have
         # no portable JSON encoding, so they fail here rather than at encoding.
         for value in (self.temperature, self.top_p, self.max_tokens, self.seed):
             if value is not None:
                 validate_json_value_numbers(value)
 
-    @property
-    def stream(self) -> Literal[False]:
-        """Return the fixed unary streaming flag sent with every request."""
-        return False
-
     def to_json(self) -> dict[str, JsonValue]:
         """Return the request body members in frozen profile order.
 
         Returns:
             A fresh JSON object. Omitted optional members are absent rather than
-            ``null``, and ``stream`` is always ``false``.
+            ``null``. ``stream`` is the value stored on this request.
         """
         body: dict[str, JsonValue] = {
             "model": self.model,

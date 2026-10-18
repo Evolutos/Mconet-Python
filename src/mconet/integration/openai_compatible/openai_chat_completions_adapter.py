@@ -57,6 +57,9 @@ from mconet.integration.openai_compatible._response import (
     single_choice,
     token_usage,
 )
+from mconet.integration.openai_compatible._server_stream import (
+    map_openai_server_stream_payload,
+)
 
 OPENAI_CHAT_COMPLETIONS_PROTOCOL_ID = OpenIdentifier("openai.chat-completions")
 """Protocol identifier a ModelTarget names to select this adapter."""
@@ -72,6 +75,9 @@ CHAT_COMPLETIONS_PATH = "/v1/chat/completions"
 
 _CONVERSATION_TASK_TYPE = OpenIdentifier("conversation.generate")
 _UNARY_MODE_ID = OpenIdentifier("unary")
+_SERVER_STREAM_MODE_ID = OpenIdentifier("server_stream")
+_STREAM_EXTENSION = "mconet.openai.stream"
+_STREAM_MAPPER_EXTENSION = "mconet.server_stream.mapper"
 _JSON_VALUE_TYPE_ID = OpenIdentifier("json.value")
 _JSON_MEDIA_TYPE = MediaType("application", "json")
 _HTTP_TRANSPORT_KIND = OpenIdentifier("http")
@@ -101,10 +107,10 @@ class OpenAIChatCompletionsAdapter:
     """Map conversation tasks to the OpenAI-compatible chat completions API.
 
     The adapter holds only its immutable compatibility policy. It handles
-    exactly one combination: a target whose protocol is
-    ``openai.chat-completions``, the ``conversation.generate`` task, and the
-    ``unary`` interaction mode. Any service and model may use the protocol, so
-    neither is part of matching.
+    exactly two combinations: a target whose protocol is
+    ``openai.chat-completions``, the ``conversation.generate`` task, and either
+    the ``unary`` or the ``server_stream`` interaction mode. Any service and
+    model may use the protocol, so neither is part of matching.
 
     The policy only decides request values outside the frozen wire profile:
     ``strict`` and unknown modes reject unknown roles and a ``temperature``
@@ -171,12 +177,14 @@ class OpenAIChatCompletionsAdapter:
 
         Returns:
             ``True`` only for the chat completions protocol, the conversation
-            generation task, and unary mode.
+            generation task, and the unary or server-stream mode.
         """
+        # Unary and server stream share this protocol. Other modes stay
+        # unsupported until their own request and response contracts exist.
         return (
             target.protocol_id == OPENAI_CHAT_COMPLETIONS_PROTOCOL_ID
             and task.type == _CONVERSATION_TASK_TYPE
-            and mode.id == _UNARY_MODE_ID
+            and mode.id in (_UNARY_MODE_ID, _SERVER_STREAM_MODE_ID)
         )
 
     def prepare_plan(
@@ -206,8 +214,15 @@ class OpenAIChatCompletionsAdapter:
                 is not absolute or has a query or fragment. Endpoint text is
                 never copied into the error.
         """
-        del request, mode
+        del request
         endpoint = _profile_endpoint(access.endpoint)
+        # The stream flag and mapper travel on the plan so request encoding
+        # can set ``stream`` without the runtime importing this protocol. A
+        # unary plan keeps the extensions empty.
+        extensions: dict[str, object] = {}
+        if mode.id == _SERVER_STREAM_MODE_ID:
+            extensions[_STREAM_EXTENSION] = True
+            extensions[_STREAM_MAPPER_EXTENSION] = map_openai_server_stream_payload
         return ProtocolExecutionPlan(
             transport_plan=TransportRequestPlan(
                 endpoint=endpoint,
@@ -223,6 +238,7 @@ class OpenAIChatCompletionsAdapter:
             error_decoder=DecoderSelection(_JSON_MEDIA_TYPE),
             transport=TransportSelection(_HTTP_TRANSPORT_KIND),
             type_contract=_ADAPTER_TYPE_CONTRACT,
+            extensions=extensions,
         )
 
     def build_request(
@@ -234,7 +250,9 @@ class OpenAIChatCompletionsAdapter:
 
         The body is ``model`` (the target model name), ``messages`` (input
         entries in preorder), the set sampling members, and
-        ``"stream": false``, in profile order. It is not encoded here.
+        ``stream`` set from the plan, in profile order. Unary plans send
+        ``false``. Server-stream plans send ``true``. The body is not encoded
+        here.
 
         Args:
             request: Validated conversation request.
@@ -259,6 +277,7 @@ class OpenAIChatCompletionsAdapter:
             max_tokens=members.max_tokens,
             stop=members.stop,
             seed=members.seed,
+            stream=plan.extensions.get(_STREAM_EXTENSION) is True,
         )
         payload = ErasedRuntimeValue(_JSON_VALUE_TYPE_ID, body.to_json())
         return ProtocolRequestPlan(payload, plan)
