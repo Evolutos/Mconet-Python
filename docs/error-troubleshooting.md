@@ -70,6 +70,7 @@ contents, secrets, or component identifiers.
 - `body_already_consumed`: a single-use body was opened again.
 - `response_body_too_large`: the response body exceeds its limit.
 - `stream_frame_too_large`: a stream frame exceeds its limit.
+- `incomplete_stream_frame`: the server stream ended inside an event.
 - `stream_events_consumed`: the stream was already consumed.
 - `client_closed`: `interact` was called after `ModelClient.close`. The
   category is `invalid_request` and the phase is `validation`.

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
 from mconet.core.domain.interaction_mode import InteractionMode
 from mconet.core.domain.model_request import ModelRequest
 from mconet.core.domain.resolved_interaction_resource_limits import (
@@ -30,6 +32,10 @@ def resolve_interaction_configuration(
     client_layer: InteractionConfigurationLayer,
     integration_layer: InteractionConfigurationLayer,
     sdk_resource_limits: ResolvedInteractionResourceLimits,
+    interaction_validation: Callable[
+        [ModelRequest, InteractionMode],
+        tuple[ModelRequest, InteractionMode],
+    ] = validate_r1_interaction,
 ) -> ResolvedInteractionConfiguration:
     """Resolve one interaction's configuration without changing the client layer.
 
@@ -50,6 +56,8 @@ def resolve_interaction_configuration(
         client_layer: Reusable client defaults. This object is not modified.
         integration_layer: Defaults from the selected integration.
         sdk_resource_limits: Finite SDK byte limits used when no layer speaks.
+        interaction_validation: Gate applied before the merge. The default is
+            the unary text gate. The server-stream entry supplies its own.
 
     Returns:
         The validated configuration for this interaction alone.
@@ -61,7 +69,9 @@ def resolve_interaction_configuration(
     """
     # Validation failure stops the stage. The client layer is not read for a
     # merge and cannot receive this interaction's policy, limits, or signal.
-    validated_request, _validated_mode = validate_r1_interaction(request, mode)
+    # The default gate is unary. A server-stream call passes its own gate so
+    # this merge can run without accepting that mode on the unary entry.
+    validated_request, _validated_mode = interaction_validation(request, mode)
     # Only request-owned target and access enter the request layer. Interaction
     # overrides stay on their own layer and are not copied onto the client.
     request_layer = InteractionConfigurationLayer(

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from typing import cast
 
 from mconet.core.domain.artifact_catalog_scope import (
@@ -19,6 +19,9 @@ from mconet.core.domain.message_content_scope import (
     validate_text_message_content_scope,
 )
 from mconet.core.domain.model_request import ModelRequest
+from mconet.core.domain.server_stream_interaction_mode import (
+    validate_server_stream_interaction_mode,
+)
 from mconet.core.domain.task_node import TaskNode
 from mconet.core.domain.unary_interaction_mode import validate_unary_interaction_mode
 from mconet.core.runtime._public_input_normalization import normalize_public_input
@@ -49,13 +52,55 @@ def validate_r1_interaction(
         ModelInteractionError: If the request or mode is outside the R1 text
             unary scope.
     """
+    return _validate_text_interaction(request, mode, validate_unary_interaction_mode)
+
+
+def validate_server_stream_interaction(
+    request: ModelRequest,
+    mode: InteractionMode,
+) -> tuple[ModelRequest, InteractionMode]:
+    """Run the text gates for one server-stream interaction.
+
+    The order matches unary validation, except the mode gate requires
+    ``server_stream``. A unary mode is rejected here. No component is resolved
+    and no I/O is performed.
+
+    Args:
+        request: The public model request for one interaction.
+        mode: The interaction mode selected by the server-stream entry.
+
+    Returns:
+        The same request and mode objects when every gate accepts them.
+
+    Raises:
+        TypeError: If a request, mode, or nested value has an invalid type.
+        ValueError: If domain semantics are invalid.
+        ModelInteractionError: If the request or mode is outside the text
+            server-stream scope.
+    """
+    # The shared text gates stay in one place. Only the mode predicate differs
+    # from the unary entry, so a conversation that is valid for unary is valid
+    # here once its mode is server_stream.
+    return _validate_text_interaction(
+        request,
+        mode,
+        validate_server_stream_interaction_mode,
+    )
+
+
+def _validate_text_interaction(
+    request: ModelRequest,
+    mode: InteractionMode,
+    mode_gate: Callable[[ModelRequest, InteractionMode], InteractionMode],
+) -> tuple[ModelRequest, InteractionMode]:
+    """Run normalization, the supplied mode gate, and the text conversation gates."""
     # Domain normalization is the first gate. A malformed envelope must fail
     # before task, mode, message, or artifact policy runs.
     normalized = normalize_public_input(request)
     task = validate_conversation_task_type(normalized.task)
-    # Mode stays outside the request envelope. Reject a non-unary mode before
-    # walking the task tree.
-    validated_mode = validate_unary_interaction_mode(normalized, mode)
+    # Mode stays outside the request envelope. The supplied gate rejects a
+    # mode this entry does not execute before the task tree is walked.
+    validated_mode = mode_gate(normalized, mode)
     # The remaining gates inspect the concrete conversation tree. An open task
     # that only reuses the conversation type id has no supported node vocabulary.
     if not isinstance(task, ConversationTaskRequest):
@@ -64,7 +109,7 @@ def validate_r1_interaction(
     scoped = validate_conversation_task_node_scope(task)
     # Artifact and message policy stay explicit at this stage. Nested request
     # validation may already have applied them; repeating the same gates keeps
-    # the R1 schedule intact if that nesting changes.
+    # the schedule intact if that nesting changes.
     validate_empty_artifact_catalog_scope(scoped.artifacts)
     _validate_message_content(scoped)
     return normalized, validated_mode

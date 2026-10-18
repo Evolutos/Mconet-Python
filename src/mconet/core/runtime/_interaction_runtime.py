@@ -14,6 +14,7 @@ from mconet.core.domain.error_category import ErrorCategory
 from mconet.core.domain.extensions import Extensions
 from mconet.core.domain.header_field import HeaderField
 from mconet.core.domain.headers import Headers
+from mconet.core.domain.interaction_mode import InteractionMode
 from mconet.core.domain.interaction_phase import InteractionPhase
 from mconet.core.domain.json_value import JsonValue
 from mconet.core.domain.model_interaction_error import ModelInteractionError
@@ -457,16 +458,23 @@ def _integration_plan(
     options: InteractionOptions,
     configuration: ModelClientConfiguration,
     policy: CompatibilityPolicy,
+    mode: InteractionMode = _UNARY_MODE,
 ) -> ModelIntegrationPlan:
     """Choose the direct adapter branch or the injected resolver branch."""
+    # The unary entry omits the mode and keeps the historical unary selection.
+    # The server-stream entry passes its own mode so the same branches resolve
+    # the matching integration instead of the unary one. The object cast keeps
+    # the runtime check even though the annotation already names the protocol.
+    if not isinstance(cast(object, mode), InteractionMode):
+        raise TypeError("mode must implement InteractionMode.")
     adapter = _component(options, configuration, "task_protocol_adapter")
     # An injected adapter is the direct branch. The resolver is not called.
     if isinstance(adapter, TaskProtocolAdapter):
-        return resolve_direct_adapter(adapter, request, _UNARY_MODE)
+        return resolve_direct_adapter(adapter, request, mode)
     resolver = _component(options, configuration, "model_integration_resolver")
     if not isinstance(resolver, ModelIntegrationResolver):
         raise unsupported_model_integration_error()
-    return resolve_integration_binding(resolver, request, _UNARY_MODE, policy)
+    return resolve_integration_binding(resolver, request, mode, policy)
 
 
 def _service_access_resolver(
@@ -643,3 +651,80 @@ def _now() -> Timestamp:
     nanoseconds = time.time_ns()
     seconds, fraction = divmod(nanoseconds, _NANOSECONDS_PER_SECOND)
     return Timestamp(seconds, fraction)
+
+
+def http_transport_kind() -> OpenIdentifier:
+    """Return the HTTP transport kind used when a plan omits one."""
+    # Shared with the server-stream entry so both paths name the same kind.
+    return _HTTP_TRANSPORT_KIND
+
+
+def empty_sdk_components() -> RuntimeComponents:
+    """Return the empty component carrier used when no SDK defaults are passed."""
+    # The client passes its own defaults. This carrier is only the fallback.
+    return _SDK_COMPONENTS
+
+
+def default_sdk_resource_limits() -> ResolvedInteractionResourceLimits:
+    """Return the SDK byte limits used when no layer supplies them."""
+    # The same object is the unary fallback, so the two entries cannot drift.
+    return _SDK_LIMITS
+
+
+def merge_interaction_monitors(
+    options: InteractionOptions,
+    configuration: ModelClientConfiguration,
+) -> tuple[InteractionMonitor, ...]:
+    """Combine client and interaction monitors for one interaction."""
+    # The merge rules live with the unary runtime. This wrapper lets the
+    # server-stream entry use them without copying the mode table.
+    return _merged_monitors(options, configuration)
+
+
+def select_interaction_integration_plan(
+    request: ModelRequest,
+    options: InteractionOptions,
+    configuration: ModelClientConfiguration,
+    policy: CompatibilityPolicy,
+    mode: InteractionMode,
+) -> ModelIntegrationPlan:
+    """Resolve the integration plan for one explicit interaction mode."""
+    # Mode is required here. The unary entry still defaults inside the helper.
+    return _integration_plan(request, options, configuration, policy, mode)
+
+
+def select_service_access_resolver(
+    options: InteractionOptions,
+    configuration: ModelClientConfiguration,
+) -> ServiceAccessResolver:
+    """Return the access resolver for one interaction."""
+    # Interaction overrides win over the client, and an absent resolver uses
+    # the builtin field merger.
+    return _service_access_resolver(options, configuration)
+
+
+def select_authorization_resolver(
+    options: InteractionOptions,
+    configuration: ModelClientConfiguration,
+) -> AuthorizationHandlerResolver:
+    """Return the authorization-handler resolver for one interaction."""
+    # An absent resolver uses the builtin selector rather than failing closed
+    # before the handlers themselves are known.
+    return _authorization_resolver(options, configuration)
+
+
+def select_authorization_handlers(
+    options: InteractionOptions,
+    configuration: ModelClientConfiguration,
+    sdk_defaults: RuntimeComponents,
+    plan: ModelIntegrationPlan,
+) -> tuple[AuthorizationHandler, ...]:
+    """Return the authorization handlers for one interaction."""
+    # Precedence stays interaction, client, binding, then SDK defaults.
+    return _authorization_handlers(options, configuration, sdk_defaults, plan)
+
+
+def interaction_timestamp() -> Timestamp:
+    """Read one UTC timestamp for an interaction that is starting."""
+    # Both entries share this clock read so their events use the same scale.
+    return _now()

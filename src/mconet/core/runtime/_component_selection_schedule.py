@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
 from mconet.core.domain.interaction_mode import InteractionMode
 from mconet.core.domain.open_identifier import OpenIdentifier
 from mconet.core.runtime._component_source_merge import merge_component_sources
@@ -35,6 +37,8 @@ def select_execution_components(
     interaction_components: RuntimeComponents | None,
     client_components: RuntimeComponents | None,
     sdk_defaults: RuntimeComponents,
+    plan_scope: Callable[[InteractionMode, ProtocolExecutionPlan], ProtocolExecutionPlan]
+    = validate_r1_protocol_execution_plan,
 ) -> ComponentSelectionResolution:
     """Select each required role from the highest present source layer.
 
@@ -51,6 +55,8 @@ def select_execution_components(
         interaction_components: Optional single-interaction overrides.
         client_components: Optional client defaults.
         sdk_defaults: SDK components used when no higher layer speaks.
+        plan_scope: Gate applied before any role is selected. The default is
+            the unary JSON HTTP gate. The server-stream entry supplies its own.
 
     Returns:
         The five selected unary roles in adapter, encoder, success decoder,
@@ -63,8 +69,8 @@ def select_execution_components(
             layer has several matches (``ambiguous_component_selection``).
     """
     # Scope failure stops the stage. Component layers are not consulted, so a
-    # streaming plan cannot be rescued by an injected unary transport.
-    validate_r1_protocol_execution_plan(mode, execution_plan)
+    # plan outside the selected gate cannot be rescued by an injected transport.
+    plan_scope(mode, execution_plan)
     sources = merge_component_sources(
         interaction_components,
         client_components,
