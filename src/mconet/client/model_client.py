@@ -201,8 +201,11 @@ class ModelClient:
 
         The request is the same conversation request used by :meth:`interact`.
         Execution uses the server-stream runtime, which asks the service for
-        an event stream and yields one event per text or finish chunk, then a
-        terminal event. ``include_raw_response`` is not applied.
+        an event stream and yields one event per text, tool-call, or finish
+        chunk, then a terminal event. Tool-call deltas for one choice are
+        assembled by call index, so ``tool_calls`` on an event is the calls
+        seen so far rather than a single argument fragment.
+        ``include_raw_response`` is not applied.
 
         Args:
             request: Complete model request for this interaction.
