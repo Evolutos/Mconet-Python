@@ -111,6 +111,11 @@ from mconet.core.domain.resource_limits_resolution import resolve_resource_limit
 from mconet.core.domain.resource_limits_validation import validate_resource_limits
 from mconet.core.domain.schema_version import SchemaVersion
 from mconet.core.domain.secret_value import AuthorizedSecretConsumer, SecretValue
+from mconet.core.domain.server_stream import ServerStream
+from mconet.core.domain.server_stream_event import ServerStreamEvent
+from mconet.core.domain.server_stream_interaction_mode import (
+    validate_server_stream_interaction_mode,
+)
 from mconet.core.domain.service_access import ServiceAccess
 from mconet.core.domain.service_access_validation import validate_service_access
 from mconet.core.domain.task_descriptor import TaskDescriptor
@@ -205,6 +210,8 @@ __all__ = (
     "ResolvedServiceAccess",
     "SchemaVersion",
     "SecretValue",
+    "ServerStream",
+    "ServerStreamEvent",
     "ServiceAccess",
     "TaskDescriptor",
     "TaskDocument",
@@ -247,6 +254,7 @@ __all__ = (
     "validate_open_identifier",
     "validate_parsed_task_response",
     "validate_resource_limits",
+    "validate_server_stream_interaction_mode",
     "validate_service_access",
     "validate_task_descriptor",
     "validate_task_document",

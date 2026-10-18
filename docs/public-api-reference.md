@@ -661,6 +661,18 @@ Signatures include the default values recorded for that symbol.
 - Signature: `(value: 'str | Bytes') -> 'None'`
 - `reveal` (method): `(self, consumer: 'AuthorizedSecretConsumer') -> 'str | Bytes'`
 
+### `mconet.core.domain.ServerStream`
+
+- Kind: `class`
+- Signature: `(events: 'AsyncIterator[ServerStreamEvent]', close: 'Callable[[], None]') -> 'None'`
+- `aclose` (method): `(self) -> 'None'`
+
+### `mconet.core.domain.ServerStreamEvent`
+
+- Kind: `class`
+- Signature: `(index: 'int', text: 'str', finish_reason: 'str | None' = None, response_id: 'str | None' = None, model: 'str | None' = None, done: 'bool' = False) -> None`
+- `finished` (method): `() -> 'ServerStreamEvent'`
+
 ### `mconet.core.domain.ServiceAccess`
 
 - Kind: `class`
@@ -894,6 +906,11 @@ Signatures include the default values recorded for that symbol.
 
 - Kind: `function`
 - Signature: `(limits: 'InteractionResourceLimits | ResolvedInteractionResourceLimits') -> 'InteractionResourceLimits | ResolvedInteractionResourceLimits'`
+
+### `mconet.core.domain.validate_server_stream_interaction_mode`
+
+- Kind: `function`
+- Signature: `(request: 'ModelRequest', mode: 'InteractionMode') -> 'InteractionMode'`
 
 ### `mconet.core.domain.validate_service_access`
 

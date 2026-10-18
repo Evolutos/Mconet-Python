@@ -1093,6 +1093,26 @@
       },
       "signature": "(value: 'str | Bytes') -> 'None'"
     },
+    "mconet.core.domain.ServerStream": {
+      "kind": "class",
+      "members": {
+        "aclose": {
+          "kind": "method",
+          "signature": "(self) -> 'None'"
+        }
+      },
+      "signature": "(events: 'AsyncIterator[ServerStreamEvent]', close: 'Callable[[], None]') -> 'None'"
+    },
+    "mconet.core.domain.ServerStreamEvent": {
+      "kind": "class",
+      "members": {
+        "finished": {
+          "kind": "method",
+          "signature": "() -> 'ServerStreamEvent'"
+        }
+      },
+      "signature": "(index: 'int', text: 'str', finish_reason: 'str | None' = None, response_id: 'str | None' = None, model: 'str | None' = None, done: 'bool' = False) -> None"
+    },
     "mconet.core.domain.ServiceAccess": {
       "kind": "class",
       "members": {
@@ -1374,6 +1394,10 @@
     "mconet.core.domain.validate_resource_limits": {
       "kind": "function",
       "signature": "(limits: 'InteractionResourceLimits | ResolvedInteractionResourceLimits') -> 'InteractionResourceLimits | ResolvedInteractionResourceLimits'"
+    },
+    "mconet.core.domain.validate_server_stream_interaction_mode": {
+      "kind": "function",
+      "signature": "(request: 'ModelRequest', mode: 'InteractionMode') -> 'InteractionMode'"
     },
     "mconet.core.domain.validate_service_access": {
       "kind": "function",
