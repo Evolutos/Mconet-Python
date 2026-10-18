@@ -8,8 +8,13 @@ from mconet.core.domain import (
     ErrorCategory,
     GenerationParameters,
     InteractionPhase,
+    JsonValue,
     ModelInteractionError,
     OpenIdentifier,
+)
+from mconet.integration.openai_compatible._tool_calls import (
+    tool_choice_json,
+    tool_definition_json,
 )
 
 UNSUPPORTED_GENERATION_PARAMETER_CODE = "unsupported_generation_parameter"
@@ -43,6 +48,12 @@ class WireParameters:
 
     seed: int | None = None
     """``seed`` member value."""
+
+    tools: tuple[dict[str, JsonValue], ...] | None = None
+    """``tools`` member value, or ``None`` to omit it."""
+
+    tool_choice: JsonValue | None = None
+    """``tool_choice`` member value, or ``None`` to omit it."""
 
 
 _NO_PARAMETERS = WireParameters()
@@ -100,4 +111,43 @@ def wire_parameters(
         max_tokens=parameters.max_output_tokens,
         stop=parameters.stop or None,
         seed=parameters.seed,
+        tools=_tools(parameters),
+        tool_choice=_tool_choice(parameters),
     )
+
+
+def _tools(parameters: GenerationParameters) -> tuple[dict[str, JsonValue], ...] | None:
+    """Return the tools array, or ``None`` when the request declares none.
+
+    Args:
+        parameters: Generation controls for the request being encoded.
+
+    Returns:
+        One JSON object per declared function tool, in declaration order.
+    """
+    # An empty tuple means the caller did not offer tools. Omitting the member
+    # leaves the service default, which is no tools, without sending ``[]``.
+    if not parameters.tools:
+        return None
+    return tuple(tool_definition_json(tool) for tool in parameters.tools)
+
+
+def _tool_choice(parameters: GenerationParameters) -> JsonValue | None:
+    """Return the tool_choice member, or ``None`` when it was not set.
+
+    Args:
+        parameters: Generation controls for the request being encoded.
+
+    Returns:
+        ``None`` when the caller omitted the control, otherwise the mode
+        string or the named-function object.
+    """
+    # None omits the member so the service default applies. It is not encoded
+    # as JSON null.
+    if parameters.tool_choice is None:
+        return None
+    # A choice names a tool or a mode over the declared tools. Sending it
+    # alone would ask the service to select from a list that is not present.
+    if not parameters.tools:
+        raise ValueError("GenerationParameters tool_choice requires a declared tool.")
+    return tool_choice_json(parameters.tool_choice)

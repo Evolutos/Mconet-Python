@@ -7,7 +7,10 @@ from types import MappingProxyType
 from typing import Literal
 
 from mconet.core.domain import (
+    Extensions,
+    JsonValue,
     MessageDocument,
+    MessageElement,
     MessageEntry,
     MessageGroup,
     NamedModel,
@@ -15,6 +18,7 @@ from mconet.core.domain import (
     OutputStatus,
     TextMessageContent,
     TokenUsage,
+    ToolCallElement,
 )
 from mconet.integration.openai_compatible._openai_chat_completion_choice_dto import (
     OpenAIChatCompletionChoiceDTO,
@@ -24,6 +28,9 @@ from mconet.integration.openai_compatible._openai_chat_completion_response_dto i
 )
 from mconet.integration.openai_compatible._openai_chat_completion_usage_dto import (
     OpenAIChatCompletionUsageDTO,
+)
+from mconet.integration.openai_compatible._openai_chat_message_dto import (
+    OpenAIChatMessageDTO,
 )
 from mconet.integration.openai_compatible._roles import domain_role
 from mconet.integration.openai_compatible._wire import (
@@ -91,9 +98,11 @@ def output_messages(choice: OpenAIChatCompletionChoiceDTO) -> MessageDocument:
     """Return the output MessageDocument for one choice message.
 
     The document has a ``message.root`` group holding one entry with one text
-    content. Element IDs derive from the choice index, so the same response
-    always produces the same document. Message members outside the frozen
-    shape, such as ``refusal``, are kept in the entry extensions.
+    content, then one ``message.tool_call`` element per call when the message
+    carried ``tool_calls``. Element IDs derive from the choice index, so the
+    same response always produces the same document. Null content becomes an
+    empty text value. Message members outside the frozen shape, such as
+    ``refusal``, are kept in the entry extensions.
 
     Args:
         choice: The selected response choice.
@@ -109,14 +118,55 @@ def output_messages(choice: OpenAIChatCompletionChoiceDTO) -> MessageDocument:
         child_path(child_path(child_path("", "choices"), 0), "message"), "role"
     )
     entry_id = f"choice-{choice.index}"
-    entry = MessageEntry(
-        entry_id,
-        domain_role(message.role, role_path),
-        (TextMessageContent(f"{entry_id}-text", message.content),),
-        extensions=message.extensions,
-    )
-    root = MessageGroup(_OUTPUT_ROOT_ID, _ROOT_KIND, (entry,))
+    # Null content is an empty text segment so the entry still satisfies the
+    # non-empty content rule without inventing display text.
+    text = "" if message.content is None else message.content
+    children: list[MessageElement] = [
+        MessageEntry(
+            entry_id,
+            domain_role(message.role, role_path),
+            (TextMessageContent(f"{entry_id}-text", text),),
+            extensions=_entry_extensions(message),
+        )
+    ]
+    if message.tool_calls is not None:
+        # Calls stay siblings of the assistant entry, in array order, so a
+        # later request can fold the same run back into one assistant message.
+        for index, call in enumerate(message.tool_calls):
+            # The element id is document-local. The service call id is stored
+            # separately so a tool result can cite it.
+            children.append(
+                ToolCallElement(
+                    f"{entry_id}-tool-{index}",
+                    call.id,
+                    call.name,
+                    call.arguments,
+                    call.type,
+                    call.extensions,
+                )
+            )
+    root = MessageGroup(_OUTPUT_ROOT_ID, _ROOT_KIND, tuple(children))
     return MessageDocument(_OUTPUT_DOCUMENT_VERSION, "output", root)
+
+
+def _entry_extensions(message: OpenAIChatMessageDTO) -> Extensions:
+    """Return entry extensions, including preserved name and tool-call id."""
+    # Those two members are known on the wire message but have no entry field.
+    # Keeping them on the entry leaves them observable without a second channel.
+    preserved: dict[str, JsonValue] = {}
+    if message.name is not None:
+        preserved["name"] = message.name
+    if message.tool_call_id is not None:
+        preserved["tool_call_id"] = message.tool_call_id
+    if not preserved:
+        # No name or tool-call id was sent, so the captured unknown members
+        # are already the complete extension snapshot.
+        return message.extensions
+    # Copy before updating so the message DTO's frozen extensions stay intact
+    # while the entry observes both unknown members and the preserved fields.
+    merged = dict(message.extensions)
+    merged.update(preserved)
+    return merged
 
 
 def output_status(finish_reason: str) -> OutputStatus:

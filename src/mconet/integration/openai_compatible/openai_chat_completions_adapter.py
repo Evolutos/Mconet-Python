@@ -58,7 +58,7 @@ from mconet.integration.openai_compatible._response import (
     token_usage,
 )
 from mconet.integration.openai_compatible._server_stream import (
-    map_openai_server_stream_payload,
+    OpenAIServerStreamMapper,
 )
 
 OPENAI_CHAT_COMPLETIONS_PROTOCOL_ID = OpenIdentifier("openai.chat-completions")
@@ -222,7 +222,9 @@ class OpenAIChatCompletionsAdapter:
         extensions: dict[str, object] = {}
         if mode.id == _SERVER_STREAM_MODE_ID:
             extensions[_STREAM_EXTENSION] = True
-            extensions[_STREAM_MAPPER_EXTENSION] = map_openai_server_stream_payload
+            # A new mapper per plan keeps argument fragments from one stream
+            # from being appended onto another interaction's calls.
+            extensions[_STREAM_MAPPER_EXTENSION] = OpenAIServerStreamMapper()
         return ProtocolExecutionPlan(
             transport_plan=TransportRequestPlan(
                 endpoint=endpoint,
@@ -249,10 +251,12 @@ class OpenAIChatCompletionsAdapter:
         """Return the chat completion body paired with the prepared plan.
 
         The body is ``model`` (the target model name), ``messages`` (input
-        entries in preorder), the set sampling members, and
-        ``stream`` set from the plan, in profile order. Unary plans send
-        ``false``. Server-stream plans send ``true``. The body is not encoded
-        here.
+        entries in preorder, with tool calls folded into the preceding
+        assistant message and tool results sent as their own messages), the
+        set sampling members, ``tools`` and ``tool_choice`` when the caller
+        set them, and ``stream`` set from the plan, in profile order. Unary
+        plans send ``false``. Server-stream plans send ``true``. The body is
+        not encoded here.
 
         Args:
             request: Validated conversation request.
@@ -277,6 +281,8 @@ class OpenAIChatCompletionsAdapter:
             max_tokens=members.max_tokens,
             stop=members.stop,
             seed=members.seed,
+            tools=members.tools,
+            tool_choice=members.tool_choice,
             stream=plan.extensions.get(_STREAM_EXTENSION) is True,
         )
         payload = ErasedRuntimeValue(_JSON_VALUE_TYPE_ID, body.to_json())

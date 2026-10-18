@@ -72,6 +72,10 @@ contents, secrets, or component identifiers.
 - `stream_frame_too_large`: a stream frame exceeds its limit.
 - `incomplete_stream_frame`: the server stream ended inside an event.
 - `stream_events_consumed`: the stream was already consumed.
+- `invalid_tool_call`: a tool call does not follow an assistant message.
+  The category is `invalid_request` and the phase is `protocol_adaptation`.
+  Document validation reports the same rule as a `ValueError` before the
+  request reaches protocol adaptation.
 - `client_closed`: `interact` was called after `ModelClient.close`. The
   category is `invalid_request` and the phase is `validation`.
 - `invalid_monitoring_merge_mode`: the monitor merge mode is not `append`,

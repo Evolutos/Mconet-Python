@@ -42,6 +42,12 @@ class OpenAIChatCompletionRequestDTO:
     seed: int | None = None
     """Deterministic sampling seed, or ``None`` to omit the member."""
 
+    tools: tuple[dict[str, JsonValue], ...] | None = None
+    """Function tools, or ``None`` to omit the member."""
+
+    tool_choice: JsonValue | None = None
+    """Tool selection control, or ``None`` to omit the member."""
+
     stream: bool = False
     """Whether the service should reply with a server-sent event stream."""
 
@@ -106,6 +112,32 @@ class OpenAIChatCompletionRequestDTO:
                     "OpenAIChatCompletionRequestDTO stop must contain only strings."
                 )
 
+        tools = cast(object, self.tools)
+        # Same omission rule as stop: None leaves the member out, and an empty
+        # tuple would send [] rather than omitting tools.
+        if tools is not None:
+            if not isinstance(tools, tuple) or not tools:
+                raise TypeError(
+                    "OpenAIChatCompletionRequestDTO tools must be a non-empty "
+                    "tuple or None."
+                )
+            # Each tool is already a JSON object. A domain FunctionTool would
+            # not encode until the adapter spelled it.
+            if any(
+                not isinstance(item, dict) for item in cast(tuple[object, ...], tools)
+            ):
+                raise TypeError(
+                    "OpenAIChatCompletionRequestDTO tools must contain JSON objects."
+                )
+        tool_choice = cast(object, self.tool_choice)
+        # The wire value is a mode string or the named-function object. Other
+        # JSON kinds are not a tool_choice.
+        if tool_choice is not None and not isinstance(tool_choice, (str, dict)):
+            raise TypeError(
+                "OpenAIChatCompletionRequestDTO tool_choice must be a string, "
+                "object, or None."
+            )
+
         if type(cast(object, self.stream)) is not bool:
             raise TypeError("OpenAIChatCompletionRequestDTO stream must be a bool.")
 
@@ -114,6 +146,14 @@ class OpenAIChatCompletionRequestDTO:
         for value in (self.temperature, self.top_p, self.max_tokens, self.seed):
             if value is not None:
                 validate_json_value_numbers(value)
+        if self.tools is not None:
+            # Tool schemas can contain numbers. They must be portable before
+            # the body is encoded.
+            validate_json_value_numbers(list(self.tools))
+        if self.tool_choice is not None:
+            # A named choice is an object. A mode string has no numbers, so
+            # this check only rejects a non-portable number inside the object.
+            validate_json_value_numbers(self.tool_choice)
 
     def to_json(self) -> dict[str, JsonValue]:
         """Return the request body members in frozen profile order.
@@ -138,5 +178,13 @@ class OpenAIChatCompletionRequestDTO:
             body["stop"] = list(self.stop)
         if self.seed is not None:
             body["seed"] = self.seed
+        if self.tools is not None:
+            # A fresh list keeps the encoded body independent of the stored
+            # tuple while preserving declaration order.
+            body["tools"] = list(self.tools)
+        if self.tool_choice is not None:
+            # The member is inserted before stream so the body order matches
+            # the frozen request profile.
+            body["tool_choice"] = self.tool_choice
         body["stream"] = self.stream
         return body
