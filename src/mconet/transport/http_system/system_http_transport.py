@@ -4,13 +4,14 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import concurrent.futures
 import http.client
 import os
 import socket
 import ssl
 import threading
 import time
-from collections.abc import Callable, Iterator, Mapping
+from collections.abc import AsyncIterator, Callable, Iterator, Mapping
 from typing import cast
 
 from mconet.core.domain.bytes_value import Bytes
@@ -211,6 +212,92 @@ class DefaultSystemHttpTransport:
         finally:
             if unsubscribe is not None:
                 unsubscribe()
+
+    async def open_server_stream(
+        self,
+        request: TransportRequest,
+        context: TransportContext,
+    ) -> HttpServerStream:
+        """Open one HTTP response and yield its body chunks as they arrive.
+
+        The request is sent with the same method, URL, header, proxy, deadline,
+        and cancellation rules as :meth:`send`. Response headers are returned
+        before the body is finished. Each chunk is at most 8192 bytes. The
+        total body still cannot exceed the context's response byte limit.
+
+        Args:
+            request: Encoded method, URL, fields, query, and body.
+            context: Deadline, cancellation, and the response byte limit.
+
+        Returns:
+            Headers and an async iterator of body chunks.
+
+        Raises:
+            TypeError: If ``request`` or ``context`` has an invalid shape.
+            ModelInteractionError: If the transport is closed, or the request,
+                deadline, proxy, or exchange fails.
+            asyncio.CancelledError: If the caller signal is cancelled.
+        """
+        self._reject_if_closed()
+        self._reject_if_business_client_closed()
+        prepared = _prepare_attempt(request, context)
+        # The queue is unbounded because the body limit already caps how many
+        # octets the worker can enqueue. A bounded queue could deadlock if the
+        # caller stops reading while the worker is blocked on put.
+        loop = asyncio.get_running_loop()
+        queue: asyncio.Queue[tuple[str, object]] = asyncio.Queue()
+        signal = context.cancellation
+        abort = _SocketAbort()
+        unsubscribe: Callable[[], None] | None = None
+        if signal is not None:
+            unsubscribe = signal.subscribe(abort.abort)
+        thread = threading.Thread(
+            target=_produce_server_stream,
+            args=(
+                prepared,
+                context,
+                os.environ
+                if self._proxy_environment is None
+                else self._proxy_environment,
+                self._proxy_override,
+                self._now,
+                abort,
+                signal,
+                loop,
+                queue,
+            ),
+            daemon=True,
+        )
+        thread.start()
+        try:
+            if signal is not None and signal.is_cancelled:
+                abort.abort(None)
+                raise asyncio.CancelledError(_cancellation_reason(signal))
+            kind, value = await queue.get()
+        except BaseException:
+            # Headers never arrived. Drop the cancellation subscription and
+            # abort the socket so the worker cannot stay blocked in a read.
+            if unsubscribe is not None:
+                unsubscribe()
+            abort.abort(None)
+            raise
+        if kind == "error":
+            if unsubscribe is not None:
+                unsubscribe()
+            abort.abort(None)
+            if isinstance(value, BaseException):
+                raise value
+            raise TypeError("server stream worker returned an invalid error.")
+        if not isinstance(value, TransportResponseMetadata):
+            if unsubscribe is not None:
+                unsubscribe()
+            abort.abort(None)
+            raise TypeError("server stream metadata must be TransportResponseMetadata.")
+        # The subscription stays armed until the body iterator is closed so a
+        # later cancellation still aborts the read. The worker is a daemon and
+        # leaves its read when close aborts the socket, so the stream does not
+        # retain the thread.
+        return HttpServerStream(value, _queue_chunks(queue), abort, unsubscribe)
 
     async def close(self) -> None:
         """Refuse later exchanges without interrupting one already started.
@@ -635,4 +722,213 @@ def _connection_failed() -> ModelInteractionError:
         phase=_TRANSPORT_PHASE,
         code=_CONNECTION_FAILED_CODE,
         message=_CONNECTION_FAILED_MESSAGE,
+    )
+
+
+class HttpServerStream:
+    """Headers plus the body chunks of one HTTP server stream."""
+
+    __slots__ = ("_abort", "_chunks", "_unsubscribe", "metadata")
+
+    def __init__(
+        self,
+        metadata: TransportResponseMetadata,
+        chunks: AsyncIterator[bytes],
+        abort: _SocketAbort,
+        unsubscribe: Callable[[], None] | None,
+    ) -> None:
+        """Retain the header result and the worker that produces chunks."""
+        # The worker is already running. These fields only let the caller read
+        # headers, pull chunks, and stop the read.
+        self.metadata = metadata
+        self._chunks = chunks
+        self._abort = abort
+        self._unsubscribe = unsubscribe
+
+    def __aiter__(self) -> AsyncIterator[bytes]:
+        """Return the chunk iterator."""
+        # The iterator is created once, when the stream is opened. Returning
+        # it here lets ``async for`` read chunks without a second request.
+        return self._chunks
+
+    def close(self) -> None:
+        """Stop the body read and drop the cancellation subscription."""
+        # Unsubscribe first so a close does not look like a caller cancellation
+        # after the socket has already been shut down.
+        unsubscribe = self._unsubscribe
+        self._unsubscribe = None
+        if unsubscribe is not None:
+            unsubscribe()
+        self._abort.abort(None)
+
+
+def _produce_server_stream(
+    prepared: _PreparedHttpAttempt,
+    context: TransportContext,
+    environment: Mapping[str, str],
+    override: HttpProxyOverride | None,
+    now: Callable[[], Timestamp],
+    abort: _SocketAbort,
+    signal: CancellationSignal | None,
+    loop: asyncio.AbstractEventLoop,
+    queue: asyncio.Queue[tuple[str, object]],
+) -> None:
+    """Send one request on a worker thread and enqueue its response chunks."""
+    connection: http.client.HTTPConnection | None = None
+    response: http.client.HTTPResponse | None = None
+    try:
+        _raise_if_cancelled(signal)
+        ensure_http_deadline(context.deadline, now)
+        selection = select_http_proxy(prepared.base, environment, override)
+        connection = _open_connection(
+            prepared.base,
+            selection,
+            _remaining_seconds(context.deadline, now),
+        )
+        abort.arm(connection)
+        _raise_if_cancelled(signal)
+        _send_request(connection, prepared, selection)
+        response = connection.getresponse()
+        fields = _response_header_fields(response)
+        # Headers are published before the body so a non-success status can
+        # be classified without waiting for the last chunk.
+        _submit(loop, queue, ("metadata", _stream_metadata(response.status, fields)))
+        total = 0
+        limit = context.resource_limits.max_response_body_bytes
+        expected = _single_content_length(fields)
+        while True:
+            _raise_if_cancelled(signal)
+            # read() keeps pulling later chunks until it fills the size or the
+            # body ends, so a short event stream would arrive as one blob.
+            # read1 stops after the bytes already available.
+            chunk = response.read1(_READ_CHUNK_BYTES)
+            if chunk == b"":
+                break
+            total += len(chunk)
+            if total > limit:
+                _release_exchange(response, connection)
+                raise _stream_body_too_large()
+            _submit(loop, queue, ("chunk", chunk))
+        # A short read against Content-Length is a dropped connection. The
+        # chunks already queued are not a complete body.
+        if expected is not None and total != expected:
+            raise _connection_failed()
+        response.close()
+        _submit(loop, queue, ("end", None))
+    except asyncio.CancelledError as error:
+        _submit_failure(loop, queue, error)
+    except ModelInteractionError as error:
+        _submit_failure(loop, queue, error)
+    except TimeoutError as error:
+        _raise_if_cancelled(signal)
+        if context.deadline is not None:
+            try:
+                ensure_http_deadline(context.deadline, now)
+            except ModelInteractionError as deadline_error:
+                _submit_failure(loop, queue, deadline_error)
+                return
+        _submit_failure(loop, queue, normalize_http_network_timeout(error))
+    except Exception:
+        if signal is not None and signal.is_cancelled:
+            _submit_failure(
+                loop,
+                queue,
+                asyncio.CancelledError(_cancellation_reason(signal)),
+            )
+        else:
+            _submit_failure(loop, queue, _connection_failed())
+    finally:
+        # The worker owns the connection it opened. Close releases it whether
+        # the body finished, the caller aborted, or the exchange failed.
+        if response is not None:
+            response.close()
+        if connection is not None:
+            connection.close()
+
+
+def _stream_metadata(
+    status_code: int,
+    fields: tuple[HttpHeaderField, ...],
+) -> TransportResponseMetadata:
+    """Build response metadata without a body."""
+    # Status and headers are known before the body. Media type is taken from
+    # Content-Type so the runtime can require text/event-stream.
+    classified = map_http_status(status_code)
+    safe_headers = summarize_http_response_headers(fields)
+    return TransportResponseMetadata(
+        outcome=classified.outcome,
+        headers=Headers(
+            tuple(HeaderField(field.name, field.value) for field in safe_headers)
+        ),
+        status_code=classified.status_code,
+        media_type=extract_http_response_media_type(fields),
+    )
+
+
+def _single_content_length(fields: tuple[HttpHeaderField, ...]) -> int | None:
+    """Return one numeric Content-Length, or None when it cannot be checked."""
+    # Duplicate or non-numeric lengths are not checked. A short read is only
+    # reported when exactly one decimal length was declared.
+    lengths = tuple(
+        field.value for field in fields if field.name.casefold() == "content-length"
+    )
+    if len(lengths) != 1 or not lengths[0].isdigit():
+        return None
+    return int(lengths[0])
+
+
+def _submit(
+    loop: asyncio.AbstractEventLoop,
+    queue: asyncio.Queue[tuple[str, object]],
+    item: tuple[str, object],
+) -> None:
+    """Enqueue one worker item on the caller's event loop."""
+    # result() waits until the loop accepts the item. The queue is unbounded,
+    # so this does not wait for the caller to read a previous chunk.
+    asyncio.run_coroutine_threadsafe(queue.put(item), loop).result()
+
+
+def _submit_failure(
+    loop: asyncio.AbstractEventLoop,
+    queue: asyncio.Queue[tuple[str, object]],
+    error: BaseException,
+) -> None:
+    """Enqueue a worker failure, ignoring a loop that has already stopped."""
+    try:
+        _submit(loop, queue, ("error", error))
+    except (RuntimeError, concurrent.futures.CancelledError):
+        # result() reports a closed loop as RuntimeError and a put cancelled
+        # during loop shutdown as the futures CancelledError. The caller is
+        # already gone, so this thread must not surface that as an unhandled
+        # exception.
+        return
+
+
+async def _queue_chunks(
+    queue: asyncio.Queue[tuple[str, object]],
+) -> AsyncIterator[bytes]:
+    """Yield body chunks until the worker reports the end or a failure."""
+    # The worker uses three item kinds: chunk, end, and error. Anything else
+    # is a programming fault in the worker, not a service response.
+    while True:
+        kind, value = await queue.get()
+        if kind == "end":
+            return
+        if kind == "error":
+            if isinstance(value, BaseException):
+                raise value
+            raise TypeError("server stream worker returned an invalid error.")
+        if kind != "chunk" or not isinstance(value, bytes):
+            raise TypeError("server stream chunk must be bytes.")
+        yield value
+
+
+def _stream_body_too_large() -> ModelInteractionError:
+    """Create the failure for a streamed body that exceeds its limit."""
+    # The accumulated length stays out of the message.
+    return ModelInteractionError(
+        category=_NETWORK_CATEGORY,
+        phase=_TRANSPORT_PHASE,
+        code="response_body_too_large",
+        message="HTTP response body exceeds its byte limit.",
     )

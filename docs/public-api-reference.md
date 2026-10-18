@@ -1625,6 +1625,7 @@ Signatures include the default values recorded for that symbol.
 - Signature: `(*, proxy_environment: 'Mapping[str, str] | None' = None, proxy_override: 'HttpProxyOverride | None' = None, tls_options: 'Mapping[str, object] | None' = None, now: 'Callable[[], Timestamp] | None' = None, network_client: 'object | None' = None) -> 'None'`
 - `close` (method): `(self) -> 'None'`
 - `descriptor` (property)
+- `open_server_stream` (method): `(self, request: 'TransportRequest', context: 'TransportContext') -> 'HttpServerStream'`
 - `send` (method): `(self, request: 'TransportRequest', context: 'TransportContext') -> 'TransportResponse'`
 
 ### `mconet.transport.http_system.HttpBaseUrl`

@@ -2628,6 +2628,10 @@
           "kind": "property",
           "signature": null
         },
+        "open_server_stream": {
+          "kind": "method",
+          "signature": "(self, request: 'TransportRequest', context: 'TransportContext') -> 'HttpServerStream'"
+        },
         "send": {
           "kind": "method",
           "signature": "(self, request: 'TransportRequest', context: 'TransportContext') -> 'TransportResponse'"
